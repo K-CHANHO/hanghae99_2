@@ -15,19 +15,11 @@ erDiagram
         string paymentId PK
         string userId FK "user"
         string orderId FK "order"
-        string userCouponId FK "userCoupon"
         string status
         string price
     }
-    userCoupon{
-        string userCouponId PK
-        string userId FK "user"
-        string couponId FK "coupon"
-        timestamp issuedAt
-    }
+    
 
     user ||--o{ payment : places
     payment ||--o| order : contains
-    payment ||--o| userCoupon : relates
-
 ```

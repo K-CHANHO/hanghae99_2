@@ -10,6 +10,8 @@
 
 - **URL**: `/api/v1/coupon`
 - **Method**: `POST`
+- **headers**: 
+  - `transactionId`: 고유한 트랜잭션 ID (중복방지)
 
 ---
 

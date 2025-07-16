@@ -44,6 +44,9 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	// self
+	implementation("org.projectlombok:lombok:1.18.38")
 }
 
 tasks.withType<Test> {

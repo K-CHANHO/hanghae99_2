@@ -15,6 +15,7 @@ erDiagram
     order{
         string orderId PK
         string userId FK "user"
+        string userCouponId FK "userCoupon"
         int totalPrice
         string status
         string orderDate
@@ -53,7 +54,6 @@ erDiagram
         string paymentId PK
         string userId FK "user"
         string orderId FK "order"
-        string userCouponId FK "userCoupon"
         string status
         string price
     }
@@ -61,11 +61,9 @@ erDiagram
     user ||--o{ order : places
     order ||--o{ orderProduct : contains
     orderProduct ||--o{ product : relates
-
     user ||--o{ payment : places
     payment ||--o| order : contains
-    payment ||--o| userCoupon : relates
-
+    order ||--o| userCoupon : relates
     user ||--o{ userCoupon : places
     userCoupon ||--o| coupon : relates
     coupon ||--o| couponRule : contains

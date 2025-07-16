@@ -8,7 +8,7 @@
 
 ### 🔗 Endpoint
 
-- **URL**: `/v1/balance`
+- **URL**: `/api/v1/balance`
 - **Method**: `PATCH`
 
 ---

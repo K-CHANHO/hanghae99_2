@@ -8,7 +8,7 @@
 
 ### 🔗 Endpoint
 
-- **URL**: `/v1/balance/{userId}`
+- **URL**: `/api/v1/balance/{userId}`
 - **Method**: `GET`
 
 ---

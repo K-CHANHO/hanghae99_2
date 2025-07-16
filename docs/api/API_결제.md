@@ -8,7 +8,7 @@
 
 ### 🔗 Endpoint
 
-- **URL**: `/v1/payment`
+- **URL**: `/api/v1/payment`
 - **Method**: `POST`
 
 ---

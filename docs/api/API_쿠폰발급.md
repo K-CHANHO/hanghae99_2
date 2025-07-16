@@ -8,7 +8,7 @@
 
 ### 🔗 Endpoint
 
-- **URL**: `/v1/coupon`
+- **URL**: `/api/v1/coupon`
 - **Method**: `POST`
 
 ---

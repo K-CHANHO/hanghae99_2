@@ -7,6 +7,7 @@ erDiagram
     order{
         string orderId PK
         string userId FK "user"
+        string userCouponId FK "userCoupon"
         int totalPrice
         string status
         string orderDate
@@ -24,8 +25,15 @@ erDiagram
         int stock
         int price
     }
+    userCoupon{
+        string userCouponId PK
+        string userId FK "user"
+        string couponId FK "coupon"
+        timestamp issuedAt
+    }
 
     user ||--o{ order : places
     order ||--o{ orderProduct : contains
+    order ||--o| userCoupon : relates
     orderProduct ||--o{ product : relates
 ```

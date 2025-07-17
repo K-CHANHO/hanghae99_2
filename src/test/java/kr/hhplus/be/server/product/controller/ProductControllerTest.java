@@ -68,27 +68,27 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.data.topProducts.size()").value(5))
                 .andExpect(jsonPath("$.data.topProducts[0].productId").value("product1"))
                 .andExpect(jsonPath("$.data.topProducts[0].productName").value("항해 백엔드 9기 과정"))
-                .andExpect(jsonPath("$.data.topProducts[0].stock").value(100))
+                .andExpect(jsonPath("$.data.topProducts[0].soldCount").value(100))
                 .andExpect(jsonPath("$.data.topProducts[0].price").value(1500000))
 
                 .andExpect(jsonPath("$.data.topProducts[1].productId").value("product2"))
                 .andExpect(jsonPath("$.data.topProducts[1].productName").value("항해 프론트엔드 9기 과정"))
-                .andExpect(jsonPath("$.data.topProducts[1].stock").value(50))
+                .andExpect(jsonPath("$.data.topProducts[1].soldCount").value(50))
                 .andExpect(jsonPath("$.data.topProducts[1].price").value(1200000))
 
                 .andExpect(jsonPath("$.data.topProducts[2].productId").value("product3"))
                 .andExpect(jsonPath("$.data.topProducts[2].productName").value("항해 데브옵스 9기 과정"))
-                .andExpect(jsonPath("$.data.topProducts[2].stock").value(70))
+                .andExpect(jsonPath("$.data.topProducts[2].soldCount").value(70))
                 .andExpect(jsonPath("$.data.topProducts[2].price").value(1600000))
 
                 .andExpect(jsonPath("$.data.topProducts[3].productId").value("product4"))
                 .andExpect(jsonPath("$.data.topProducts[3].productName").value("항해 풀스택 9기 과정"))
-                .andExpect(jsonPath("$.data.topProducts[3].stock").value(20))
+                .andExpect(jsonPath("$.data.topProducts[3].soldCount").value(20))
                 .andExpect(jsonPath("$.data.topProducts[3].price").value(2000000))
 
                 .andExpect(jsonPath("$.data.topProducts[4].productId").value("product5"))
                 .andExpect(jsonPath("$.data.topProducts[4].productName").value("항해 학습메이트 9기 과정"))
-                .andExpect(jsonPath("$.data.topProducts[4].stock").value(5))
+                .andExpect(jsonPath("$.data.topProducts[4].soldCount").value(5))
                 .andExpect(jsonPath("$.data.topProducts[4].price").value(1000000))
         ;
     }

@@ -44,31 +44,31 @@ public class ProductController {
         ViewTopProductResponse.Product product1 = new ViewTopProductResponse.Product();
         product1.setProductId("product1");
         product1.setProductName("항해 백엔드 9기 과정");
-        product1.setStock(100);
+        product1.setSoldCount(100);
         product1.setPrice(1500000);
 
         ViewTopProductResponse.Product product2 = new ViewTopProductResponse.Product();
         product2.setProductId("product2");
         product2.setProductName("항해 프론트엔드 9기 과정");
-        product2.setStock(50);
+        product2.setSoldCount(50);
         product2.setPrice(1200000);
 
         ViewTopProductResponse.Product product3 = new ViewTopProductResponse.Product();
         product3.setProductId("product3");
         product3.setProductName("항해 데브옵스 9기 과정");
-        product3.setStock(70);
+        product3.setSoldCount(70);
         product3.setPrice(1600000);
 
         ViewTopProductResponse.Product product4 = new ViewTopProductResponse.Product();
         product4.setProductId("product4");
         product4.setProductName("항해 풀스택 9기 과정");
-        product4.setStock(20);
+        product4.setSoldCount(20);
         product4.setPrice(2000000);
 
         ViewTopProductResponse.Product product5 = new ViewTopProductResponse.Product();
         product5.setProductId("product5");
         product5.setProductName("항해 학습메이트 9기 과정");
-        product5.setStock(5);
+        product5.setSoldCount(5);
         product5.setPrice(1000000);
 
         topProducts.add(product1);

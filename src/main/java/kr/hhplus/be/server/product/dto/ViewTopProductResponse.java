@@ -13,7 +13,7 @@ public class ViewTopProductResponse {
     public static class Product {
         private String productId;
         private String productName;
-        private int stock;
+        private int soldCount;
         private int price;
     }
 }

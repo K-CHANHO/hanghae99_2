@@ -48,7 +48,8 @@ dependencies {
 	// self
 	implementation("org.projectlombok:lombok:1.18.30")
 	annotationProcessor("org.projectlombok:lombok:1.18.30")
-	implementation("com.google.code.gson:gson:2.10.1")
+	implementation("com.google.code.gson:gson")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 }
 
 tasks.withType<Test> {

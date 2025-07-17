@@ -1,40 +1,40 @@
 package kr.hhplus.be.server.balance.controller;
 
-import kr.hhplus.be.server.balance.dto.BalanceChargeRequest;
-import kr.hhplus.be.server.balance.dto.BalanceChargeResponse;
-import kr.hhplus.be.server.balance.dto.BalanceViewResponse;
+import kr.hhplus.be.server.balance.dto.ChargeBalanceRequest;
+import kr.hhplus.be.server.balance.dto.ChargeBalanceResponse;
+import kr.hhplus.be.server.balance.dto.ViewBalanceResponse;
 import kr.hhplus.be.server.common.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/balance")
 public class BalanceController {
 
-    @GetMapping("/balance/{userId}")
-    public ResponseEntity<ApiResponse<BalanceViewResponse>> getBalance(@PathVariable String userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId) {
 
-        BalanceViewResponse balanceViewResponse = new BalanceViewResponse();
-        balanceViewResponse.setUserId(userId);
-        balanceViewResponse.setBalance(100000);
+        ViewBalanceResponse viewBalanceResponse = new ViewBalanceResponse();
+        viewBalanceResponse.setUserId(userId);
+        viewBalanceResponse.setBalance(100000);
 
-        ApiResponse<BalanceViewResponse> result = new ApiResponse<>();
-        result.setMessage("성공");
+        ApiResponse<ViewBalanceResponse> result = new ApiResponse<>();
+        result.setMessage("잔액 조회 성공");
         result.setCode(200);
-        result.setData(balanceViewResponse);
+        result.setData(viewBalanceResponse);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PatchMapping("/balance")
-    public ResponseEntity<ApiResponse<BalanceChargeResponse>> updateBalance(@RequestBody BalanceChargeRequest request) {
+    @PatchMapping
+    public ResponseEntity<ApiResponse<ChargeBalanceResponse>> updateBalance(@RequestBody ChargeBalanceRequest request) {
 
-        BalanceChargeResponse balanceResponse = new BalanceChargeResponse();
+        ChargeBalanceResponse balanceResponse = new ChargeBalanceResponse();
         balanceResponse.setUserId(request.getUserId());
         balanceResponse.setNewBalance(100000 + request.getAmount()); // 예시로 100000에 충전 금액을 더함
 
-        ApiResponse<BalanceChargeResponse> result = new ApiResponse<>();
+        ApiResponse<ChargeBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 충전 성공");
         result.setCode(200);
         result.setData(balanceResponse);

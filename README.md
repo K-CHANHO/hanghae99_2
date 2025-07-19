@@ -1,13 +1,11 @@
-## 프로젝트
+## 선택한 아키텍처
+`Relaxed Layered Architecture`
 
-## Getting Started
+## 선택한 이유
+- 초기 MVP단계에서 빠른 개발을 위해
+- 계층 간 이동이 자유롭고 비즈니스 요구사항에 집중 가능
+- 이해하기 쉬운 구조로 초기 설계 비용을 최소화
+- 테스트 코드 작성 용이
+- 점진적인 리팩토링 가능
 
-### Prerequisites
 
-#### Running Docker Containers
-
-`local` profile 로 실행하기 위하여 인프라가 설정되어 있는 Docker 컨테이너를 실행해주셔야 합니다.
-
-```bash
-docker-compose up -d
-```

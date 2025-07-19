@@ -8,9 +8,10 @@
 
 ### 🔗 Endpoint
 
-- **URL**: `/v1/payment`
+- **URL**: `/api/v1/payment`
 - **Method**: `POST`
-
+- **headers**: 
+  - `transactionId`: 고유한 트랜잭션 ID (중복방지) 
 ---
 
 ### 📥 Request Body

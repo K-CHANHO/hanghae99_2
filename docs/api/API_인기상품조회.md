@@ -8,7 +8,7 @@
 
 ### 🔗 Endpoint
 
-- **URL**: `/v1/product/popular`
+- **URL**: `/api/v1/product/popular`
 - **Method**: `GET`
 
 ---

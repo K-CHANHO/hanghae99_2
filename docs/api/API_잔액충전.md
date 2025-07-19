@@ -8,8 +8,10 @@
 
 ### 🔗 Endpoint
 
-- **URL**: `/v1/balance`
+- **URL**: `/api/v1/balance`
 - **Method**: `PATCH`
+- **headers**: 
+  - `transactionId`: 고유한 트랜잭션 ID (중복방지)
 
 ---
 

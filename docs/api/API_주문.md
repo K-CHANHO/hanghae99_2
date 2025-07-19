@@ -8,7 +8,7 @@
 
 ### 🔗 Endpoint
 
-- **URL**: `/v1/order`
+- **URL**: `/api/v1/order`
 - **Method**: `POST`
 
 ---

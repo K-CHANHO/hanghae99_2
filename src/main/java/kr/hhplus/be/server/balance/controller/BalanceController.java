@@ -7,14 +7,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.balance.dto.ChargeBalanceRequest;
 import kr.hhplus.be.server.balance.dto.ChargeBalanceResponse;
 import kr.hhplus.be.server.balance.dto.ViewBalanceResponse;
+import kr.hhplus.be.server.balance.entity.Balance;
+import kr.hhplus.be.server.balance.service.BalanceService;
 import kr.hhplus.be.server.common.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/balance")
+@RequiredArgsConstructor
 public class BalanceController {
+
+    private final BalanceService balanceService;
 
     @GetMapping("/{userId}")
     @Tag(name = "잔액", description = "잔액과 관련된 API")
@@ -23,9 +29,11 @@ public class BalanceController {
     @Parameter(name = "userId", description = "사용자 ID", required = true, in = ParameterIn.PATH)
     public ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId) {
 
+        Balance balance = balanceService.getBalance(userId);
+
         ViewBalanceResponse viewBalanceResponse = new ViewBalanceResponse();
-        viewBalanceResponse.setUserId(userId);
-        viewBalanceResponse.setBalance(100000);
+        viewBalanceResponse.setUserId(balance.getUserId());
+        viewBalanceResponse.setBalance(balance.getBalance());
 
         ApiResponse<ViewBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 조회 성공");

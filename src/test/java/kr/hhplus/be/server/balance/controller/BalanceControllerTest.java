@@ -1,15 +1,17 @@
 package kr.hhplus.be.server.balance.controller;
 
+import kr.hhplus.be.server.balance.entity.Balance;
+import kr.hhplus.be.server.balance.repository.BalanceRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -17,17 +19,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class BalanceControllerTest {
 
-    @InjectMocks
+    @Autowired
     private BalanceController balanceController;
+
+    @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private BalanceRepository balanceRepository;
 
     @BeforeEach
     void setUp() {
-        // MockMvc 초기화 및 설정
-        mockMvc = MockMvcBuilders.standaloneSetup(balanceController).build();
+        Balance balance = new Balance("sampleUserId", 100000);
+        balanceRepository.save(balance);
+    }
+
+    @AfterEach
+    void cleanUp(){
+        balanceRepository.deleteAll();
     }
 
     @Test
@@ -44,7 +57,7 @@ public class BalanceControllerTest {
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("성공"))
+                .andExpect(jsonPath("$.message").value("잔액 조회 성공"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.userId").value(userId))
                 .andExpect(jsonPath("$.data.balance").value(100000));

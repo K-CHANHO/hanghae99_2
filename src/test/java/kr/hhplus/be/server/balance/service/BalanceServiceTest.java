@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class BalanceServiceTest {
 
     @InjectMocks
-    private BalanceService balanceService;
+    private BalanceServiceImpl balanceService;
 
     @Mock
     private BalanceRepository balanceRepository;

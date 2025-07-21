@@ -1,8 +1,19 @@
 package kr.hhplus.be.server.balance.service;
 
 import kr.hhplus.be.server.balance.entity.BalanceHistory;
+import kr.hhplus.be.server.balance.repository.BalanceHistoryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-public interface BalanceHistoryService {
+@Service
+@RequiredArgsConstructor
+public class BalanceHistoryService {
 
-    BalanceHistory saveBalanceHistory(String userId, int amount, String type);
+    private final BalanceHistoryRepository balanceHistoryRepository;
+
+    public BalanceHistory saveBalanceHistory(String userId, int amount, String type) {
+        BalanceHistory balanceHistory = new BalanceHistory(userId, amount, type);
+        return balanceHistoryRepository.save(balanceHistory);
+    }
+
 }

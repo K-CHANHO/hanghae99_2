@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class BalanceServiceTest {
 
     @InjectMocks
-    private BalanceServiceImpl balanceService;
+    private BalanceService balanceService;
 
     @Mock
     private BalanceRepository balanceRepository;

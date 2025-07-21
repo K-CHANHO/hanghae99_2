@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 public class BalanceHistoryServiceTest {
 
     @InjectMocks
-    private BalanceHistoryServiceImpl balanceHistoryService;
+    private BalanceHistoryService balanceHistoryService;
 
     @Mock
     private BalanceHistoryRepository balanceHistoryRepository;

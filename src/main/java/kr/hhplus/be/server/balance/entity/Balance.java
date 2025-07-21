@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.balance.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
@@ -13,8 +12,6 @@ public class Balance {
 
     @Id
     private String userId;
-
-    @Column
     private int balance;
 
     public Balance(String userId, int balance) {

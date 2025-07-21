@@ -21,4 +21,10 @@ public class Product {
     @JoinColumn(name = "productStock_productId")
     private ProductStock productStock;
 
+    public void reduceStock(int orderQuantity) {
+        if (productStock.getStockQuantity() < orderQuantity) {
+            throw new RuntimeException("재고가 부족합니다.");
+        }
+        this.productStock.reduceStock(orderQuantity);
+    }
 }

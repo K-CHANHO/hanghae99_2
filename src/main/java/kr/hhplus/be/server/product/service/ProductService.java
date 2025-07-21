@@ -16,5 +16,11 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("상품을 조회할 수 없습니다."));
     }
 
+    public Product reduceProductStock(String productId, int orderQuantity) {
+        Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("상품을 조회할 수 없습니다."));
+        product.reduceStock(orderQuantity);
+
+        return productRepository.save(product);
+    }
 }
 

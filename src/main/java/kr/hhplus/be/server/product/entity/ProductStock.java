@@ -14,5 +14,9 @@ public class ProductStock {
 
     @Id
     private String productId;
-    private int stock;
+    private int stockQuantity;
+
+    public void reduceStock(int orderQuantity) {
+        this.stockQuantity -= orderQuantity;
+    }
 }

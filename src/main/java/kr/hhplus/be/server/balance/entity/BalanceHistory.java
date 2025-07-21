@@ -20,12 +20,12 @@ public class BalanceHistory {
     private String userId;
     private int amount;
     private String type;
-    private Timestamp createdDate;
+    private Timestamp createdAt;
 
     public BalanceHistory(String userId, int amount, String type) {
         this.userId = userId;
         this.amount = amount;
         this.type = type;
-        this.createdDate = new Timestamp(System.currentTimeMillis());
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 }

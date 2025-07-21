@@ -18,8 +18,8 @@ public class JpaBalanceRepository implements BalanceRepository {
     }
 
     @Override
-    public Balance save(Balance updatedBalance) {
-        return jpaRepository.save(updatedBalance);
+    public Balance save(Balance balance) {
+        return jpaRepository.save(balance);
     }
 
     @Override

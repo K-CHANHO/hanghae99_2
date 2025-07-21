@@ -31,4 +31,13 @@ public class Balance {
         }
         this.balance += chargeAmount;
     }
+
+    public void use(int useAmount) {
+        if(useAmount < 0){
+            throw new RuntimeException("사용은 양수 값만 가능합니다.");
+        } else if(this.balance < useAmount){
+            throw new RuntimeException("잔액보다 많이 사용할 수 없습니다.");
+        }
+        this.balance -= useAmount;
+    }
 }

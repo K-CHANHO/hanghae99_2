@@ -1,16 +1,10 @@
 package kr.hhplus.be.server.balance.repository;
 
 import kr.hhplus.be.server.balance.entity.Balance;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface BalanceRepository {
+public interface BalanceRepository extends JpaRepository<Balance, String> {
 
-    Optional<Balance> findById(String userId);
-
-    Balance save(Balance updatedBalance);
-
-    void deleteAll();
 }

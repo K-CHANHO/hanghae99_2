@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ProductStock {
 
     @Id
-    private String productId;
+    private Long productId;
     private int stockQuantity;
 
     public void reduceStock(int orderQuantity) {

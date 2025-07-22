@@ -1,0 +1,19 @@
+package kr.hhplus.be.server.payment.service;
+
+import kr.hhplus.be.server.payment.entity.Payment;
+import kr.hhplus.be.server.payment.repository.PaymentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class PaymentService {
+    private final PaymentRepository paymentRepository;
+
+    public Payment pay(String userId, Long orderId) {
+        Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> new RuntimeException("유효하지 않은 주문입니다."));
+        payment.pay();
+
+        return paymentRepository.save(payment);
+    }
+}

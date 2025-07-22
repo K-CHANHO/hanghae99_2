@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,6 +120,25 @@ public class CouponServiceTest {
         // then
         assertThat(userCoupon.getCoupon().getCouponId()).isEqualTo(couponId);
         assertThat(userCoupon.getStatus()).isEqualTo("USED");
+    }
+
+    @Test
+    @DisplayName("쿠폰 확인 테스트")
+    public void viewCouponList(){
+        // given
+        String userId = "sampleUserId";
+        List<UserCoupon> sampleUserCoupons = List.of(
+                new UserCoupon(1L, userId, new Coupon(1L, "쿠폰1", 100, "ING", 0.1), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null),
+                new UserCoupon(2L, userId, new Coupon(2L, "쿠폰2", 200, "ING", 0.2), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null)
+        );
+        when(userCouponRepository.findByUserId(userId)).thenReturn(Optional.of(sampleUserCoupons));
+
+        // when
+        List<UserCoupon> userCouponList = couponService.viewCouponList(userId);
+
+        // then
+        assertThat(userCouponList).isNotNull();
+        assertThat(userCouponList.size()).isEqualTo(2);
     }
 
 

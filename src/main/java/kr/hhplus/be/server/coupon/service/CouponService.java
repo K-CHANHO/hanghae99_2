@@ -7,6 +7,8 @@ import kr.hhplus.be.server.coupon.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CouponService {
@@ -28,5 +30,9 @@ public class CouponService {
         UserCoupon userCoupon = userCouponRepository.findByUserIdAndCouponId(userId, couponId).orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다"));
         userCoupon.useCoupon();
         return userCouponRepository.save(userCoupon);
+    }
+
+    public List<UserCoupon> viewCouponList(String userId) {
+        return userCouponRepository.findByUserId(userId).orElse(null);
     }
 }

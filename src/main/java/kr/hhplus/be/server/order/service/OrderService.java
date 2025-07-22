@@ -15,12 +15,20 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    public Order createOrder(Long orderId, String userId, String status, int totalPrice, ArrayList<OrderProduct> orderProducts) {
-        Order order = new Order(orderId, userId, status, totalPrice, new Timestamp(System.currentTimeMillis()), orderProducts);
+    public Order createOrder(String userId, ArrayList<OrderProduct> orderProducts) {
+        orderProducts.stream().mapToInt(product -> product.getTotalPrice()).sum();
+
+        Order order = Order.builder()
+                .userId(userId)
+                .status("PENDING")
+                .orderProductList(orderProducts)
+                .totalPrice(orderProducts.stream().mapToInt(product -> product.getTotalPrice()).sum())
+                .createdAt(new Timestamp(System.currentTimeMillis()))
+                .build();
         return orderRepository.save(order);
     }
 
-    public Order chageStatus(Long orderId, String status) {
+    public Order changeStatus(Long orderId, String status) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
         order.setStatus(status);
 

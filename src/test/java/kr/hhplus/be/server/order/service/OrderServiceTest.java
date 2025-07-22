@@ -36,11 +36,18 @@ public class OrderServiceTest {
         String status = "PENDING";
         int totalPrice = 100000;
 
-        Order order = new Order(orderId, userId, status, totalPrice, new Timestamp(System.currentTimeMillis()), new ArrayList<OrderProduct>());
+        Order order = Order.builder()
+                .orderId(orderId)
+                .userId(userId)
+                .status("PENDING")
+                .totalPrice(totalPrice)
+                .orderProductList(new ArrayList<>())
+                .createdAt(new Timestamp(System.currentTimeMillis()))
+                .build();
         when(orderRepository.save(any())).thenReturn(order);
 
         // when
-        Order createdOrder = orderService.createOrder(orderId, userId, status, totalPrice, new ArrayList<OrderProduct>());
+        Order createdOrder = orderService.createOrder(userId, new ArrayList<OrderProduct>());
 
         // then
         assertThat(createdOrder).isNotNull();
@@ -59,7 +66,7 @@ public class OrderServiceTest {
         when(orderRepository.save(any(Order.class))).thenReturn((Order.builder().orderId(orderId).status("PAID").build()));
 
         // when
-        Order order = orderService.chageStatus(orderId, status);
+        Order order = orderService.changeStatus(orderId, status);
 
         // then
         assertThat(order.getStatus()).isEqualTo(status);

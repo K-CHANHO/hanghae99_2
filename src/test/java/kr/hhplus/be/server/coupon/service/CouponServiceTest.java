@@ -20,8 +20,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CouponServiceTest {
@@ -81,10 +80,12 @@ public class CouponServiceTest {
         UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", new Coupon(), "USED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null);
         when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
-        // when, then
-        assertThatThrownBy(()->couponService.useCoupon(userId, couponId))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("이미 사용한 쿠폰입니다.");
+        // when
+        UserCoupon usedCoupon = couponService.useCoupon(userId, couponId);
+
+        // then
+        assertThat(usedCoupon).isNull();
+        verify(userCouponRepository, never()).save(any(UserCoupon.class));
     }
 
     @Test
@@ -96,10 +97,12 @@ public class CouponServiceTest {
         UserCoupon userCoupon = new UserCoupon(1L, userId, new Coupon(), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS)), null);
         when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
-        // when, then
-        assertThatThrownBy(()->couponService.useCoupon(userId, couponId))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("만료된 쿠폰입니다.");
+        // when
+        UserCoupon expiredCoupon = couponService.useCoupon(userId, couponId);
+
+        // then
+        assertThat(expiredCoupon).isNull();
+        verify(userCouponRepository, never()).save(any(UserCoupon.class));
     }
 
     @Test
@@ -109,7 +112,7 @@ public class CouponServiceTest {
         String userId = "sampleUserId";
         Long couponId = 1L;
         Coupon coupon = Coupon.builder().couponId(couponId).build();
-        UserCoupon unusedCoupon = UserCoupon.builder().coupon(coupon).status("UNUSED").build();
+        UserCoupon unusedCoupon = UserCoupon.builder().coupon(coupon).status("UNUSED").expiredAt(Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS))).build();
         UserCoupon usedCoupon = UserCoupon.builder().coupon(coupon).status("USED").build();
         when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(usedCoupon);

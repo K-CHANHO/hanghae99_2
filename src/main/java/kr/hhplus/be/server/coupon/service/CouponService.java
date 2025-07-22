@@ -27,9 +27,14 @@ public class CouponService {
     }
 
     public UserCoupon useCoupon(String userId, Long couponId) {
-        UserCoupon userCoupon = userCouponRepository.findByUserIdAndCouponId(userId, couponId).orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다"));
-        userCoupon.useCoupon();
-        return userCouponRepository.save(userCoupon);
+        try{
+            UserCoupon userCoupon = userCouponRepository.findByUserIdAndCouponId(userId, couponId).orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다"));
+            userCoupon.useCoupon();
+            return userCouponRepository.save(userCoupon);
+        }
+        catch (RuntimeException e){
+            return null;
+        }
     }
 
     public List<UserCoupon> viewCouponList(String userId) {

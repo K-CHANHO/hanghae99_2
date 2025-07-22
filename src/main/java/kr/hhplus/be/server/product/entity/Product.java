@@ -20,6 +20,7 @@ public class Product {
     @OneToOne
     @JoinColumn(name = "productStock_productId")
     private ProductStock productStock;
+    private int price;
 
     public void reduceStock(int orderQuantity) {
         if (productStock.getStockQuantity() < orderQuantity) {

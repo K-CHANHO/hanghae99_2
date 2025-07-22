@@ -34,7 +34,7 @@ public class ProductServiceTest {
         String productId = "sampleProductId";
         String productName = "샘플 상품명";
         int stock = 100;
-        when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, productName, new ProductStock(productId, stock))));
+        when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, productName, new ProductStock(productId, stock), 10000)));
 
         // when
         Product product = productService.getProduct(productId);
@@ -53,7 +53,7 @@ public class ProductServiceTest {
         // given
         String productId = "sampleProductId";
         int initialStock = 100;
-        when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock))));
+        when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock), 10000)));
 
         // when, then
         assertThatThrownBy(() -> productService.reduceProductStock(productId, orderQuantity))
@@ -69,8 +69,8 @@ public class ProductServiceTest {
         // given
         String productId = "sampleProductId";
         int initialStock = 100;
-        when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock))));
-        when(productRepository.save(any(Product.class))).thenReturn(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock - orderQuantity)));
+        when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock), 10000)));
+        when(productRepository.save(any(Product.class))).thenReturn(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock - orderQuantity), 10000));
         // when
         Product product = productService.reduceProductStock(productId, orderQuantity);
 

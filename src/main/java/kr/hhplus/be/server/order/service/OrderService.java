@@ -16,13 +16,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     public Order createOrder(String userId, ArrayList<OrderProduct> orderProducts) {
-        orderProducts.stream().mapToInt(product -> product.getTotalPrice()).sum();
-
         Order order = Order.builder()
                 .userId(userId)
                 .status("PENDING")
                 .orderProductList(orderProducts)
-                .totalPrice(orderProducts.stream().mapToInt(product -> product.getTotalPrice()).sum())
+                .totalPrice(orderProducts.stream().mapToInt(OrderProduct::getTotalPrice).sum())
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build();
         return orderRepository.save(order);

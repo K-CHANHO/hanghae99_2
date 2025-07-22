@@ -45,7 +45,7 @@ public class PaymentServiceTest {
         when(paymentRepository.save(any(Payment.class))).thenReturn(afterPayment);
 
         // when
-        Payment payment = paymentService.pay(userId, orderId);
+        Payment payment = paymentService.pay(userId, orderId, 10000, 0.1);
 
         // then
         Assertions.assertThat(payment.getStatus()).isEqualTo("PAID");

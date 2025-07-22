@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +32,7 @@ public class ProductServiceTest {
     @DisplayName("상품 조회 테스트")
     public void getProduct(){
         // given
-        String productId = "sampleProductId";
+        Long productId = 1L;
         String productName = "샘플 상품명";
         int stock = 100;
         when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, productName, new ProductStock(productId, stock), 10000)));
@@ -51,7 +52,7 @@ public class ProductServiceTest {
     @DisplayName("상품 재고 차감 실패 테스트 - 재고 부족")
     public void reduceProductStockFail(int orderQuantity){
         // given
-        String productId = "sampleProductId";
+        Long productId = 1L;
         int initialStock = 100;
         when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock), 10000)));
 
@@ -67,7 +68,7 @@ public class ProductServiceTest {
     @DisplayName("상품 재고 차감 테스트")
     public void reduceProductStock(int orderQuantity){
         // given
-        String productId = "sampleProductId";
+        Long productId = 1L;
         int initialStock = 100;
         when(productRepository.findById(productId)).thenReturn(Optional.of(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock), 10000)));
         when(productRepository.save(any(Product.class))).thenReturn(new Product(productId, "샘플 상품명", new ProductStock(productId, initialStock - orderQuantity), 10000));
@@ -76,5 +77,24 @@ public class ProductServiceTest {
 
         // then
         assertThat(initialStock - orderQuantity).isEqualTo(product.getProductStock().getStockQuantity());
+    }
+
+    @Test
+    @DisplayName("상품 목록 조회 테스트")
+    public void getProductList() {
+        // given
+        List<Product> productList = List.of(
+                new Product(1L, "상품1", new ProductStock(1L, 100), 10000),
+                new Product(2L, "상품2", new ProductStock(2L, 200), 20000),
+                new Product(3L, "상품3", new ProductStock(3L, 300), 30000)
+        );
+        when(productRepository.findAll()).thenReturn(productList);
+
+        // when
+        List<Product> products = productService.getProductList();
+
+        // then
+        assertThat(products).isNotEmpty();
+        assertThat(products.size()).isEqualTo(3);
     }
 }

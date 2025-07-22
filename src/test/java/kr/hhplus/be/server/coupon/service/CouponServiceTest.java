@@ -46,7 +46,7 @@ public class CouponServiceTest {
         when(userCouponRepository.countByCouponId(couponId)).thenReturn(issuedQuantity);
 
         // when, then
-        assertThatThrownBy(() -> couponService.issue(userId, couponId))
+        assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("쿠폰이 소진되었습니다.");
     }
@@ -58,16 +58,51 @@ public class CouponServiceTest {
         Long couponId = 1L;
         String userId = "sampleUserId";
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
-        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", coupon.get(), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)));
+        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", coupon.get(), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null);
         when(couponRepository.findById(couponId)).thenReturn(coupon);
         when(userCouponRepository.countByCouponId(couponId)).thenReturn(10);
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(userCoupon);
 
         // when
-        UserCoupon issuedCoupon = couponService.issue(userId, couponId);
+        UserCoupon issuedCoupon = couponService.issueCoupon(userId, couponId);
 
         // then
         assertThat(issuedCoupon.getCoupon()).isEqualTo(coupon.get());
 
+    }
+
+    @Test
+    @DisplayName("쿠폰 사용 테스트_이미 사용한 쿠폰")
+    public void useCouponWithUsedCoupon(){
+        // given
+        String userId = "sampleUserId";
+        Long couponId = 1L;
+        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", new Coupon(), "USED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null);
+        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
+
+        // when, then
+        assertThatThrownBy(()->couponService.useCoupon(userId, couponId))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("이미 사용한 쿠폰입니다.");
+    }
+
+    @Test
+    @DisplayName("쿠폰 사용 테스트")
+    public void useCoupon(){
+        // given
+        String userId = "sampleUserId";
+        Long couponId = 1L;
+        Coupon coupon = Coupon.builder().couponId(couponId).build();
+        UserCoupon unusedCoupon = UserCoupon.builder().coupon(coupon).status("UNUSED").build();
+        UserCoupon usedCoupon = UserCoupon.builder().coupon(coupon).status("USED").build();
+        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
+        when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(usedCoupon);
+
+        // when
+        UserCoupon userCoupon = couponService.useCoupon(userId, couponId);
+
+        // then
+        assertThat(userCoupon.getCoupon().getCouponId()).isEqualTo(couponId);
+        assertThat(userCoupon.getStatus()).isEqualTo("USED");
     }
 }

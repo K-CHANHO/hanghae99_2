@@ -3,11 +3,15 @@ package kr.hhplus.be.server.coupon.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Coupon {
     @Id
     private Long couponId;

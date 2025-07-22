@@ -87,6 +87,21 @@ public class CouponServiceTest {
     }
 
     @Test
+    @DisplayName("쿠폰 사용 테스트_만료된 쿠폰")
+    public void useCouponWithExpiredCoupon(){
+        // given
+        String userId = "sampleUserId";
+        Long couponId = 1L;
+        UserCoupon userCoupon = new UserCoupon(1L, userId, new Coupon(), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS)), null);
+        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
+
+        // when, then
+        assertThatThrownBy(()->couponService.useCoupon(userId, couponId))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("만료된 쿠폰입니다.");
+    }
+
+    @Test
     @DisplayName("쿠폰 사용 테스트")
     public void useCoupon(){
         // given
@@ -105,4 +120,6 @@ public class CouponServiceTest {
         assertThat(userCoupon.getCoupon().getCouponId()).isEqualTo(couponId);
         assertThat(userCoupon.getStatus()).isEqualTo("USED");
     }
+
+
 }

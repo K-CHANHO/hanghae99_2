@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.management.RuntimeMBeanException;
 import java.sql.Timestamp;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -37,6 +38,7 @@ public class UserCoupon {
 
     public void useCoupon() {
         if(this.status.equals("USED")) throw new RuntimeException("이미 사용한 쿠폰입니다.");
+        else if(this.expiredAt.before(new Timestamp(System.currentTimeMillis()))) throw new RuntimeException("만료된 쿠폰입니다.");
         this.status = "USED";
         this.usedAt = new Timestamp(System.currentTimeMillis());
     }

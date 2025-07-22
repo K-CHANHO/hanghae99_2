@@ -19,4 +19,12 @@ public class OrderService {
         Order order = new Order(orderId, userId, status, totalPrice, new Timestamp(System.currentTimeMillis()), orderProducts);
         return orderRepository.save(order);
     }
+
+    public Order chageStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("주문이 존재하지 않습니다."));
+        order.setStatus(status);
+
+        return orderRepository.save(order);
+
+    }
 }

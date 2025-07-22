@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -46,6 +47,22 @@ public class OrderServiceTest {
         assertThat(createdOrder.getOrderId()).isEqualTo(orderId);
         assertThat(createdOrder.getTotalPrice()).isEqualTo(totalPrice);
 
+    }
+
+    @Test
+    @DisplayName("주문 상태 변경 테스트")
+    public void changeOrderStatus(){
+        // given
+        Long orderId = 1L;
+        String status = "PAID";
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(Order.builder().orderId(orderId).status("PENDING").build()));
+        when(orderRepository.save(any(Order.class))).thenReturn((Order.builder().orderId(orderId).status("PAID").build()));
+
+        // when
+        Order order = orderService.chageStatus(orderId, status);
+
+        // then
+        assertThat(order.getStatus()).isEqualTo(status);
     }
 
 

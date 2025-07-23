@@ -1,15 +1,13 @@
 package kr.hhplus.be.server.order.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
+@Table(name = "`order`")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +21,8 @@ public class Order {
     private String status;
     private int totalPrice;
     private Timestamp createdAt;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProduct> orderProductList;
 
     public void setStatus(String status) {

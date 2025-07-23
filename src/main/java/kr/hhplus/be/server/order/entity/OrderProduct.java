@@ -1,17 +1,18 @@
 package kr.hhplus.be.server.order.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
 @Getter
+@Builder
 public class OrderProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderProductId;
     @ManyToOne
-    @JoinColumn(name = "order_id")
     private Order order;
     private String productId;
     private int quantity;

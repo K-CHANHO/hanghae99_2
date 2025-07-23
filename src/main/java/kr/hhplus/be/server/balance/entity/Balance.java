@@ -2,12 +2,14 @@ package kr.hhplus.be.server.balance.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@Builder
 public class Balance {
 
     @Id

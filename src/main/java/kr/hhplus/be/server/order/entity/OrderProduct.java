@@ -14,7 +14,7 @@ public class OrderProduct {
     private Long orderProductId;
     @ManyToOne
     private Order order;
-    private String productId;
+    private Long productId;
     private int quantity;
     private int price;
 

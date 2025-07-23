@@ -9,14 +9,6 @@ public class OrderRequest {
 
     private String userId;
     private String userCouponId;
-    private List<Product> products;
-
-    @Data
-    public static class Product {
-        private String productId;
-        private int price;
-        private int quantity;
-    }
-
+    private List<OrderProductDto> orderProductDtoDtoList;
 
 }

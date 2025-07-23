@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.order.controller;
 
 import com.google.gson.Gson;
+import kr.hhplus.be.server.order.dto.OrderProductDto;
 import kr.hhplus.be.server.order.dto.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,17 +40,17 @@ class OrderControllerTest {
         request.setUserId("sampleUserId");
         request.setUserCouponId("sampleCouponId");
 
-        OrderRequest.Product product1 = new OrderRequest.Product();
-        product1.setProductId("Product1");
-        product1.setPrice(100000);
-        product1.setQuantity(3);
+        OrderProductDto orderProductDto1 = new OrderProductDto();
+        orderProductDto1.setProductId(1L);
+        orderProductDto1.setPrice(100000);
+        orderProductDto1.setQuantity(3);
 
-        OrderRequest.Product product2 = new OrderRequest.Product();
-        product2.setProductId("Product1");
-        product2.setPrice(100000);
-        product2.setQuantity(3);
+        OrderProductDto orderProductDto2 = new OrderProductDto();
+        orderProductDto2.setProductId(2L);
+        orderProductDto2.setPrice(100000);
+        orderProductDto2.setQuantity(3);
 
-        request.setProducts(List.of(product1, product2));
+        request.setOrderProductDtoDtoList(List.of(orderProductDto1, orderProductDto2));
 
         Gson gson = new Gson();
         String content = gson.toJson(request);

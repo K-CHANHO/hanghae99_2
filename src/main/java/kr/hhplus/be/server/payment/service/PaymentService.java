@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
 
+    public Payment create(String userId, Long orderId, int totalPrice, double discountRate){
+        Payment payment = new Payment();
+        payment.create(userId, orderId, totalPrice, discountRate);
+        return paymentRepository.save(payment);
+    }
+
     public Payment pay(String userId, Long orderId, int totalPrice, double discountRate) {
         Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> new RuntimeException("유효하지 않은 주문입니다."));
         payment.pay(totalPrice, discountRate);

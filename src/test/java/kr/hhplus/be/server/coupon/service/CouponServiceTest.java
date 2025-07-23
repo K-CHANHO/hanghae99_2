@@ -43,7 +43,7 @@ public class CouponServiceTest {
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "END", 0.1));
 
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.countByCouponId(couponId)).thenReturn(issuedQuantity);
+        when(userCouponRepository.countByCoupon_CouponId(couponId)).thenReturn(issuedQuantity);
 
         // when, then
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
@@ -60,7 +60,7 @@ public class CouponServiceTest {
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
         UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", coupon.get(), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null);
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.countByCouponId(couponId)).thenReturn(10);
+        when(userCouponRepository.countByCoupon_CouponId(couponId)).thenReturn(10);
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(userCoupon);
 
         // when
@@ -78,7 +78,7 @@ public class CouponServiceTest {
         String userId = "sampleUserId";
         Long couponId = 1L;
         UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", new Coupon(), "USED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null);
-        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
+        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
         // when
         UserCoupon usedCoupon = couponService.useCoupon(userId, couponId);
@@ -95,7 +95,7 @@ public class CouponServiceTest {
         String userId = "sampleUserId";
         Long couponId = 1L;
         UserCoupon userCoupon = new UserCoupon(1L, userId, new Coupon(), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS)), null);
-        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
+        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
         // when
         UserCoupon expiredCoupon = couponService.useCoupon(userId, couponId);
@@ -114,7 +114,7 @@ public class CouponServiceTest {
         Coupon coupon = Coupon.builder().couponId(couponId).build();
         UserCoupon unusedCoupon = UserCoupon.builder().coupon(coupon).status("UNUSED").expiredAt(Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS))).build();
         UserCoupon usedCoupon = UserCoupon.builder().coupon(coupon).status("USED").build();
-        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
+        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(usedCoupon);
 
         // when

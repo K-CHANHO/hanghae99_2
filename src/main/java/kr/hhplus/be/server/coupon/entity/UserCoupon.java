@@ -22,7 +22,7 @@ public class UserCoupon {
     private Long userCouponId;
     private String userId;
     @OneToOne
-    @JoinColumn(name = "coupon_couponId")
+    @JoinColumn
     private Coupon coupon;
     private String status;
     private Timestamp issuedAt;

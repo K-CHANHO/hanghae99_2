@@ -17,15 +17,5 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
     private String productName;
-    @OneToOne
-    @JoinColumn(name = "productStock_productId")
-    private ProductStock productStock;
     private int price;
-
-    public void reduceStock(int orderQuantity) {
-        if (productStock.getStockQuantity() < orderQuantity) {
-            throw new RuntimeException("재고가 부족합니다.");
-        }
-        this.productStock.reduceStock(orderQuantity);
-    }
 }

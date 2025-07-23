@@ -17,6 +17,9 @@ public class ProductStock {
     private int stockQuantity;
 
     public void reduceStock(int orderQuantity) {
+        if (this.getStockQuantity() < orderQuantity) {
+            throw new RuntimeException("재고가 부족합니다.");
+        }
         this.stockQuantity -= orderQuantity;
     }
 }

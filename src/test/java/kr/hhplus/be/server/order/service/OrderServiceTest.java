@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.order.service;
 
+import kr.hhplus.be.server.order.dto.OrderProductDto;
 import kr.hhplus.be.server.order.entity.Order;
-import kr.hhplus.be.server.order.entity.OrderProduct;
 import kr.hhplus.be.server.order.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,13 +41,12 @@ public class OrderServiceTest {
                 .userId(userId)
                 .status("PENDING")
                 .totalPrice(totalPrice)
-                .orderProductList(new ArrayList<>())
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build();
         when(orderRepository.save(any())).thenReturn(order);
 
         // when
-        Order createdOrder = orderService.createOrder(userId, new ArrayList<OrderProduct>());
+        Order createdOrder = orderService.createOrder(userId, new ArrayList<OrderProductDto>());
 
         // then
         assertThat(createdOrder).isNotNull();

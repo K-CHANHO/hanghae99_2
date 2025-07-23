@@ -50,7 +50,7 @@ class OrderControllerTest {
         orderProductDto2.setPrice(100000);
         orderProductDto2.setQuantity(3);
 
-        request.setOrderProductDtoDtoList(List.of(orderProductDto1, orderProductDto2));
+        request.setOrderProductDtoList(List.of(orderProductDto1, orderProductDto2));
 
         Gson gson = new Gson();
         String content = gson.toJson(request);

@@ -1,10 +1,7 @@
 package kr.hhplus.be.server.domain.product.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -18,4 +15,7 @@ public class Product {
     private Long productId;
     private String productName;
     private int price;
+
+    @Transient @Setter
+    private ProductStock productStock;
 }

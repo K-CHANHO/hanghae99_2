@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.payment.service;
 
-import kr.hhplus.be.server.payment.entity.Payment;
-import kr.hhplus.be.server.payment.repository.PaymentRepository;
-import org.assertj.core.api.Assertions;
+import kr.hhplus.be.server.domain.payment.entity.Payment;
+import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
+import kr.hhplus.be.server.domain.payment.service.PaymentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

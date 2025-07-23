@@ -1,7 +1,8 @@
 package kr.hhplus.be.server.product.service;
 
-import kr.hhplus.be.server.product.entity.ProductStock;
-import kr.hhplus.be.server.product.repository.ProductStockRepository;
+import kr.hhplus.be.server.domain.product.entity.ProductStock;
+import kr.hhplus.be.server.domain.product.repository.ProductStockRepository;
+import kr.hhplus.be.server.domain.product.service.ProductStockService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

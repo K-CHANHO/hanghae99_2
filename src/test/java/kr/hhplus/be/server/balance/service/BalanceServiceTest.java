@@ -1,7 +1,8 @@
 package kr.hhplus.be.server.balance.service;
 
-import kr.hhplus.be.server.balance.entity.Balance;
-import kr.hhplus.be.server.balance.repository.BalanceRepository;
+import kr.hhplus.be.server.domain.balance.entity.Balance;
+import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
+import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.payment.controller;
 
+import kr.hhplus.be.server.domain.payment.controller.PaymentController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

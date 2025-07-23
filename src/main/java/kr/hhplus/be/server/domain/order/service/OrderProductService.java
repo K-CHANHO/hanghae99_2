@@ -18,4 +18,8 @@ public class OrderProductService {
 
         return orderProductRepository.saveAll(productList);
     }
+
+    public List<OrderProduct> getOrderProductsByOrderIds(List<Long> orderIds) {
+        return orderProductRepository.findTopOrderProducts(orderIds);
+    }
 }

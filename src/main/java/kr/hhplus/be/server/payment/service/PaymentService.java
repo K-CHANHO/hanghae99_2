@@ -16,9 +16,9 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    public Payment pay(String userId, Long orderId, int totalPrice, double discountRate) {
-        Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> new RuntimeException("유효하지 않은 주문입니다."));
-        payment.pay(totalPrice, discountRate);
+    public Payment pay(String userId, Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new RuntimeException("유효하지 않은 주문입니다."));
+        payment.pay();
 
         return paymentRepository.save(payment);
     }

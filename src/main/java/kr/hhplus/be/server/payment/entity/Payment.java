@@ -26,9 +26,8 @@ public class Payment {
     private int paidPrice;
     private Timestamp paidAt;
 
-    public void pay(int totalPrice, double discountRate) {
+    public void pay() {
         this.status = "PAID";
-        this.paidPrice = (int) (totalPrice * (1 - discountRate));
         this.paidAt = new Timestamp(System.currentTimeMillis());
     }
 

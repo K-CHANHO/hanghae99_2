@@ -48,24 +48,27 @@ public class PaymentServiceTest {
     public void payPayment(){
         // given
         String userId = "sampleUserId";
+        Long paymentId = 1L;
         Long orderId = 1L;
         Payment beforePayment = Payment.builder()
+                .paymentId(paymentId)
                 .userId(userId)
                 .orderId(orderId)
                 .status("PENDING")
                 .paidPrice(10000)
                 .build();
         Payment afterPayment = Payment.builder()
+                .paymentId(paymentId)
                 .userId(userId)
                 .orderId(orderId)
                 .status("PAID")
                 .paidPrice(10000)
                 .build();
-        when(paymentRepository.findByOrderId(orderId)).thenReturn(Optional.of(beforePayment));
+        when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(beforePayment));
         when(paymentRepository.save(any(Payment.class))).thenReturn(afterPayment);
 
         // when
-        Payment payment = paymentService.pay(userId, orderId, 10000, 0.1);
+        Payment payment = paymentService.pay(userId, paymentId);
 
         // then
         assertThat(payment.getStatus()).isEqualTo("PAID");

@@ -5,8 +5,9 @@ import kr.hhplus.be.server.balance.repository.BalanceRepository;
 import kr.hhplus.be.server.balance.service.BalanceService;
 import kr.hhplus.be.server.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.coupon.service.CouponService;
+import kr.hhplus.be.server.order.dto.OrderProductDto;
 import kr.hhplus.be.server.order.entity.Order;
-import kr.hhplus.be.server.order.entity.OrderProduct;
+import kr.hhplus.be.server.order.service.OrderProductService;
 import kr.hhplus.be.server.order.service.OrderService;
 import kr.hhplus.be.server.payment.entity.Payment;
 import kr.hhplus.be.server.payment.service.PaymentService;
@@ -27,6 +28,8 @@ public class OrderFacadeTest {
     private PaymentService paymentService;
     @Autowired
     private BalanceService balanceService;
+    @Autowired
+    private OrderProductService orderProductService;
 
     @Autowired
     private BalanceRepository balanceRepository;
@@ -39,12 +42,19 @@ public class OrderFacadeTest {
     public void orderProcess(){
         // given
         String userId = "sampleUserId";
-        ArrayList<OrderProduct> productsList = new ArrayList<>();
+        ArrayList<OrderProductDto> productDtoList = new ArrayList<>();
+        OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(1).build();
+        OrderProductDto orderProductDto2 = OrderProductDto.builder().productId(2L).price(20000).quantity(2).build();
+        OrderProductDto orderProductDto3 = OrderProductDto.builder().productId(3L).price(30000).quantity(3).build();
+        productDtoList.add(orderProductDto1);
+        productDtoList.add(orderProductDto2);
+        productDtoList.add(orderProductDto3);
+
         Long couponId = 1L;
 
         // when
         // 주문 생성
-        Order order = orderService.createOrder(userId, productsList);
+        Order order = orderService.createOrder(userId, productDtoList);
 
         // 주문 상품 저장
 

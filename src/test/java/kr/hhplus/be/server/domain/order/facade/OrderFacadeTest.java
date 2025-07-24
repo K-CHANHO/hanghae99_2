@@ -1,113 +1,104 @@
 package kr.hhplus.be.server.domain.order.facade;
 
-import kr.hhplus.be.server.domain.balance.entity.Balance;
-import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
+import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.entity.Order;
-import kr.hhplus.be.server.domain.order.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.service.PaymentService;
-import kr.hhplus.be.server.domain.product.entity.Product;
-import kr.hhplus.be.server.domain.product.repository.ProductRepository;
-import kr.hhplus.be.server.domain.product.service.ProductService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-@SpringBootTest
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 public class OrderFacadeTest {
-    @Autowired
+    @InjectMocks
+    private OrderFacade orderFacade;
+    @Mock
     private OrderService orderService;
-    @Autowired
+    @Mock
     private CouponService couponService;
-    @Autowired
+    @Mock
     private PaymentService paymentService;
-    @Autowired
+    @Mock
     private BalanceService balanceService;
-    @Autowired
+    @Mock
     private OrderProductService orderProductService;
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private BalanceRepository balanceRepository;
-    @Autowired
-    private ProductRepository productRepository;
-    @BeforeEach
-    public void initBalance(){
-        Balance balance = Balance.builder().userId("sampleUserId").balance(1000000).build();
-        balanceRepository.save(balance);
-
-        Product product1 = Product.builder().productName("Product 1").price(10000).build();
-        Product product2 = Product.builder().productName("Product 2").price(20000).build();
-        Product product3 = Product.builder().productName("Product 3").price(30000).build();
-        productRepository.save(product1);
-        productRepository.save(product2);
-        productRepository.save(product3);
-
-    }
+    
     @Test
     public void orderProcess(){
         // given
         String userId = "sampleUserId";
-        ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
-        OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(1).build();
-        OrderProductDto orderProductDto2 = OrderProductDto.builder().productId(2L).price(20000).quantity(2).build();
-        OrderProductDto orderProductDto3 = OrderProductDto.builder().productId(3L).price(30000).quantity(3).build();
-        orderProductDtoList.add(orderProductDto1);
-        orderProductDtoList.add(orderProductDto2);
-        orderProductDtoList.add(orderProductDto3);
-
+        List<OrderProductDto> orderProductDtoList = IntStream.rangeClosed(1, 3)
+                .mapToObj(i -> OrderProductDto.builder()
+                        .productId((long) i)
+                        .price(i * 10000)
+                        .quantity(i)
+                        .build())
+                .collect(Collectors.toList());
         Long couponId = 1L;
+        Order mockOrder = Order.builder()
+                .orderId(1L)
+                .userId(userId)
+                .totalPrice((int) orderProductDtoList.stream().mapToLong(dto -> (long) dto.getPrice() * dto.getQuantity()).sum())
+                .status("PENDING")
+                .build();
+        Coupon mockCoupon = Coupon.builder()
+                .couponId(couponId)
+                .discountRate(0.1)
+                .couponName("샘플 쿠폰")
+                .quantity(100)
+                .status("ACTIVE")
+                .build();
+        UserCoupon mockUserCoupon = UserCoupon.builder()
+                .userId(userId)
+                .couponId(couponId)
+                .coupon(mockCoupon)
+                .build();
+        Payment mockPayment = Payment.builder()
+                .paymentId(1L)
+                .userId(userId)
+                .orderId(mockOrder.getOrderId())
+                .paidPrice((int) (mockOrder.getTotalPrice() * (1 - mockCoupon.getDiscountRate())))
+                .status("PENDING")
+                .build();
+        Payment mockPaidPayment = Payment.builder()
+                .paymentId(1L)
+                .userId(userId)
+                .orderId(mockOrder.getOrderId())
+                .paidPrice((int) (mockOrder.getTotalPrice() * (1 - mockCoupon.getDiscountRate())))
+                .status("PAID")
+                .build();
+
+        when(orderService.createOrder(userId, orderProductDtoList)).thenReturn(mockOrder);
+        when(couponService.useCoupon(userId, couponId)).thenReturn(mockUserCoupon);
+        when(paymentService.create(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate())).thenReturn(mockPayment);
+        when(paymentService.pay(mockPayment)).thenReturn(mockPaidPayment);
 
         // when
-        // 주문 생성
-        Order order = orderService.createOrder(userId, orderProductDtoList);
+        orderFacade.orderProcess(userId, orderProductDtoList, couponId);
 
-        // 주문 상품 조회
-        ArrayList<OrderProduct> orderProductList = new ArrayList<>();
-        for( int i = 0 ; i < orderProductDtoList.size(); i++){
-            Product product = productService.getProduct(orderProductDtoList.get(i).getProductId());
-            OrderProduct orderProduct = OrderProduct.builder()
-                    .order(order)
-                    .productId(orderProductDtoList.get(i).getProductId())
-                    .quantity(orderProductDtoList.get(i).getQuantity())
-                    .price(orderProductDtoList.get(i).getPrice())
-                    .build();
-            orderProductList.add(orderProduct);
-        }
-
-        // 주문 상품저장
-        orderProductService.save(userId, order.getOrderId(), orderProductList);
-
-        // 쿠폰 적용
-        UserCoupon userCoupon = couponService.useCoupon(userId, couponId);
-        double discountRate = 0.0;
-        if(userCoupon != null){
-            discountRate = userCoupon.getCoupon().getDiscountRate();
-        }
-
-        // 결제 생성
-        Payment payment = paymentService.create(userId, order.getOrderId(), order.getTotalPrice(), discountRate);
-
-        // 결제 요청
-        paymentService.pay(userId, payment.getPaymentId());
-
-        // 주문 상태 변경
-        orderService.changeStatus(order.getOrderId(), "PAID");
-
-        // 잔액 차감
-        balanceService.useBalance(userId, payment.getPaidPrice());
-
-        // 외부 API 호출
-        paymentService.sendPaymentNotification(payment);
+        // then
+        verify(orderService).createOrder(userId, orderProductDtoList);
+        verify(orderProductService).save(userId, mockOrder.getOrderId(), orderProductDtoList);
+        verify(couponService).useCoupon(userId, couponId);
+        verify(paymentService).create(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());
+        verify(paymentService).pay(mockPayment);
+        verify(balanceService).useBalance(userId, mockPaidPayment.getPaidPrice());
+        verify(orderService).changeStatus(mockOrder.getOrderId(), "PAID");
+        verify(paymentService).sendPaymentNotification(mockPayment);
     }
 }

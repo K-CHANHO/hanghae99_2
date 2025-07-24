@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderProductServiceTest {
@@ -30,7 +30,7 @@ public class OrderProductServiceTest {
         String userId = "sampleUserId";
         Long orderId = 1L;
         ArrayList<OrderProduct> productList = new ArrayList<>();
-        Mockito.when(orderProductRepository.saveAll(Mockito.anyList())).thenReturn(new ArrayList<>(3));
+        when(orderProductRepository.saveAll(anyList())).thenReturn(new ArrayList<>(3));
         // when
         List<OrderProduct> savedOrderProducts = orderProductService.save(userId, orderId, productList);
 
@@ -42,12 +42,16 @@ public class OrderProductServiceTest {
     @Test
     void getOrderProductsByOrderIds() {
         // given
-        int withInDays = 3;
+        List<Long> orderIds = List.of(1L, 2L, 3L, 4L, 5L);
+        List<Long> mockProductIds = List.of(101L, 102L, 103L, 104L, 105L);
+        when(orderProductRepository.findTop5OrderProducts(orderIds)).thenReturn(mockProductIds);
 
         // when
-        //orderProductService.getOrderProductsByOrderIds(withInDays);
+        List<Long> topProductIds = orderProductService.getOrderProductsByOrderIds(orderIds);
 
         // then
+        verify(orderProductRepository).findTop5OrderProducts(orderIds);
+        assertThat(topProductIds.size()).isLessThanOrEqualTo(5);
 
     }
 

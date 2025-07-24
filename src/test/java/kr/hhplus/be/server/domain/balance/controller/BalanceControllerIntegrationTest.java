@@ -1,7 +1,5 @@
 package kr.hhplus.be.server.domain.balance.controller;
 
-import kr.hhplus.be.server.domain.balance.entity.Balance;
-import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,24 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BalanceControllerIntegrationTest {
 
     @Autowired
-    private BalanceController balanceController;
-
-    @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private BalanceRepository balanceRepository;
-
-    //@BeforeEach
-    void setUp() {
-        Balance balance = new Balance("sampleUserId", 100000);
-        balanceRepository.save(balance);
-    }
-
-    //@AfterEach
-    void cleanUp(){
-        balanceRepository.deleteAll();
-    }
 
     @Test
     @DisplayName("잔액 조회 API 테스트")

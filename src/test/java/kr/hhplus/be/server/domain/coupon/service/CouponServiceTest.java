@@ -4,7 +4,6 @@ import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.repository.UserCouponRepository;
-import kr.hhplus.be.server.domain.coupon.service.CouponService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +49,22 @@ public class CouponServiceTest {
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("쿠폰이 소진되었습니다.");
+    }
+
+    @Test
+    @DisplayName("쿠폰 발급 테스트_이미 발급된 쿠폰")
+    public void issueCouponWithAlreadyIssued(){
+        // given
+        Long couponId = 1L;
+        String userId = "sampleUserId";
+        Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
+        when(couponRepository.findById(couponId)).thenReturn(coupon);
+        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(new UserCoupon()));
+
+        // when, then
+        assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("이미 발급된 쿠폰입니다.");
     }
 
     @Test

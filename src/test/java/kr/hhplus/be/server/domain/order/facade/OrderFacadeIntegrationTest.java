@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ public class OrderFacadeIntegrationTest {
     private OrderFacade orderFacade;
 
     @Test
+    @DisplayName("주문/결제 테스트")
     public void orderProcess(){
         // given
         String userId = "sampleUserId";
@@ -30,4 +32,5 @@ public class OrderFacadeIntegrationTest {
         // when
         orderFacade.orderProcess(userId, orderProductDtoList, couponId);
     }
+
 }

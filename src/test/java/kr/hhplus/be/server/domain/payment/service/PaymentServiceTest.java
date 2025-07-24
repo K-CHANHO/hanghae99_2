@@ -1,8 +1,7 @@
-package kr.hhplus.be.server.payment.service;
+package kr.hhplus.be.server.domain.payment.service;
 
 import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
-import kr.hhplus.be.server.domain.payment.service.PaymentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,10 +9,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -75,4 +78,19 @@ public class PaymentServiceTest {
     }
 
 
+    @Test
+    void getPaidOrderIdsWithinLastDays() {
+        // given
+        int withinDays = 3;
+        List<Long> mockOrderIds = List.of(1L, 2L, 3L, 4L, 5L);
+        when(paymentRepository.findOrderIdByStatusAndPaidAtAfter(anyString(), any(Timestamp.class))).thenReturn(mockOrderIds);
+
+        // when
+        List<Long> orderIds = paymentService.getPaidOrderIdsWithinLastDays(withinDays);
+
+        // then
+        verify(paymentRepository).findOrderIdByStatusAndPaidAtAfter(anyString(), any(Timestamp.class));
+        assertThat(orderIds).isNotNull();
+        assertThat(orderIds.size()).isEqualTo(5);
+    }
 }

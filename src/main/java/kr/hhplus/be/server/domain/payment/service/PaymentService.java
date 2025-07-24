@@ -27,12 +27,12 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    public void sendPaymentNotification(Payment payment) {
-        System.out.println("결제정보 외부 전송");
+    public List<Long> getPaidOrderIdsWithinLastDays(int days) {
+        return paymentRepository.findOrderIdByStatusAndPaidAtAfter("PAID", new Timestamp(System.currentTimeMillis() - Duration.ofDays(days).toMillis()));
+
     }
 
-    public List<Long> getPaidOrdersWithinLastDays(int days) {
-        return paymentRepository.findOrderIdByStatusAndPaidAtAfter("PAID", new Timestamp(System.currentTimeMillis() - Duration.ofDays(days).toMillis()))
-                .orElseThrow(() -> new RuntimeException("최근 " + days + "일 이내에 결제된 주문이 없습니다."));
+    public void sendPaymentNotification(Payment payment) {
+        System.out.println("결제정보 외부 전송");
     }
 }

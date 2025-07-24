@@ -20,7 +20,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
     private String userId;
-    private String status;
+    private String status; // PENDING, PAID
     private int totalPrice;
     private Timestamp createdAt;
 

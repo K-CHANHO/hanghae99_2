@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +15,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    public Order createOrder(String userId, ArrayList<OrderProductDto> orderProducts) {
+    public Order createOrder(String userId, List<OrderProductDto> orderProducts) {
         Order order = Order.builder()
                 .userId(userId)
                 .status("PENDING")

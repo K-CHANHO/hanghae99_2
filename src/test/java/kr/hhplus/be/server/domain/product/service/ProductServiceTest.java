@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,5 +83,26 @@ public class ProductServiceTest {
 
         // then
         assertThat(initialStock - orderQuantity).isEqualTo(productStock.getStockQuantity());
+    }
+
+    @Test
+    void getProducts() {
+        // given
+        List<Long> productIds = List.of(1L, 2L, 3L, 4L, 5L);
+        List<Product> mockProducts = List.of(
+                Product.builder().productId(1L).productName("Product 1").price(10000).build(),
+                Product.builder().productId(2L).productName("Product 2").price(20000).build(),
+                Product.builder().productId(3L).productName("Product 3").price(30000).build(),
+                Product.builder().productId(4L).productName("Product 4").price(40000).build(),
+                Product.builder().productId(5L).productName("Product 5").price(50000).build()
+        );
+        when(productRepository.findAllById(productIds)).thenReturn(mockProducts);
+
+        // when
+        List<Product> products = productService.getProducts(productIds);
+
+        // then
+        assertThat(products).isNotNull();
+        assertThat(products).hasSizeLessThanOrEqualTo(5);
     }
 }

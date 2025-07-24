@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.coupon.controller;
+package kr.hhplus.be.server.domain.coupon.controller;
 
 import kr.hhplus.be.server.domain.coupon.controller.CouponController;
 import org.junit.jupiter.api.BeforeEach;

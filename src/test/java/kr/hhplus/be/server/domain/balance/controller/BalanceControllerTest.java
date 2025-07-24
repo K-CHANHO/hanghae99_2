@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.balance.controller;
+package kr.hhplus.be.server.domain.balance.controller;
 
 import kr.hhplus.be.server.domain.balance.controller.BalanceController;
 import kr.hhplus.be.server.domain.balance.entity.Balance;

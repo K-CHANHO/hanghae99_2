@@ -66,7 +66,7 @@ class OrderControllerTest {
                 .orderId(1L)
                 .userId("sampleUserId")
                 .totalPrice(600000)
-                .status("CREATED")
+                .status("PAID")
                 .build();
 
         when(orderFacade.orderProcess(anyString(), anyList(), anyLong())).thenReturn(mockOrder);
@@ -85,6 +85,6 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.data.orderId").isNotEmpty())
                 .andExpect(jsonPath("$.data.userId").value("sampleUserId"))
                 .andExpect(jsonPath("$.data.totalPrice").value(600000))
-                .andExpect(jsonPath("$.data.status").value("CREATED"));
+                .andExpect(jsonPath("$.data.status").value("PAID"));
     }
 }

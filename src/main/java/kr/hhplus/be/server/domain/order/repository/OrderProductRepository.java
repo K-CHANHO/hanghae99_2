@@ -7,6 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
-    @Query("SELECT op FROM OrderProduct op WHERE op.order.id IN :orderIds GROUP BY op.product.id ORDER BY COUNT(op.product.id) DESC")
-    List<OrderProduct> findTopOrderProducts(List<Long> orderIds);
+    @Query(value = "SELECT product_id " +
+            "FROM order_product " +
+            "WHERE order_id IN (:orderIds) " +
+            "GROUP BY product_id " +
+            "ORDER BY count(product_id) DESC " +
+            "LIMIT 5", nativeQuery = true)
+    List<Long> findTop5OrderProducts(List<Long> orderIds);
 }

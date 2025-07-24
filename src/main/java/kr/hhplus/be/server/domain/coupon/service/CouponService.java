@@ -17,6 +17,7 @@ public class CouponService {
 
     public UserCoupon issueCoupon(String userId, Long couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow(() -> new RuntimeException("유효한 쿠폰이 아닙니다."));
+        if(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId).isPresent()) throw new RuntimeException("이미 발급된 쿠폰입니다.");
         int issuedCouponQuantity = userCouponRepository.countByCoupon_CouponId(couponId);
         coupon.checkQuantity(issuedCouponQuantity);
 

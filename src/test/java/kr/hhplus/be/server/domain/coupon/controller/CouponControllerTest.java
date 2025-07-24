@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.domain.coupon.controller;
 
-import kr.hhplus.be.server.domain.coupon.controller.CouponController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +29,7 @@ class CouponControllerTest {
 
     @Test
     void issueCoupon() throws Exception {
-        // gien
+        // given
         String url = "/api/v1/coupon/issue";
         String requestBody = "{ \"userId\": \"sampleUserId\", \"couponId\": \"COUPON1\" }";
 

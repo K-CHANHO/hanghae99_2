@@ -30,6 +30,8 @@ public class CouponService {
     public UserCoupon useCoupon(String userId, Long couponId) {
         try{
             UserCoupon userCoupon = userCouponRepository.findByUserIdAndCouponId(userId, couponId).orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다"));
+            Coupon coupon = couponRepository.findById(userCoupon.getCouponId()).orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다."));
+            userCoupon.setCoupon(coupon);
             userCoupon.useCoupon();
             return userCouponRepository.save(userCoupon);
         }

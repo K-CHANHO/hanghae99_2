@@ -26,7 +26,7 @@ class CouponControllerIntegrationTest {
     @DisplayName("쿠폰 발급 API 테스트")
     void issueCoupon() throws Exception {
         // given
-        Long couponId = 1L;
+        Long couponId = 2L;
         String userId = "sampleUserId";
         String url = "/api/v1/coupon/issue";
         String requestBody = "{ \"userId\": \"" + userId + "\", \"couponId\": "+ couponId +" }";
@@ -43,7 +43,7 @@ class CouponControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("쿠폰 발급 성공"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.couponId").value(couponId))
-                .andExpect(jsonPath("$.data.couponName").value("깜짝 10% 할인쿠폰"));
+                .andExpect(jsonPath("$.data.couponName").value("깜짝 20% 할인쿠폰"));
 
     }
 }

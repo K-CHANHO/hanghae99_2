@@ -17,7 +17,7 @@ public class Coupon {
     private Long couponId;
     private String couponName;
     private int quantity;
-    private String status;
+    private String status; // "ACTIVE", "INACTIVE"
     private double discountRate;
 
     public void checkQuantity(int issuedCouponQuantity) {

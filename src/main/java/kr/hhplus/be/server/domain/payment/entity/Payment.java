@@ -22,7 +22,7 @@ public class Payment {
     private Long paymentId;
     private String userId;
     private Long orderId;
-    private String status;
+    private String status; // PENDING, PAID
     private int paidPrice;
     private Timestamp paidAt;
 

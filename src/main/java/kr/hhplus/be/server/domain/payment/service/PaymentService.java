@@ -27,6 +27,11 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
+    public Payment pay(Payment payment) {
+        payment.pay();
+        return paymentRepository.save(payment);
+    }
+
     public List<Long> getPaidOrderIdsWithinLastDays(int days) {
         return paymentRepository.findOrderIdByStatusAndPaidAtAfter("PAID", new Timestamp(System.currentTimeMillis() - Duration.ofDays(days).toMillis()));
 
@@ -35,4 +40,6 @@ public class PaymentService {
     public void sendPaymentNotification(Payment payment) {
         System.out.println("결제정보 외부 전송");
     }
+
+
 }

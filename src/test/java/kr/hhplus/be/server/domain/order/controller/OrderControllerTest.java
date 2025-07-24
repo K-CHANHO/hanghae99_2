@@ -80,7 +80,7 @@ class OrderControllerTest {
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("주문 성공"))
+                .andExpect(jsonPath("$.message").value("주문/결제 성공"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.orderId").isNotEmpty())
                 .andExpect(jsonPath("$.data.userId").value("sampleUserId"))

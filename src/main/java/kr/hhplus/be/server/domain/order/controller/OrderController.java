@@ -30,7 +30,7 @@ public class OrderController implements OrderApiDocs {
 
         ApiResponse<OrderResponse> result = new ApiResponse<>();
         result.setCode(200);
-        result.setMessage("주문 성공");
+        result.setMessage("주문/결제 성공");
         result.setData(orderResponse);
 
         return new ResponseEntity<>(result,HttpStatus.OK);

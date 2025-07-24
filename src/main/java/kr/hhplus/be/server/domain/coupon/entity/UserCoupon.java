@@ -19,10 +19,8 @@ public class UserCoupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userCouponId;
     private String userId;
-    @OneToOne
-    @JoinColumn
     private Coupon coupon;
-    private String status;
+    private String status; // 쿠폰 상태: AVAILABLE, USED, EXPIRED
     private Timestamp issuedAt;
     private Timestamp expiredAt;
     private Timestamp usedAt;

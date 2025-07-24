@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.order.controller;
+package kr.hhplus.be.server.domain.order.controller;
 
 import com.google.gson.Gson;
 import kr.hhplus.be.server.domain.order.controller.OrderController;

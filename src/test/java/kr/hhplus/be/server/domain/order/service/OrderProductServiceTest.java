@@ -1,8 +1,7 @@
-package kr.hhplus.be.server.order.service;
+package kr.hhplus.be.server.domain.order.service;
 
 import kr.hhplus.be.server.domain.order.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.repository.OrderProductRepository;
-import kr.hhplus.be.server.domain.order.service.OrderProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderProductServiceTest {
@@ -38,6 +37,18 @@ public class OrderProductServiceTest {
         // then
         assertThat(savedOrderProducts).isNotNull();
         assertThat(savedOrderProducts.size()).isEqualTo(productList.size());
+    }
+
+    @Test
+    void getOrderProductsByOrderIds() {
+        // given
+        int withInDays = 3;
+
+        // when
+        //orderProductService.getOrderProductsByOrderIds(withInDays);
+
+        // then
+
     }
 
 }

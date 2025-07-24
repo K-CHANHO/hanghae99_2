@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.product.service;
+package kr.hhplus.be.server.domain.product.service;
 
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.entity.ProductStock;

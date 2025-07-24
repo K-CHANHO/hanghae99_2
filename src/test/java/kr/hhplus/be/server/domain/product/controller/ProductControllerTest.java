@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.product.controller;
+package kr.hhplus.be.server.domain.product.controller;
 
 import kr.hhplus.be.server.domain.product.controller.ProductController;
 import kr.hhplus.be.server.domain.product.entity.Product;

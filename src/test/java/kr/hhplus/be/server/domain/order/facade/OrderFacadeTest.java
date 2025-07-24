@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.order.facade;
+package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;

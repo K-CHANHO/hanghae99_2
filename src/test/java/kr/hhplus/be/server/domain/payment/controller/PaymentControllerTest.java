@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.payment.controller;
+package kr.hhplus.be.server.domain.payment.controller;
 
 import kr.hhplus.be.server.domain.payment.controller.PaymentController;
 import org.junit.jupiter.api.BeforeEach;

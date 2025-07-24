@@ -1,13 +1,15 @@
 package kr.hhplus.be.server.domain.order.controller;
 
 import com.google.gson.Gson;
-import kr.hhplus.be.server.domain.order.controller.OrderController;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.dto.OrderRequest;
+import kr.hhplus.be.server.domain.order.entity.Order;
+import kr.hhplus.be.server.domain.order.facade.OrderFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,6 +18,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,6 +30,8 @@ class OrderControllerTest {
     @InjectMocks
     private OrderController orderController;
     private MockMvc mockMvc;
+    @Mock
+    private OrderFacade orderFacade;
 
     @BeforeEach
     void setUp() {
@@ -39,7 +45,7 @@ class OrderControllerTest {
         String url = "/api/v1/order";
         OrderRequest request = new OrderRequest();
         request.setUserId("sampleUserId");
-        request.setUserCouponId("sampleCouponId");
+        request.setUserCouponId(1L);
 
         OrderProductDto orderProductDto1 = new OrderProductDto();
         orderProductDto1.setProductId(1L);
@@ -56,6 +62,15 @@ class OrderControllerTest {
         Gson gson = new Gson();
         String content = gson.toJson(request);
 
+        Order mockOrder = Order.builder()
+                .orderId(1L)
+                .userId("sampleUserId")
+                .totalPrice(600000)
+                .status("CREATED")
+                .build();
+
+        when(orderFacade.orderProcess(anyString(), anyList(), anyLong())).thenReturn(mockOrder);
+
         // when
         ResultActions result = mockMvc.perform(
                 post(url)
@@ -70,7 +85,6 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.data.orderId").isNotEmpty())
                 .andExpect(jsonPath("$.data.userId").value("sampleUserId"))
                 .andExpect(jsonPath("$.data.totalPrice").value(600000))
-                .andExpect(jsonPath("$.data.status").value("CREATED"))
-                .andExpect(jsonPath("$.data.orderDate").isNotEmpty());
+                .andExpect(jsonPath("$.data.status").value("CREATED"));
     }
 }

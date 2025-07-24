@@ -8,7 +8,7 @@ import java.util.List;
 public class OrderRequest {
 
     private String userId;
-    private String userCouponId;
+    private Long userCouponId;
     private List<OrderProductDto> orderProductDtoList;
 
 }

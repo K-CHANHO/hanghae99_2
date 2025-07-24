@@ -10,6 +10,7 @@ import kr.hhplus.be.server.domain.order.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.service.PaymentService;
+import kr.hhplus.be.server.domain.product.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,8 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderFacadeTest {
@@ -37,6 +38,8 @@ public class OrderFacadeTest {
     private BalanceService balanceService;
     @Mock
     private OrderProductService orderProductService;
+    @Mock
+    private ProductService productService;
     
     @Test
     public void orderProcess(){
@@ -93,6 +96,7 @@ public class OrderFacadeTest {
 
         // then
         verify(orderService).createOrder(userId, orderProductDtoList);
+        verify(productService, times(3)).getProduct(anyLong());
         verify(orderProductService).save(userId, mockOrder.getOrderId(), orderProductDtoList);
         verify(couponService).useCoupon(userId, couponId);
         verify(paymentService).create(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());

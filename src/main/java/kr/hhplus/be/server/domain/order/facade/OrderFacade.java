@@ -1,17 +1,20 @@
 package kr.hhplus.be.server.domain.order.facade;
 
-import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.entity.Order;
+import kr.hhplus.be.server.domain.order.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.service.PaymentService;
+import kr.hhplus.be.server.domain.product.entity.Product;
+import kr.hhplus.be.server.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +26,7 @@ public class OrderFacade {
     private final CouponService couponService;
     private final PaymentService paymentService;
     private final BalanceService balanceService;
+    private final ProductService productService;
 
     @Transactional
     public void orderProcess(String userId, List<OrderProductDto> orderProductDtoList, Long couponId) {
@@ -30,8 +34,13 @@ public class OrderFacade {
         // 주문 생성
         Order order = orderService.createOrder(userId, orderProductDtoList);
 
+        // 주문 상품 조회
+        List<Product> productList = orderProductDtoList.stream()
+                .map(orderProductDto -> productService.getProduct(orderProductDto.getProductId()))
+                .toList();
+
         // 주문 상품 저장
-        orderProductService.save(userId, order.getOrderId(), orderProductDtoList);
+        List<OrderProduct> orderProductList = orderProductService.save(userId, order.getOrderId(), orderProductDtoList);
 
         // 쿠폰 적용
         UserCoupon userCoupon = couponService.useCoupon(userId, couponId);
@@ -45,6 +54,11 @@ public class OrderFacade {
 
         // 결제 요청
         Payment PaidPayment = paymentService.pay(payment);
+
+        // 재고 차감
+        orderProductList.forEach(product -> {
+            productService.reduceStock(product.getProductId(), product.getQuantity());
+        });
 
         // 잔액 차감
         balanceService.useBalance(userId, PaidPayment.getPaidPrice());

@@ -1,12 +1,13 @@
 package kr.hhplus.be.server.domain.product.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import kr.hhplus.be.server.apidocs.ProductApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
 import kr.hhplus.be.server.domain.product.dto.ViewProductResponse;
 import kr.hhplus.be.server.domain.product.dto.ViewTopProductResponse;
+import kr.hhplus.be.server.domain.product.entity.Product;
+import kr.hhplus.be.server.domain.product.facade.ProductFacade;
+import kr.hhplus.be.server.domain.product.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,21 +19,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/product")
-public class ProductController {
+public class ProductController implements ProductApiDocs {
 
-    @Tag(name = "상품", description = "상품과 관련된 API")
-    @Operation(summary = "상품 조회", description = "상품 ID로 상품 정보를 조회합니다.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "상품 조회 성공")
-    @Parameter(name = "productId", description = "상품 ID", required = true, in = ParameterIn.PATH)
+    private final ProductFacade productFacade;
+    private final ProductService productService;
+
     @GetMapping("/{productId}")
-    public ResponseEntity<ApiResponse<ViewProductResponse>> viewProduct(@PathVariable String productId){
+    public ResponseEntity<ApiResponse<ViewProductResponse>> viewProduct(@PathVariable Long productId){
+        Product product = productService.getProduct(productId);
 
         ViewProductResponse response = new ViewProductResponse();
-        response.setProductId(productId);
-        response.setProductName("항해 백엔드 9기 과정");
-        response.setPrice(1500000);
-        response.setStock(100);
+        response.from(product);
 
         ApiResponse<ViewProductResponse> result = new ApiResponse<>();
         result.setMessage("상품 조회 성공");
@@ -43,9 +42,6 @@ public class ProductController {
 
     }
 
-    @Tag(name = "상품", description = "상품과 관련된 API")
-    @Operation(summary = "인기 상품 조회", description = "인기 상품 목록 5개를 조회합니다.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "인기 상품 조회 성공")
     @GetMapping("/top")
     public ResponseEntity<ApiResponse<ViewTopProductResponse>> viewTopProducts() {
         ViewTopProductResponse response = new ViewTopProductResponse();

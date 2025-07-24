@@ -16,7 +16,7 @@ public interface ProductApiDocs {
     @Operation(summary = "상품 조회", description = "상품 ID로 상품 정보를 조회합니다.")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "상품 조회 성공")
     @Parameter(name = "productId", description = "상품 ID", required = true, in = ParameterIn.PATH)
-    public ResponseEntity<ApiResponse<ViewProductResponse>> viewProduct(@PathVariable String productId);
+    public ResponseEntity<ApiResponse<ViewProductResponse>> viewProduct(@PathVariable Long productId);
 
     @Tag(name = "상품", description = "상품과 관련된 API")
     @Operation(summary = "인기 상품 조회", description = "인기 상품 목록 5개를 조회합니다.")

@@ -1,11 +1,16 @@
 package kr.hhplus.be.server.product.controller;
 
 import kr.hhplus.be.server.domain.product.controller.ProductController;
+import kr.hhplus.be.server.domain.product.entity.Product;
+import kr.hhplus.be.server.domain.product.entity.ProductStock;
+import kr.hhplus.be.server.domain.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,6 +25,10 @@ class ProductControllerTest {
 
     @InjectMocks
     private ProductController productController;
+
+    @Mock
+    private ProductService productService;
+
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -32,8 +41,15 @@ class ProductControllerTest {
     @DisplayName("상품 조회 API 테스트")
     void viewProduct() throws Exception {
         // given
-        String productId = "product1";
+        Long productId = 1L;
         String url = "/api/v1/product/{productId}";
+        Product product = Product.builder()
+                .productId(productId)
+                .productName("항해 백엔드 9기 과정")
+                .price(1500000)
+                .productStock(ProductStock.builder().productId(productId).stockQuantity(100).build())
+                .build();
+        Mockito.when(productService.getProduct(productId)).thenReturn(product);
 
         // when
         ResultActions result = mockMvc.perform(

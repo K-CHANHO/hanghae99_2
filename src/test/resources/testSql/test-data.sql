@@ -20,7 +20,7 @@ INSERT INTO product (product_id, product_name, price) VALUES (2, '샘플 상품 
 INSERT INTO product (product_id, product_name, price) VALUES (3, '샘플 상품 3', 30000);
 
 -- 상품 재고 샘플 데이터
-INSERT INTO product_stock (product_id, stock_quantity) VALUES (1, 10);
+INSERT INTO product_stock (product_id, stock_quantity) VALUES (1, 49);
 INSERT INTO product_stock (product_id, stock_quantity) VALUES (2, 20);
 INSERT INTO product_stock (product_id, stock_quantity) VALUES (3, 30);
 

@@ -24,11 +24,13 @@ public class BalanceController implements BalanceApiDocs {
     public ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId) {
 
         Balance balance = balanceService.getBalance(userId);
+        ViewBalanceResponse viewBalanceResponse = new ViewBalanceResponse();
+        viewBalanceResponse.from(balance);
 
         ApiResponse<ViewBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 조회 성공");
         result.setCode(200);
-        result.setData(ViewBalanceResponse.toDto(balance));
+        result.setData(viewBalanceResponse);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -38,14 +40,14 @@ public class BalanceController implements BalanceApiDocs {
     public ResponseEntity<ApiResponse<ChargeBalanceResponse>> updateBalance(@RequestBody ChargeBalanceRequest request) {
 
         Balance balance = balanceService.chargeBalance(request.getUserId(), request.getAmount());
-        ChargeBalanceResponse balanceResponse = new ChargeBalanceResponse();
-        balanceResponse.from(balance);
+        ChargeBalanceResponse chargeBalanceResponse = new ChargeBalanceResponse();
+        chargeBalanceResponse.from(balance);
 
 
         ApiResponse<ChargeBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 충전 성공");
         result.setCode(200);
-        result.setData(balanceResponse);
+        result.setData(chargeBalanceResponse);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

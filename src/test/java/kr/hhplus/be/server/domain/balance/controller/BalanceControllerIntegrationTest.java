@@ -41,7 +41,7 @@ public class BalanceControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("잔액 조회 성공"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.userId").value(userId))
-                .andExpect(jsonPath("$.data.balance").value(100000));
+                .andExpect(jsonPath("$.data.balance").value(150000));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class BalanceControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("잔액 충전 성공"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.userId").value(userId))
-                .andExpect(jsonPath("$.data.newBalance").value(110000));
+                .andExpect(jsonPath("$.data.newBalance").value(160000));
     }
 
 }

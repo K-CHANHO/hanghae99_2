@@ -16,11 +16,9 @@ public class ViewBalanceResponse {
     private String userId;
     private int balance;
 
-    public static ViewBalanceResponse toDto(Balance balance){
-        return ViewBalanceResponse.builder()
-                .userId(balance.getUserId())
-                .balance(balance.getBalance())
-                .build();
+    public void from(Balance balance){
+        this.userId = balance.getUserId();
+        this.balance = balance.getBalance();
     }
 
 }

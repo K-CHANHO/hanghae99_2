@@ -1,10 +1,7 @@
 package kr.hhplus.be.server.domain.coupon.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.time.temporal.ChronoUnit;
@@ -19,14 +16,18 @@ public class UserCoupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userCouponId;
     private String userId;
-    private Coupon coupon;
+    private Long couponId;
     private String status; // 쿠폰 상태: AVAILABLE, USED, EXPIRED
     private Timestamp issuedAt;
     private Timestamp expiredAt;
     private Timestamp usedAt;
 
+    @Transient @Setter
+    private Coupon coupon;
+
     public void issue(String userId, Coupon coupon) {
         this.userId = userId;
+        this.couponId = coupon.getCouponId();
         this.coupon = coupon;
         this.issuedAt = new Timestamp(System.currentTimeMillis());
         this.expiredAt = Timestamp.from(issuedAt.toInstant().plus(7, ChronoUnit.DAYS));

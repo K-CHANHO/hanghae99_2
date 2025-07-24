@@ -43,7 +43,7 @@ public class CouponServiceTest {
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "END", 0.1));
 
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.countByCoupon_CouponId(couponId)).thenReturn(issuedQuantity);
+        when(userCouponRepository.countByCouponId(couponId)).thenReturn(issuedQuantity);
 
         // when, then
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
@@ -59,7 +59,7 @@ public class CouponServiceTest {
         String userId = "sampleUserId";
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(new UserCoupon()));
+        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(new UserCoupon()));
 
         // when, then
         assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
@@ -74,16 +74,16 @@ public class CouponServiceTest {
         Long couponId = 1L;
         String userId = "sampleUserId";
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
-        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", coupon.get(), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null);
+        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", couponId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, coupon.get());
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.countByCoupon_CouponId(couponId)).thenReturn(10);
+        when(userCouponRepository.countByCouponId(couponId)).thenReturn(10);
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(userCoupon);
 
         // when
         UserCoupon issuedCoupon = couponService.issueCoupon(userId, couponId);
 
         // then
-        assertThat(issuedCoupon.getCoupon()).isEqualTo(coupon.get());
+        assertThat(issuedCoupon.getCoupon().getCouponId()).isEqualTo(coupon.get().getCouponId());
 
     }
 
@@ -93,8 +93,8 @@ public class CouponServiceTest {
         // given
         String userId = "sampleUserId";
         Long couponId = 1L;
-        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", new Coupon(), "USED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null);
-        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
+        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", couponId, "USED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon());
+        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
         // when
         UserCoupon usedCoupon = couponService.useCoupon(userId, couponId);
@@ -110,8 +110,8 @@ public class CouponServiceTest {
         // given
         String userId = "sampleUserId";
         Long couponId = 1L;
-        UserCoupon userCoupon = new UserCoupon(1L, userId, new Coupon(), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS)), null);
-        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
+        UserCoupon userCoupon = new UserCoupon(1L, userId, couponId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS)), null, new Coupon());
+        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
         // when
         UserCoupon expiredCoupon = couponService.useCoupon(userId, couponId);
@@ -130,7 +130,7 @@ public class CouponServiceTest {
         Coupon coupon = Coupon.builder().couponId(couponId).build();
         UserCoupon unusedCoupon = UserCoupon.builder().coupon(coupon).status("UNUSED").expiredAt(Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS))).build();
         UserCoupon usedCoupon = UserCoupon.builder().coupon(coupon).status("USED").build();
-        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
+        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(usedCoupon);
 
         // when
@@ -147,8 +147,8 @@ public class CouponServiceTest {
         // given
         String userId = "sampleUserId";
         List<UserCoupon> sampleUserCoupons = List.of(
-                new UserCoupon(1L, userId, new Coupon(1L, "쿠폰1", 100, "ING", 0.1), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null),
-                new UserCoupon(2L, userId, new Coupon(2L, "쿠폰2", 200, "ING", 0.2), "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null)
+                new UserCoupon(1L, userId, 1L, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon(1L, "쿠폰1", 100, "ING", 0.1)),
+                new UserCoupon(2L, userId, 2L, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon(2L, "쿠폰2", 200, "ING", 0.2))
         );
         when(userCouponRepository.findByUserId(userId)).thenReturn(Optional.of(sampleUserCoupons));
 

@@ -14,6 +14,7 @@ import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class OrderFacade {
     private final BalanceService balanceService;
     private final ProductService productService;
 
+    @Transactional
     public Order orderProcess(String userId, List<OrderProductDto> orderProductDtoList, Long couponId) {
 
         // 주문 생성

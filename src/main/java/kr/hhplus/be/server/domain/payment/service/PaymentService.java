@@ -4,6 +4,8 @@ import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Duration;
@@ -37,6 +39,7 @@ public class PaymentService {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendPaymentNotification(Payment payment) {
         System.out.println("결제정보 외부 전송");
     }

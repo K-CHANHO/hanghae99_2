@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.order.service;
 
+import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.repository.OrderProductRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ public class OrderProductServiceTest {
         // given
         String userId = "sampleUserId";
         Long orderId = 1L;
-        ArrayList<OrderProduct> productList = new ArrayList<>();
+        ArrayList<OrderProductDto> productList = new ArrayList<>();
         when(orderProductRepository.saveAll(anyList())).thenReturn(new ArrayList<>(3));
         // when
         List<OrderProduct> savedOrderProducts = orderProductService.save(userId, orderId, productList);

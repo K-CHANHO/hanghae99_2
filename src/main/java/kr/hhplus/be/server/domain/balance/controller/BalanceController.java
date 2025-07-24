@@ -37,9 +37,10 @@ public class BalanceController implements BalanceApiDocs {
     @Tag(name = "잔액", description = "잔액과 관련된 API")
     public ResponseEntity<ApiResponse<ChargeBalanceResponse>> updateBalance(@RequestBody ChargeBalanceRequest request) {
 
+        Balance balance = balanceService.chargeBalance(request.getUserId(), request.getAmount());
         ChargeBalanceResponse balanceResponse = new ChargeBalanceResponse();
-        balanceResponse.setUserId(request.getUserId());
-        balanceResponse.setNewBalance(100000 + request.getAmount()); // 예시로 100000에 충전 금액을 더함
+        balanceResponse.from(balance);
+
 
         ApiResponse<ChargeBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 충전 성공");

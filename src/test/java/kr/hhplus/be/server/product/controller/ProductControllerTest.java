@@ -10,12 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,7 +50,7 @@ class ProductControllerTest {
                 .price(1500000)
                 .productStock(ProductStock.builder().productId(productId).stockQuantity(100).build())
                 .build();
-        Mockito.when(productService.getProduct(productId)).thenReturn(product);
+        when(productService.getProduct(productId)).thenReturn(product);
 
         // when
         ResultActions result = mockMvc.perform(
@@ -57,6 +58,7 @@ class ProductControllerTest {
         );
 
         // then
+        verify(productService).getProduct(productId);
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("상품 조회 성공"))
                 .andExpect(jsonPath("$.code").value(200))
@@ -78,6 +80,7 @@ class ProductControllerTest {
         );
 
         // then
+        //verify(productService)
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("인기 상품 조회 성공"))
                 .andExpect(jsonPath("$.code").value(200))

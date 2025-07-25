@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +32,12 @@ public class ProductService {
     }
 
     public ProductStock reduceStock(Long productId, int orderQuantity) {
+        ReentrantLock lock = new ReentrantLock();
+        lock.lock();
         ProductStock productStock = productStockRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("상품 재고를 조회할 수 없습니다."));
         productStock.reduceStock(orderQuantity);
+        lock.unlock();
         return productStockRepository.save(productStock);
     }
 

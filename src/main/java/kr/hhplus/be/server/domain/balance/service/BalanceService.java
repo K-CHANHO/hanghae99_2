@@ -25,11 +25,11 @@ public class BalanceService{
         return balanceRepository.save(balance);
     }
 
-    public Balance useBalance(String userId, int useAmount) {
+    public Balance useBalance(String userId, int useAmount, double discountRate) {
         Balance balance = balanceRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
 
-        balance.use(useAmount);
+        balance.use((int) (useAmount * (1-discountRate)));
 
         return balanceRepository.save(balance);
 

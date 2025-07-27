@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +28,7 @@ public class PaymentServiceTest {
 
     @Test
     @DisplayName("결제 생성 테스트")
-    public void createPayment(){
+    public void payPayment(){
         // given
         String userId = "sampleUserId";
         Long orderId = 1L;
@@ -38,45 +37,13 @@ public class PaymentServiceTest {
         when(paymentRepository.save(any(Payment.class))).thenReturn(Payment.builder().status("PENDING").paidPrice((int) (totalPrice * (1 - discountRate))).build());
 
         // when
-        Payment payment = paymentService.create(userId, orderId, totalPrice, discountRate);
+        Payment payment = paymentService.pay(userId, orderId, totalPrice, discountRate);
 
         // then
         assertThat(payment).isNotNull();
         assertThat(payment.getStatus()).isEqualTo("PENDING");
         assertThat(payment.getPaidPrice()).isEqualTo((int) (totalPrice * (1 - discountRate)));
     }
-
-    @Test
-    @DisplayName("결제 서비스 테스트")
-    public void payPayment(){
-        // given
-        String userId = "sampleUserId";
-        Long paymentId = 1L;
-        Long orderId = 1L;
-        Payment beforePayment = Payment.builder()
-                .paymentId(paymentId)
-                .userId(userId)
-                .orderId(orderId)
-                .status("PENDING")
-                .paidPrice(10000)
-                .build();
-        Payment afterPayment = Payment.builder()
-                .paymentId(paymentId)
-                .userId(userId)
-                .orderId(orderId)
-                .status("PAID")
-                .paidPrice(10000)
-                .build();
-        when(paymentRepository.findById(paymentId)).thenReturn(Optional.of(beforePayment));
-        when(paymentRepository.save(any(Payment.class))).thenReturn(afterPayment);
-
-        // when
-        Payment payment = paymentService.pay(userId, paymentId);
-
-        // then
-        assertThat(payment.getStatus()).isEqualTo("PAID");
-    }
-
 
     @Test
     void getPaidOrderIdsWithinLastDays() {

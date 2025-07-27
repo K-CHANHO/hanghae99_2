@@ -8,7 +8,6 @@ import kr.hhplus.be.server.domain.order.entity.Order;
 import kr.hhplus.be.server.domain.order.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.service.OrderService;
-import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.service.PaymentService;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.service.ProductService;
@@ -49,25 +48,19 @@ public class OrderFacade {
             discountRate = userCoupon.getCoupon().getDiscountRate();
         }
 
-        // 결제 생성
-        Payment payment = paymentService.create(userId, order.getOrderId(), order.getTotalPrice(), discountRate);
-
-        // 결제 요청
-        Payment PaidPayment = paymentService.pay(payment);
-
         // 재고 차감
         orderProductList.forEach(product -> {
             productService.reduceStock(product.getProductId(), product.getQuantity());
         });
 
-        // 잔액 차감
-        balanceService.useBalance(userId, PaidPayment.getPaidPrice());
-
         // 주문 상태 변경
         Order paidOrder = orderService.changeStatus(order.getOrderId(), "PAID");
 
-        // 외부 API 호출
-        paymentService.sendPaymentNotification(payment);        // 결제 생성
+        // 잔액 차감
+        balanceService.useBalance(userId, order.getTotalPrice(), discountRate);
+
+        // 결제
+        paymentService.pay(userId, order.getOrderId(), order.getTotalPrice(), discountRate);
 
         return paidOrder;
     }

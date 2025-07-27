@@ -88,8 +88,7 @@ public class OrderFacadeTest {
 
         when(orderService.createOrder(userId, orderProductDtoList)).thenReturn(mockOrder);
         when(couponService.useCoupon(userId, couponId)).thenReturn(mockUserCoupon);
-        when(paymentService.create(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate())).thenReturn(mockPayment);
-        when(paymentService.pay(mockPayment)).thenReturn(mockPaidPayment);
+        when(paymentService.pay(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate())).thenReturn(mockPayment);
 
         // when
         orderFacade.orderProcess(userId, orderProductDtoList, couponId);
@@ -99,10 +98,8 @@ public class OrderFacadeTest {
         verify(productService, times(3)).getProduct(anyLong());
         verify(orderProductService).save(userId, mockOrder.getOrderId(), orderProductDtoList);
         verify(couponService).useCoupon(userId, couponId);
-        verify(paymentService).create(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());
-        verify(paymentService).pay(mockPayment);
-        verify(balanceService).useBalance(userId, mockPaidPayment.getPaidPrice());
+        verify(paymentService).pay(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());
+        verify(balanceService).useBalance(userId, mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());
         verify(orderService).changeStatus(mockOrder.getOrderId(), "PAID");
-        verify(paymentService).sendPaymentNotification(mockPayment);
     }
 }

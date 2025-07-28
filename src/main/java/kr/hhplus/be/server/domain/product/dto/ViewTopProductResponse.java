@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class ViewTopProductResponse {
 
-    private List<productDto> topProductDtos;
+    private List<productDto> topProducts;
 
     @Data
     @Builder
@@ -26,7 +26,7 @@ public class ViewTopProductResponse {
                         .price(product.getPrice())
                         .build())
                 .toList();
-        this.topProductDtos = list;
+        this.topProducts = list;
     }
 
 }

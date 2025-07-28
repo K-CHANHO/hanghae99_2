@@ -1,6 +1,12 @@
 package kr.hhplus.be.server.domain.order.facade;
 
+import kr.hhplus.be.server.domain.balance.entity.Balance;
+import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
+import kr.hhplus.be.server.domain.order.entity.Order;
+import kr.hhplus.be.server.domain.product.entity.Product;
+import kr.hhplus.be.server.domain.product.service.ProductService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +18,65 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.assertj.core.api.Assertions.*;
+
 @SpringBootTest
-@Sql(scripts = "/testSql/test-data.sql")
+@Sql(scripts = {
+        "/testSql/cleanup.sql",
+        "/testSql/balance.sql",
+        "/testSql/product.sql",
+        "/testSql/coupon.sql"
+})
 public class OrderFacadeIntegrationTest {
     @Autowired
     private OrderFacade orderFacade;
+    @Autowired
+    private BalanceService balanceService;
+    @Autowired
+    private ProductService productService;
+
+
+    // 재고 부족 -> 잔고 그대로 인지
+    @Test
+    @DisplayName("주문/결제 테스트_재고부족")
+    public void orderProcessWithLessStock(){
+        // given
+        String userId = "sampleUserId";
+        ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
+        OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(100).build();
+        orderProductDtoList.add(orderProductDto1);
+
+        // when
+        Balance balance = balanceService.getBalance(userId);
+
+        // then
+        assertThatThrownBy(() -> orderFacade.orderProcess(userId, orderProductDtoList, null))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("재고가 부족합니다.");
+        assertThat(balance.getBalance()).isEqualTo(300000);
+
+    }
+
+    // 잔고 부족 -> 재고 그대로 인지
+    @Test
+    @DisplayName("주문/결제 테스트_잔고부족")
+    public void orderProcessWithLessBalance(){
+        // given
+        String userId = "sampleUserId";
+        ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
+        OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(4L).price(1000000).quantity(1).build();
+        orderProductDtoList.add(orderProductDto1);
+
+        // when
+        Product product = productService.getProduct(4L);
+
+        // then
+        assertThatThrownBy(() -> orderFacade.orderProcess(userId, orderProductDtoList, null))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("잔고가 부족합니다.");
+        assertThat(product.getProductStock().getStockQuantity()).isEqualTo(10);
+
+    }
 
     @Test
     @DisplayName("주문/결제 테스트")
@@ -33,38 +93,15 @@ public class OrderFacadeIntegrationTest {
         Long couponId = 1L;
 
         // when
-        orderFacade.orderProcess(userId, orderProductDtoList, couponId);
-    }
+        Order order = orderFacade.orderProcess(userId, orderProductDtoList, couponId);
+        Balance afterBalance = balanceService.getBalance(order.getUserId());
 
-    @Test
-    @DisplayName("재고 테스트")
-    public void sdfas() throws InterruptedException {
-        int threadCount = 50;
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
-        CountDownLatch latch = new CountDownLatch(threadCount);
 
-        // given
-        String userId = "sampleUserId";
-        ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
-        OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(1).build();
-        orderProductDtoList.add(orderProductDto1);
-
-        Long couponId = 1L;
-
-        // when
-        for (int i=0; i<threadCount; i++){
-            executorService.execute(() -> {
-                try {
-                    orderFacade.orderProcess(userId, orderProductDtoList, couponId);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    latch.countDown();
-                }
-            });
-
-        }
-        latch.await();
+        // then
+        assertThat(order).isNotNull();
+        assertThat(order.getStatus()).isEqualTo("PAID");
+        assertThat(order.getTotalPrice()).isEqualTo(140000);
+        assertThat(afterBalance.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
     }
 
 }

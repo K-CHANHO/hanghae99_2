@@ -2,7 +2,7 @@
 INSERT INTO product (product_id, product_name, price) VALUES (1, '샘플 상품 01', 10000);
 INSERT INTO product (product_id, product_name, price) VALUES (2, '샘플 상품 02', 20000);
 INSERT INTO product (product_id, product_name, price) VALUES (3, '샘플 상품 03', 30000);
-INSERT INTO product (product_id, product_name, price) VALUES (4, '샘플 상품 04', 10000);
+INSERT INTO product (product_id, product_name, price) VALUES (4, '샘플 상품 04', 1000000);
 INSERT INTO product (product_id, product_name, price) VALUES (5, '샘플 상품 05', 10000);
 INSERT INTO product (product_id, product_name, price) VALUES (6, '샘플 상품 06', 10000);
 INSERT INTO product (product_id, product_name, price) VALUES (7, '샘플 상품 07', 10000);

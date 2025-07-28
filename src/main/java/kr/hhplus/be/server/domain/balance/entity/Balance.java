@@ -31,12 +31,12 @@ public class Balance {
         this.balance += chargeAmount;
     }
 
-    public void use(int useAmount) {
+    public void use(int useAmount, double discountRate) {
         if(useAmount < 0){
             throw new RuntimeException("사용은 양수 값만 가능합니다.");
         } else if(this.balance < useAmount){
             throw new RuntimeException("잔고가 부족합니다.");
         }
-        this.balance -= useAmount;
+        this.balance -= (int) (useAmount * (1-discountRate));
     }
 }

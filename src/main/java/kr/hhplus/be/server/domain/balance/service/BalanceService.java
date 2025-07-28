@@ -29,7 +29,7 @@ public class BalanceService{
         Balance balance = balanceRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
 
-        balance.use((int) (useAmount * (1-discountRate)));
+        balance.use(useAmount, discountRate);
 
         return balanceRepository.save(balance);
 

@@ -105,7 +105,7 @@ public class BalanceServiceTest {
         // when, then
         assertThatThrownBy(() -> balanceService.useBalance(userId, useAmount, 0.1))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessage("잔액보다 많이 사용할 수 없습니다.");
+                .hasMessage("잔고가 부족합니다.");
 
     }
 

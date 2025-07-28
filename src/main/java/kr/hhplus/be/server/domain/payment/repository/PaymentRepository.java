@@ -7,5 +7,5 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    List<Long> findOrderIdByStatusAndPaidAtAfter(String status, Timestamp days);
+    List<Payment> findOrderIdByStatusAndPaidAtAfter(String status, Timestamp days);
 }

@@ -41,7 +41,7 @@ public class PaymentServiceTest {
 
         // then
         assertThat(payment).isNotNull();
-        assertThat(payment.getStatus()).isEqualTo("PENDING");
+        assertThat(payment.getStatus()).isEqualTo("PAID");
         assertThat(payment.getPaidPrice()).isEqualTo((int) (totalPrice * (1 - discountRate)));
     }
 
@@ -49,7 +49,9 @@ public class PaymentServiceTest {
     void getPaidOrderIdsWithinLastDays() {
         // given
         int withinDays = 3;
-        List<Long> mockOrderIds = List.of(1L, 2L, 3L, 4L, 5L);
+        List<Payment> mockOrderIds = List.of(
+                new Payment(), new Payment(),new Payment(),new Payment(),new Payment()
+        );
         when(paymentRepository.findOrderIdByStatusAndPaidAtAfter(anyString(), any(Timestamp.class))).thenReturn(mockOrderIds);
 
         // when

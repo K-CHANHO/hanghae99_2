@@ -32,7 +32,10 @@ public class PaymentService {
     }
 
     public List<Long> getPaidOrderIdsWithinLastDays(int days) {
-        return paymentRepository.findOrderIdByStatusAndPaidAtAfter("PAID", new Timestamp(System.currentTimeMillis() - Duration.ofDays(days).toMillis()));
+        List<Payment> paidOrder = paymentRepository.findOrderIdByStatusAndPaidAtAfter("PAID", new Timestamp(System.currentTimeMillis() - Duration.ofDays(days).toMillis()));
+        return paidOrder.stream()
+                .map(Payment::getOrderId)
+                .toList();
 
     }
 

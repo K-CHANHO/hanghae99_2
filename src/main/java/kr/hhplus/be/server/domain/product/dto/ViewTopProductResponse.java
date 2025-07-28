@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class ViewTopProductResponse {
 
-    private List<productDto> topProducts;
+    private List<productDto> topProductDtos;
 
     @Data
     @Builder
@@ -17,17 +17,16 @@ public class ViewTopProductResponse {
         private Long productId;
         private String productName;
         private int price;
-        private int stock;
     }
 
     public void from(List<Product> topProducts) {
-        this.topProducts = topProducts.stream().map(product -> productDto.builder()
-                            .productId(product.getProductId())
-                            .productName(product.getProductName())
-                            .price(product.getPrice())
-                            .stock(product.getProductStock().getStockQuantity())
-                            .build())
-                            .toList();
+        List<productDto> list = topProducts.stream().map(product -> productDto.builder()
+                        .productId(product.getProductId())
+                        .productName(product.getProductName())
+                        .price(product.getPrice())
+                        .build())
+                .toList();
+        this.topProductDtos = list;
     }
 
 }

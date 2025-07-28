@@ -46,6 +46,7 @@ public class PaymentServiceTest {
     }
 
     @Test
+    @DisplayName("3일 내에 결제된 주문 아이디 조회 테스트")
     void getPaidOrderIdsWithinLastDays() {
         // given
         int withinDays = 3;

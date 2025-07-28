@@ -18,7 +18,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Sql(scripts = "/testSql/test-data.sql")
+@Sql(scripts = {
+        "/testSql/cleanup.sql",
+        "/testSql/balance.sql",
+        "/testSql/product.sql",
+        "/testSql/coupon.sql"
+})
 public class BalanceControllerIntegrationTest {
 
     @Autowired
@@ -26,7 +31,7 @@ public class BalanceControllerIntegrationTest {
 
     @Test
     @DisplayName("잔액 조회 API 테스트")
-    public void getBalanceTest() throws Exception {
+    public void getBalance() throws Exception {
         // given
         String url = "/api/v1/balance/{userId}";
         String userId = "sampleUserId";
@@ -41,16 +46,38 @@ public class BalanceControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("잔액 조회 성공"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.userId").value(userId))
-                .andExpect(jsonPath("$.data.balance").value(150000));
+                .andExpect(jsonPath("$.data.balance").value(300000));
     }
 
     @Test
-    @DisplayName("잔액 충전 API 테스트")
-    public void chargeBalanceTest() throws Exception {
+    @DisplayName("잔액 충전 API 테스트_음수 값 입력받은 경우")
+    public void chargeBalanceWithNegativeValue() throws Exception {
         // given
         String url = "/api/v1/balance";
         String userId = "sampleUserId";
-        String requestBody = "{\"userId\" : \"sampleUserId\", \"amount\" : 10000, \"transactionId\" : \"tx12345\"}";
+        Long chargeAmount = -100000L;
+        String requestBody = "{\"userId\" : \"" + userId + "\", \"amount\" : " + chargeAmount + ", \"transactionId\" : \"tx12345\"}";
+
+        // when
+        ResultActions result = mockMvc.perform(
+                patch(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+        );
+
+        // then
+        result.andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("충전은 양수 값만 가능합니다."))
+                .andExpect(jsonPath("$.code").value(500));
+    }
+
+    @Test
+    @DisplayName("잔액 충전 API 테스트_성공")
+    public void chargeBalance() throws Exception {
+        // given
+        String url = "/api/v1/balance";
+        String userId = "sampleUserId";
+        String requestBody = "{\"userId\" : \"sampleUserId\", \"amount\" : 100000, \"transactionId\" : \"tx12345\"}";
 
         // when
         ResultActions result = mockMvc.perform(
@@ -64,7 +91,7 @@ public class BalanceControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("잔액 충전 성공"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.userId").value(userId))
-                .andExpect(jsonPath("$.data.newBalance").value(160000));
+                .andExpect(jsonPath("$.data.newBalance").value(400000));
     }
 
 }

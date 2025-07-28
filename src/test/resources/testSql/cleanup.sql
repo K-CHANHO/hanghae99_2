@@ -1,0 +1,9 @@
+-- 데이터 초기화
+DELETE FROM balance;
+DELETE FROM product;
+DELETE FROM product_stock;
+DELETE FROM `order`;
+DELETE FROM order_product;
+DELETE FROM coupon;
+DELETE FROM user_coupon;
+DELETE FROM payment;

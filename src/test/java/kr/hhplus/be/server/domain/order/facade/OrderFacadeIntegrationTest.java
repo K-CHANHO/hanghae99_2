@@ -5,8 +5,8 @@ import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceRes
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.entity.Order;
-import kr.hhplus.be.server.domain.product.entity.Product;
-import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.domain.entity.Product;
+import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

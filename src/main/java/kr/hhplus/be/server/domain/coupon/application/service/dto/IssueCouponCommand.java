@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.application.service.dto;
 
-import kr.hhplus.be.server.domain.coupon.present.controller.dto.IssueCouponRequest;
+import kr.hhplus.be.server.domain.coupon.presenter.controller.dto.IssueCouponRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

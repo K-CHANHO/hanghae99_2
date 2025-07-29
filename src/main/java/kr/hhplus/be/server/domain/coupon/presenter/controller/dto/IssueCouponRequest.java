@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.coupon.present.controller.dto;
+package kr.hhplus.be.server.domain.coupon.presenter.controller.dto;
 
 import lombok.Data;
 

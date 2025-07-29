@@ -1,9 +1,9 @@
-package kr.hhplus.be.server.domain.coupon.present.controller;
+package kr.hhplus.be.server.domain.coupon.presenter.controller;
 
 import kr.hhplus.be.server.apidocs.CouponApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.coupon.present.controller.dto.IssueCouponRequest;
-import kr.hhplus.be.server.domain.coupon.present.controller.dto.IssueCouponResponse;
+import kr.hhplus.be.server.domain.coupon.presenter.controller.dto.IssueCouponRequest;
+import kr.hhplus.be.server.domain.coupon.presenter.controller.dto.IssueCouponResponse;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponResult;

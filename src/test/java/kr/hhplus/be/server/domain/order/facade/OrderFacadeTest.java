@@ -12,7 +12,7 @@ import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayResult;
-import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

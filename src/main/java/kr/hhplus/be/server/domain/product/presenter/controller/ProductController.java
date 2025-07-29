@@ -1,12 +1,12 @@
-package kr.hhplus.be.server.domain.product.controller;
+package kr.hhplus.be.server.domain.product.presenter.controller;
 
 import kr.hhplus.be.server.apidocs.ProductApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.product.dto.ViewProductResponse;
-import kr.hhplus.be.server.domain.product.dto.ViewTopProductResponse;
-import kr.hhplus.be.server.domain.product.entity.Product;
-import kr.hhplus.be.server.domain.product.facade.ProductFacade;
-import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.presenter.controller.dto.ViewProductResponse;
+import kr.hhplus.be.server.domain.product.presenter.controller.dto.ViewTopProductResponse;
+import kr.hhplus.be.server.domain.product.domain.entity.Product;
+import kr.hhplus.be.server.domain.product.application.facade.ProductFacade;
+import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

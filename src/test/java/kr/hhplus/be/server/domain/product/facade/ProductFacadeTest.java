@@ -2,8 +2,9 @@ package kr.hhplus.be.server.domain.product.facade;
 
 import kr.hhplus.be.server.domain.order.service.OrderProductService;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
-import kr.hhplus.be.server.domain.product.entity.Product;
-import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.application.facade.ProductFacade;
+import kr.hhplus.be.server.domain.product.domain.entity.Product;
+import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

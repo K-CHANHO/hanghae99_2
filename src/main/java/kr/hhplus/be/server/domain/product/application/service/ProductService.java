@@ -1,14 +1,13 @@
-package kr.hhplus.be.server.domain.product.service;
+package kr.hhplus.be.server.domain.product.application.service;
 
-import kr.hhplus.be.server.domain.product.entity.Product;
-import kr.hhplus.be.server.domain.product.entity.ProductStock;
-import kr.hhplus.be.server.domain.product.repository.ProductRepository;
-import kr.hhplus.be.server.domain.product.repository.ProductStockRepository;
+import kr.hhplus.be.server.domain.product.domain.entity.Product;
+import kr.hhplus.be.server.domain.product.domain.entity.ProductStock;
+import kr.hhplus.be.server.domain.product.domain.repository.ProductRepository;
+import kr.hhplus.be.server.domain.product.domain.repository.ProductStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @RequiredArgsConstructor

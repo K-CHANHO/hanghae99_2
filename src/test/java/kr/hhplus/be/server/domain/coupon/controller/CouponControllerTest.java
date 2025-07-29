@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.coupon.controller;
 
 import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
-import kr.hhplus.be.server.domain.coupon.present.controller.CouponController;
+import kr.hhplus.be.server.domain.coupon.presenter.controller.CouponController;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponResult;

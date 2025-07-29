@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.domain.balance.service;
 
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequest;
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponse;
+import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceCommand;
+import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceResult;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceCommand;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceResult;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,20 +15,21 @@ public class BalanceService{
 
     private final BalanceRepository balanceRepository;
 
-    public ViewBalanceServiceResponse getBalance(ViewBalanceServiceRequest viewBalanceServiceRequest){
+    public ViewBalanceResult getBalance(ViewBalanceCommand viewBalanceCommand){
 
-        Balance balance = balanceRepository.findById(viewBalanceServiceRequest.getUserId())
+        Balance balance = balanceRepository.findById(viewBalanceCommand.getUserId())
                 .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
-        return new ViewBalanceServiceResponse(balance);
+        return new ViewBalanceResult(balance);
     }
 
-    public Balance chargeBalance(String userId, int chargeAmount) {
-        Balance balance = balanceRepository.findById(userId)
+    public ChargeBalanceResult chargeBalance(ChargeBalanceCommand serviceRequest) {
+        Balance balance = balanceRepository.findById(serviceRequest.getUserId())
                 .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
 
-        balance.charge(chargeAmount);
+        balance.charge(serviceRequest.getAmount());
 
-        return balanceRepository.save(balance);
+        Balance chargedBalance = balanceRepository.save(balance);
+        return new ChargeBalanceResult(chargedBalance);
     }
 
     public Balance useBalance(String userId, int useAmount, double discountRate) {

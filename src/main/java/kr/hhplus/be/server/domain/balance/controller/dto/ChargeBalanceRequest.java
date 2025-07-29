@@ -1,8 +1,10 @@
-package kr.hhplus.be.server.domain.balance.dto;
+package kr.hhplus.be.server.domain.balance.controller.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
 public class ChargeBalanceRequest {
     private String userId;
     private int amount; // 충전할 금액

@@ -3,9 +3,14 @@ package kr.hhplus.be.server.domain.balance.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.apidocs.BalanceApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.balance.dto.*;
-import kr.hhplus.be.server.domain.balance.entity.Balance;
+import kr.hhplus.be.server.domain.balance.controller.dto.ChargeBalanceRequest;
+import kr.hhplus.be.server.domain.balance.controller.dto.ChargeBalanceResponse;
+import kr.hhplus.be.server.domain.balance.controller.dto.ViewBalanceResponse;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
+import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceCommand;
+import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceResult;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceCommand;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +26,9 @@ public class BalanceController implements BalanceApiDocs {
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId) {
 
-        ViewBalanceServiceRequest viewBalanceServiceRequest = new ViewBalanceServiceRequest(userId);
+        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(userId);
 
-        ViewBalanceServiceResponse serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequest);
+        ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
         ViewBalanceResponse viewBalanceResponse = new ViewBalanceResponse(serviceResponseDto);
 
         ApiResponse<ViewBalanceResponse> result = new ApiResponse<>();
@@ -38,10 +43,10 @@ public class BalanceController implements BalanceApiDocs {
     @Tag(name = "잔액", description = "잔액과 관련된 API")
     public ResponseEntity<ApiResponse<ChargeBalanceResponse>> updateBalance(@RequestBody ChargeBalanceRequest request) {
 
-        Balance balance = balanceService.chargeBalance(request.getUserId(), request.getAmount());
-        ChargeBalanceResponse chargeBalanceResponse = new ChargeBalanceResponse();
-        chargeBalanceResponse.from(balance);
+        ChargeBalanceCommand serviceRequest = new ChargeBalanceCommand(request);
 
+        ChargeBalanceResult serviceResponse = balanceService.chargeBalance(serviceRequest);
+        ChargeBalanceResponse chargeBalanceResponse = new ChargeBalanceResponse(serviceResponse);
 
         ApiResponse<ChargeBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 충전 성공");

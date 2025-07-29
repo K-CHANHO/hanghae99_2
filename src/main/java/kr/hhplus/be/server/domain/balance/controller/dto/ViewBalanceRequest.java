@@ -1,9 +1,9 @@
-package kr.hhplus.be.server.domain.balance.dto;
+package kr.hhplus.be.server.domain.balance.controller.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
 public class ViewBalanceRequest {
     private String userId;

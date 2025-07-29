@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.domain.balance.service;
 
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequest;
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponse;
+import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceCommand;
+import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceResult;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceCommand;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceResult;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -34,11 +36,11 @@ public class BalanceServiceTest {
     public void getBalance(){
         // given
         String userId = "sampleUserId";
-        ViewBalanceServiceRequest viewBalanceServiceRequest = new ViewBalanceServiceRequest(userId);
+        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(userId);
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when
-        ViewBalanceServiceResponse serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequest);
+        ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
 
         // then
         assertThat(serviceResponseDto).isNotNull();
@@ -52,10 +54,11 @@ public class BalanceServiceTest {
     public void chargeBalanceWithNegativeValue(int chargeAmount){
         // given
         String userId = "sampleUserId";
+        ChargeBalanceCommand serviceRequest = ChargeBalanceCommand.builder().userId(userId).amount(chargeAmount).build();
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when, then
-        assertThatThrownBy(() -> balanceService.chargeBalance(userId, chargeAmount))
+        assertThatThrownBy(() -> balanceService.chargeBalance(serviceRequest))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("충전은 양수 값만 가능합니다.");
 
@@ -68,6 +71,7 @@ public class BalanceServiceTest {
         // given
         String userId = "sampleUserId";
         int initialBalance = 100000;
+        ChargeBalanceCommand serviceRequest = ChargeBalanceCommand.builder().userId(userId).amount(chargeAmount).build();
 
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, initialBalance)));
         when(balanceRepository.save(Mockito.any(Balance.class))).thenReturn(
@@ -75,11 +79,11 @@ public class BalanceServiceTest {
         );
 
         // when
-        Balance updatedBalance = balanceService.chargeBalance(userId, chargeAmount);
+        ChargeBalanceResult serviceResponse = balanceService.chargeBalance(serviceRequest);
 
         // then
-        assertThat(updatedBalance).isNotNull();
-        assertThat(updatedBalance.getBalance()).isEqualTo(initialBalance + chargeAmount);
+        assertThat(serviceResponse).isNotNull();
+        assertThat(serviceResponse.getBalance()).isEqualTo(initialBalance + chargeAmount);
     }
 
     @ParameterizedTest

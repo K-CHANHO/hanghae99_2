@@ -1,12 +1,10 @@
-package kr.hhplus.be.server.domain.balance.dto;
+package kr.hhplus.be.server.domain.balance.controller.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceResult;
+import lombok.*;
 
-@Data
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +13,7 @@ public class ViewBalanceResponse {
     private String userId;
     private int balance;
 
-    public ViewBalanceResponse(ViewBalanceServiceResponse serviceResponse) {
+    public ViewBalanceResponse(ViewBalanceResult serviceResponse) {
         this.userId = serviceResponse.getUserId();
         this.balance = serviceResponse.getBalance();
     }

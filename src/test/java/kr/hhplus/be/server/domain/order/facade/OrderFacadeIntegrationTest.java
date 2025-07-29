@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.order.facade;
 
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequest;
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponse;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceCommand;
+import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceResult;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.entity.Order;
@@ -39,13 +39,13 @@ public class OrderFacadeIntegrationTest {
     public void orderProcessWithLessStock(){
         // given
         String userId = "sampleUserId";
-        ViewBalanceServiceRequest viewBalanceServiceRequest = new ViewBalanceServiceRequest(userId);
+        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(userId);
         ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(100).build();
         orderProductDtoList.add(orderProductDto1);
 
         // when
-        ViewBalanceServiceResponse serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequest);
+        ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
 
         // then
         assertThatThrownBy(() -> orderFacade.orderProcess(userId, orderProductDtoList, null))
@@ -92,15 +92,15 @@ public class OrderFacadeIntegrationTest {
 
         // when
         Order order = orderFacade.orderProcess(userId, orderProductDtoList, couponId);
-        ViewBalanceServiceRequest viewBalanceServiceRequest = new ViewBalanceServiceRequest(order.getUserId());
-        ViewBalanceServiceResponse viewBalanceServiceResponse = balanceService.getBalance(viewBalanceServiceRequest);
+        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(order.getUserId());
+        ViewBalanceResult viewBalanceResult = balanceService.getBalance(viewBalanceCommand);
 
 
         // then
         assertThat(order).isNotNull();
         assertThat(order.getStatus()).isEqualTo("PAID");
         assertThat(order.getTotalPrice()).isEqualTo(140000);
-        assertThat(viewBalanceServiceResponse.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
+        assertThat(viewBalanceResult.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
     }
 
 }

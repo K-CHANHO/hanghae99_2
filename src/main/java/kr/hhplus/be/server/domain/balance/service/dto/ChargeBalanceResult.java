@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.balance.dto;
+package kr.hhplus.be.server.domain.balance.service.dto;
 
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import lombok.AllArgsConstructor;
@@ -8,12 +8,11 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ViewBalanceServiceResponse {
-
+public class ChargeBalanceResult {
     private String userId;
     private int balance;
 
-    public ViewBalanceServiceResponse(Balance balance){
+    public ChargeBalanceResult(Balance balance){
         this.userId = balance.getUserId();
         this.balance = balance.getBalance();
     }

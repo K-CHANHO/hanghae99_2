@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.domain.payment.service.dto;
+package kr.hhplus.be.server.domain.payment.application.service.dto;
 
-import kr.hhplus.be.server.domain.payment.entity.Payment;
+import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

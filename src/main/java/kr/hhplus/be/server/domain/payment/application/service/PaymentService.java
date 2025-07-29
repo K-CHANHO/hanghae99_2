@@ -1,9 +1,9 @@
-package kr.hhplus.be.server.domain.payment.service;
+package kr.hhplus.be.server.domain.payment.application.service;
 
-import kr.hhplus.be.server.domain.payment.entity.Payment;
-import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
-import kr.hhplus.be.server.domain.payment.service.dto.PayCommand;
-import kr.hhplus.be.server.domain.payment.service.dto.PayResult;
+import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
+import kr.hhplus.be.server.domain.payment.domain.repository.PaymentRepository;
+import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
+import kr.hhplus.be.server.domain.payment.application.service.dto.PayResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

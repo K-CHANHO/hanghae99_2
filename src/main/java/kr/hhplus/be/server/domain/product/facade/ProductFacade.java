@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.product.facade;
 
 import kr.hhplus.be.server.domain.order.service.OrderProductService;
-import kr.hhplus.be.server.domain.payment.service.PaymentService;
+import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;

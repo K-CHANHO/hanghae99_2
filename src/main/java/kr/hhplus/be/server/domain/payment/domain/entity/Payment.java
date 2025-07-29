@@ -1,10 +1,10 @@
-package kr.hhplus.be.server.domain.payment.entity;
+package kr.hhplus.be.server.domain.payment.domain.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import kr.hhplus.be.server.domain.payment.service.dto.PayCommand;
+import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

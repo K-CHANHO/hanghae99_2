@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.order.controller;
 
 import com.google.gson.Gson;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
-import kr.hhplus.be.server.domain.order.dto.OrderRequest;
+import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

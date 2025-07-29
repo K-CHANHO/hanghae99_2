@@ -1,8 +1,9 @@
 package kr.hhplus.be.server.domain.order.service;
 
+import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
-import kr.hhplus.be.server.domain.order.entity.OrderProduct;
-import kr.hhplus.be.server.domain.order.repository.OrderProductRepository;
+import kr.hhplus.be.server.domain.order.domain.entity.OrderProduct;
+import kr.hhplus.be.server.domain.order.domain.repository.OrderProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

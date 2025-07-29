@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.domain.order.dto;
+package kr.hhplus.be.server.domain.order.presenter.controller.dto;
 
-import kr.hhplus.be.server.domain.order.entity.Order;
+import kr.hhplus.be.server.domain.order.domain.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

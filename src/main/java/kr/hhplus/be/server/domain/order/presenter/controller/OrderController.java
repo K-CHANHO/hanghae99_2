@@ -1,11 +1,11 @@
-package kr.hhplus.be.server.domain.order.controller;
+package kr.hhplus.be.server.domain.order.presenter.controller;
 
 import kr.hhplus.be.server.apidocs.OrderApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.order.dto.OrderRequest;
-import kr.hhplus.be.server.domain.order.dto.OrderResponse;
-import kr.hhplus.be.server.domain.order.entity.Order;
-import kr.hhplus.be.server.domain.order.facade.OrderFacade;
+import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderRequest;
+import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderResponse;
+import kr.hhplus.be.server.domain.order.domain.entity.Order;
+import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

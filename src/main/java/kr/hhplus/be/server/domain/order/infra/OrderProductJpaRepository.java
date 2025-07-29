@@ -1,12 +1,12 @@
-package kr.hhplus.be.server.domain.order.repository;
+package kr.hhplus.be.server.domain.order.infra;
 
-import kr.hhplus.be.server.domain.order.entity.OrderProduct;
+import kr.hhplus.be.server.domain.order.domain.entity.OrderProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface OrderProductRepository extends JpaRepository<OrderProduct, Long> {
+public interface OrderProductJpaRepository extends JpaRepository<OrderProduct, Long> {
     @Query(value = "SELECT product_id " +
             "FROM order_product " +
             "WHERE order_id IN (:orderIds) " +

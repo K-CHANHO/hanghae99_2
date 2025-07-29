@@ -1,13 +1,13 @@
-package kr.hhplus.be.server.domain.order.facade;
+package kr.hhplus.be.server.domain.order.application.facade;
 
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
-import kr.hhplus.be.server.domain.order.entity.Order;
-import kr.hhplus.be.server.domain.order.entity.OrderProduct;
-import kr.hhplus.be.server.domain.order.service.OrderProductService;
-import kr.hhplus.be.server.domain.order.service.OrderService;
+import kr.hhplus.be.server.domain.order.domain.entity.Order;
+import kr.hhplus.be.server.domain.order.domain.entity.OrderProduct;
+import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
+import kr.hhplus.be.server.domain.order.application.service.OrderService;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;

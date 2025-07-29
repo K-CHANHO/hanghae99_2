@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.product.application.facade;
 
-import kr.hhplus.be.server.domain.order.service.OrderProductService;
+import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;

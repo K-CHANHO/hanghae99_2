@@ -3,8 +3,8 @@ package kr.hhplus.be.server.apidocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.order.dto.OrderRequest;
-import kr.hhplus.be.server.domain.order.dto.OrderResponse;
+import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderRequest;
+import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 

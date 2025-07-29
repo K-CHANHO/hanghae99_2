@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import kr.hhplus.be.server.domain.payment.service.dto.PayCommand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,10 +32,10 @@ public class Payment {
         this.paidAt = new Timestamp(System.currentTimeMillis());
     }
 
-    public void create(String userId, Long orderId, int totalPrice, double discountRate) {
-        this.userId = userId;
-        this.orderId = orderId;
-        this.status = "PENDING";
-        this.paidPrice = (int) (totalPrice * (1 - discountRate));
+    public void create(PayCommand payCommand) {
+        this.userId = payCommand.getUserId();
+        this.orderId = payCommand.getOrderId();
+        this.status = payCommand.getStatus();
+        this.paidPrice = (int) (payCommand.getTotalPrice() * (1 - payCommand.getDiscountRate()));
     }
 }

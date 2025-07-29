@@ -2,6 +2,8 @@ package kr.hhplus.be.server.domain.payment.service;
 
 import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
+import kr.hhplus.be.server.domain.payment.service.dto.PayCommand;
+import kr.hhplus.be.server.domain.payment.service.dto.PayResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,15 +36,21 @@ public class PaymentServiceTest {
         Long orderId = 1L;
         int totalPrice = 100000;
         double discountRate = 0.1;
+        PayCommand payCommand = PayCommand.builder()
+                        .userId(userId)
+                        .orderId(orderId)
+                        .totalPrice(totalPrice)
+                        .discountRate(discountRate)
+                        .build();
         when(paymentRepository.save(any(Payment.class))).thenReturn(Payment.builder().status("PENDING").paidPrice((int) (totalPrice * (1 - discountRate))).build());
 
         // when
-        Payment payment = paymentService.pay(userId, orderId, totalPrice, discountRate);
+        PayResult payResult = paymentService.pay(payCommand);
 
         // then
-        assertThat(payment).isNotNull();
-        assertThat(payment.getStatus()).isEqualTo("PAID");
-        assertThat(payment.getPaidPrice()).isEqualTo((int) (totalPrice * (1 - discountRate)));
+        assertThat(payResult).isNotNull();
+        assertThat(payResult.getStatus()).isEqualTo("PAID");
+        assertThat(payResult.getPaidPrice()).isEqualTo((int) (totalPrice * (1 - discountRate)));
     }
 
     @Test

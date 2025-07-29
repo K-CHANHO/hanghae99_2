@@ -2,6 +2,8 @@ package kr.hhplus.be.server.domain.payment.service;
 
 import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
+import kr.hhplus.be.server.domain.payment.service.dto.PayCommand;
+import kr.hhplus.be.server.domain.payment.service.dto.PayResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,10 +18,11 @@ import java.util.List;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
 
-    public Payment pay(String userId, Long orderId, int totalPrice, double discountRate){
+    public PayResult pay(PayCommand payCommand){
+
         // 결제 생성
         Payment payment = new Payment();
-        payment.create(userId, orderId, totalPrice, discountRate);
+        payment.create(payCommand);
 
         // 결제 요청
         Payment createdPayment = paymentRepository.save(payment);
@@ -28,7 +31,7 @@ public class PaymentService {
         // 알림 전송
         sendPaymentNotification(createdPayment);
 
-        return createdPayment;
+        return new PayResult(createdPayment);
     }
 
     public List<Long> getPaidOrderIdsWithinLastDays(int days) {

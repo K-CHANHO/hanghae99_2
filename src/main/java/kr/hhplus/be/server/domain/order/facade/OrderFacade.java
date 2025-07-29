@@ -9,6 +9,7 @@ import kr.hhplus.be.server.domain.order.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.payment.service.PaymentService;
+import kr.hhplus.be.server.domain.payment.service.dto.PayCommand;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,13 @@ public class OrderFacade {
         balanceService.useBalance(userId, order.getTotalPrice(), discountRate);
 
         // 결제
-        paymentService.pay(userId, order.getOrderId(), order.getTotalPrice(), discountRate);
+        PayCommand payCommand = PayCommand.builder()
+                        .userId(userId)
+                        .orderId(order.getOrderId())
+                        .totalPrice(order.getTotalPrice())
+                        .discountRate(discountRate)
+                        .build();
+        paymentService.pay(payCommand);
 
         return paidOrder;
     }

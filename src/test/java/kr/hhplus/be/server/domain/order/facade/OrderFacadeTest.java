@@ -10,6 +10,8 @@ import kr.hhplus.be.server.domain.order.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.service.OrderService;
 import kr.hhplus.be.server.domain.payment.entity.Payment;
 import kr.hhplus.be.server.domain.payment.service.PaymentService;
+import kr.hhplus.be.server.domain.payment.service.dto.PayCommand;
+import kr.hhplus.be.server.domain.payment.service.dto.PayResult;
 import kr.hhplus.be.server.domain.product.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,10 +86,17 @@ public class OrderFacadeTest {
                 .paidPrice((int) (mockOrder.getTotalPrice() * (1 - mockCoupon.getDiscountRate())))
                 .status("PAID")
                 .build();
+        PayCommand mockPayCommand = PayCommand.builder()
+                .userId(userId)
+                .orderId(mockOrder.getOrderId())
+                .totalPrice(mockOrder.getTotalPrice())
+                .discountRate(mockCoupon.getDiscountRate())
+                .build();
+        PayResult payResult = new PayResult(mockPayment);
 
         when(orderService.createOrder(userId, orderProductDtoList)).thenReturn(mockOrder);
         when(couponService.useCoupon(userId, couponId)).thenReturn(mockUserCoupon);
-        when(paymentService.pay(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate())).thenReturn(mockPayment);
+        when(paymentService.pay(any(PayCommand.class))).thenReturn(payResult);
 
         // when
         orderFacade.orderProcess(userId, orderProductDtoList, couponId);
@@ -97,7 +106,7 @@ public class OrderFacadeTest {
         verify(productService, times(3)).getProduct(anyLong());
         verify(orderProductService).save(userId, mockOrder.getOrderId(), orderProductDtoList);
         verify(couponService).useCoupon(userId, couponId);
-        verify(paymentService).pay(userId, mockOrder.getOrderId(), mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());
+        verify(paymentService).pay(any(PayCommand.class));
         verify(balanceService).useBalance(userId, mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());
         verify(orderService).changeStatus(mockOrder.getOrderId(), "PAID");
     }

@@ -1,12 +1,13 @@
 package kr.hhplus.be.server.domain.order.facade;
 
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequestDto;
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponseDto;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.entity.Order;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.service.ProductService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -42,18 +40,19 @@ public class OrderFacadeIntegrationTest {
     public void orderProcessWithLessStock(){
         // given
         String userId = "sampleUserId";
+        ViewBalanceServiceRequestDto viewBalanceServiceRequestDto = new ViewBalanceServiceRequestDto(userId);
         ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(100).build();
         orderProductDtoList.add(orderProductDto1);
 
         // when
-        Balance balance = balanceService.getBalance(userId);
+        ViewBalanceServiceResponseDto serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequestDto);
 
         // then
         assertThatThrownBy(() -> orderFacade.orderProcess(userId, orderProductDtoList, null))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("재고가 부족합니다.");
-        assertThat(balance.getBalance()).isEqualTo(300000);
+        assertThat(serviceResponseDto.getBalance()).isEqualTo(300000);
 
     }
 
@@ -94,14 +93,15 @@ public class OrderFacadeIntegrationTest {
 
         // when
         Order order = orderFacade.orderProcess(userId, orderProductDtoList, couponId);
-        Balance afterBalance = balanceService.getBalance(order.getUserId());
+        ViewBalanceServiceRequestDto viewBalanceServiceRequestDto = new ViewBalanceServiceRequestDto(order.getUserId());
+        ViewBalanceServiceResponseDto viewBalanceServiceResponseDto = balanceService.getBalance(viewBalanceServiceRequestDto);
 
 
         // then
         assertThat(order).isNotNull();
         assertThat(order.getStatus()).isEqualTo("PAID");
         assertThat(order.getTotalPrice()).isEqualTo(140000);
-        assertThat(afterBalance.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
+        assertThat(viewBalanceServiceResponseDto.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
     }
 
 }

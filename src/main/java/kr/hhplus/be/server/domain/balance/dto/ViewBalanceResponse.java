@@ -16,9 +16,9 @@ public class ViewBalanceResponse {
     private String userId;
     private int balance;
 
-    public void from(Balance balance){
-        this.userId = balance.getUserId();
-        this.balance = balance.getBalance();
+    public ViewBalanceResponse(ViewBalanceServiceResponseDto serviceResponseDto) {
+        this.userId = serviceResponseDto.getUserId();
+        this.balance = serviceResponseDto.getBalance();
     }
 
 }

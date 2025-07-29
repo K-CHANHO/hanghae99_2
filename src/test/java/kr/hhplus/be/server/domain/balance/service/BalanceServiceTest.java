@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.balance.service;
 
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequestDto;
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponseDto;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -32,15 +34,16 @@ public class BalanceServiceTest {
     public void getBalance(){
         // given
         String userId = "sampleUserId";
+        ViewBalanceServiceRequestDto viewBalanceServiceRequestDto = new ViewBalanceServiceRequestDto(userId);
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when
-        Balance balance = balanceService.getBalance(userId);
+        ViewBalanceServiceResponseDto serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequestDto);
 
         // then
-        assertThat(balance).isNotNull();
-        assertThat(userId).isEqualTo(balance.getUserId());
-        assertThat(100000).isEqualTo(balance.getBalance());
+        assertThat(serviceResponseDto).isNotNull();
+        assertThat(userId).isEqualTo(serviceResponseDto.getUserId());
+        assertThat(100000).isEqualTo(serviceResponseDto.getBalance());
     }
 
     @ParameterizedTest

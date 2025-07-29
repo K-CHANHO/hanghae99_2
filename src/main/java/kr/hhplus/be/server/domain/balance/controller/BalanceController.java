@@ -3,9 +3,7 @@ package kr.hhplus.be.server.domain.balance.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.apidocs.BalanceApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.balance.dto.ChargeBalanceRequest;
-import kr.hhplus.be.server.domain.balance.dto.ChargeBalanceResponse;
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceResponse;
+import kr.hhplus.be.server.domain.balance.dto.*;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +21,10 @@ public class BalanceController implements BalanceApiDocs {
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId) {
 
-        Balance balance = balanceService.getBalance(userId);
-        ViewBalanceResponse viewBalanceResponse = new ViewBalanceResponse();
-        viewBalanceResponse.from(balance);
+        ViewBalanceServiceRequestDto viewBalanceServiceRequestDto = new ViewBalanceServiceRequestDto(userId);
+
+        ViewBalanceServiceResponseDto serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequestDto);
+        ViewBalanceResponse viewBalanceResponse = new ViewBalanceResponse(serviceResponseDto);
 
         ApiResponse<ViewBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 조회 성공");

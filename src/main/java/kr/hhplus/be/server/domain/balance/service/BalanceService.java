@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.balance.service;
 
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequestDto;
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponseDto;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +13,11 @@ public class BalanceService{
 
     private final BalanceRepository balanceRepository;
 
-    public Balance getBalance(String userId){
+    public ViewBalanceServiceResponseDto getBalance(ViewBalanceServiceRequestDto viewBalanceServiceRequestDto){
 
-        return balanceRepository.findById(userId).orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
+        Balance balance = balanceRepository.findById(viewBalanceServiceRequestDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
+        return new ViewBalanceServiceResponseDto(balance);
     }
 
     public Balance chargeBalance(String userId, int chargeAmount) {

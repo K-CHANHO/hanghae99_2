@@ -1,5 +1,8 @@
 package kr.hhplus.be.server.domain.balance.controller;
 
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceResponse;
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequestDto;
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponseDto;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.service.BalanceService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -45,8 +49,8 @@ public class BalanceControllerTest {
         // given
         String url = "/api/v1/balance/{userId}";
         String userId = "sampleUserId";
-        Balance mockBalance = Balance.builder().userId(userId).balance(100000).build();
-        when(balanceService.getBalance(userId)).thenReturn(mockBalance);
+        ViewBalanceServiceResponseDto viewBalanceServiceResponseDto = ViewBalanceServiceResponseDto.builder().userId(userId).balance(100000).build();
+        when(balanceService.getBalance(any(ViewBalanceServiceRequestDto.class))).thenReturn(viewBalanceServiceResponseDto);
 
         // when
         ResultActions result = mockMvc.perform(

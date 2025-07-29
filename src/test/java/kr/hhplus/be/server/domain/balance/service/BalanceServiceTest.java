@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.domain.balance.service;
 
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequestDto;
-import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponseDto;
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceRequest;
+import kr.hhplus.be.server.domain.balance.dto.ViewBalanceServiceResponse;
 import kr.hhplus.be.server.domain.balance.entity.Balance;
 import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -34,11 +34,11 @@ public class BalanceServiceTest {
     public void getBalance(){
         // given
         String userId = "sampleUserId";
-        ViewBalanceServiceRequestDto viewBalanceServiceRequestDto = new ViewBalanceServiceRequestDto(userId);
+        ViewBalanceServiceRequest viewBalanceServiceRequest = new ViewBalanceServiceRequest(userId);
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when
-        ViewBalanceServiceResponseDto serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequestDto);
+        ViewBalanceServiceResponse serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequest);
 
         // then
         assertThat(serviceResponseDto).isNotNull();

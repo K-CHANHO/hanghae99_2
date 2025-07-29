@@ -8,12 +8,12 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ViewBalanceServiceResponseDto {
+public class ViewBalanceServiceResponse {
 
     private String userId;
     private int balance;
 
-    public ViewBalanceServiceResponseDto(Balance balance){
+    public ViewBalanceServiceResponse(Balance balance){
         this.userId = balance.getUserId();
         this.balance = balance.getBalance();
     }

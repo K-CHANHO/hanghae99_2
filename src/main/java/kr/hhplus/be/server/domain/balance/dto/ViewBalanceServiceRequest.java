@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ViewBalanceServiceRequestDto {
+public class ViewBalanceServiceRequest {
     private String userId;
 
-    public ViewBalanceServiceRequestDto(String userId) {
+    public ViewBalanceServiceRequest(String userId) {
         this.userId = userId;
     }
 }

@@ -21,9 +21,9 @@ public class BalanceController implements BalanceApiDocs {
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId) {
 
-        ViewBalanceServiceRequestDto viewBalanceServiceRequestDto = new ViewBalanceServiceRequestDto(userId);
+        ViewBalanceServiceRequest viewBalanceServiceRequest = new ViewBalanceServiceRequest(userId);
 
-        ViewBalanceServiceResponseDto serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequestDto);
+        ViewBalanceServiceResponse serviceResponseDto = balanceService.getBalance(viewBalanceServiceRequest);
         ViewBalanceResponse viewBalanceResponse = new ViewBalanceResponse(serviceResponseDto);
 
         ApiResponse<ViewBalanceResponse> result = new ApiResponse<>();

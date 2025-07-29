@@ -4,6 +4,8 @@ import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.repository.UserCouponRepository;
+import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponCommand;
+import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,12 +43,13 @@ public class CouponServiceTest {
         Long couponId = 1L;
         String userId = "sampleUserId";
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "END", 0.1));
+        IssueCouponCommand couponCommand = IssueCouponCommand.builder().userId(userId).couponId(couponId).build();
 
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.countByCouponId(couponId)).thenReturn(issuedQuantity);
+        when(userCouponRepository.countByCoupon_CouponId(couponId)).thenReturn(issuedQuantity);
 
         // when, then
-        assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
+        assertThatThrownBy(() -> couponService.issueCoupon(couponCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("쿠폰이 소진되었습니다.");
     }
@@ -58,11 +61,13 @@ public class CouponServiceTest {
         Long couponId = 1L;
         String userId = "sampleUserId";
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
+        IssueCouponCommand couponCommand = IssueCouponCommand.builder().userId(userId).couponId(couponId).build();
+
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(new UserCoupon()));
+        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(new UserCoupon()));
 
         // when, then
-        assertThatThrownBy(() -> couponService.issueCoupon(userId, couponId))
+        assertThatThrownBy(() -> couponService.issueCoupon(couponCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("이미 발급된 쿠폰입니다.");
     }
@@ -74,16 +79,18 @@ public class CouponServiceTest {
         Long couponId = 1L;
         String userId = "sampleUserId";
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
-        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", couponId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, coupon.get());
+        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, coupon.get());
+        IssueCouponCommand couponCommand = IssueCouponCommand.builder().userId(userId).couponId(couponId).build();
+
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.countByCouponId(couponId)).thenReturn(10);
+        when(userCouponRepository.countByCoupon_CouponId(couponId)).thenReturn(10);
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(userCoupon);
 
         // when
-        UserCoupon issuedCoupon = couponService.issueCoupon(userId, couponId);
+        IssueCouponResult couponResult = couponService.issueCoupon(couponCommand);
 
         // then
-        assertThat(issuedCoupon.getCoupon().getCouponId()).isEqualTo(coupon.get().getCouponId());
+        assertThat(couponResult.getCoupon().getCouponId()).isEqualTo(coupon.get().getCouponId());
 
     }
 
@@ -93,8 +100,8 @@ public class CouponServiceTest {
         // given
         String userId = "sampleUserId";
         Long couponId = 1L;
-        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", couponId, "USED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon());
-        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
+        UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", "USED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon());
+        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
         // when
         UserCoupon usedCoupon = couponService.useCoupon(userId, couponId);
@@ -110,8 +117,8 @@ public class CouponServiceTest {
         // given
         String userId = "sampleUserId";
         Long couponId = 1L;
-        UserCoupon userCoupon = new UserCoupon(1L, userId, couponId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS)), null, new Coupon());
-        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
+        UserCoupon userCoupon = new UserCoupon(1L, userId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS)), null, new Coupon());
+        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
         // when
         UserCoupon expiredCoupon = couponService.useCoupon(userId, couponId);
@@ -128,11 +135,11 @@ public class CouponServiceTest {
         String userId = "sampleUserId";
         Long couponId = 1L;
         Coupon coupon = Coupon.builder().couponId(couponId).build();
-        UserCoupon unusedCoupon = UserCoupon.builder().couponId(couponId).coupon(coupon).status("UNUSED").expiredAt(Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS))).build();
-        UserCoupon usedCoupon = UserCoupon.builder().couponId(couponId).coupon(coupon).status("USED").build();
-        when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
+        UserCoupon unusedCoupon = UserCoupon.builder().coupon(coupon).status("UNUSED").expiredAt(Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS))).build();
+        UserCoupon usedCoupon = UserCoupon.builder().coupon(coupon).status("USED").build();
+
+        when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(usedCoupon);
-        when(couponRepository.findById(couponId)).thenReturn(Optional.of(coupon));
 
         // when
         UserCoupon userCoupon = couponService.useCoupon(userId, couponId);
@@ -148,8 +155,8 @@ public class CouponServiceTest {
         // given
         String userId = "sampleUserId";
         List<UserCoupon> sampleUserCoupons = List.of(
-                new UserCoupon(1L, userId, 1L, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon(1L, "쿠폰1", 100, "ING", 0.1)),
-                new UserCoupon(2L, userId, 2L, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon(2L, "쿠폰2", 200, "ING", 0.2))
+                new UserCoupon(1L, userId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon(1L, "쿠폰1", 100, "ING", 0.1)),
+                new UserCoupon(2L, userId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon(2L, "쿠폰2", 200, "ING", 0.2))
         );
         when(userCouponRepository.findByUserId(userId)).thenReturn(Optional.of(sampleUserCoupons));
 

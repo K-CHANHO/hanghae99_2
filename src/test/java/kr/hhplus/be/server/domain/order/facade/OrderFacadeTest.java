@@ -68,7 +68,6 @@ public class OrderFacadeTest {
                 .build();
         UserCoupon mockUserCoupon = UserCoupon.builder()
                 .userId(userId)
-                .couponId(couponId)
                 .coupon(mockCoupon)
                 .build();
         Payment mockPayment = Payment.builder()

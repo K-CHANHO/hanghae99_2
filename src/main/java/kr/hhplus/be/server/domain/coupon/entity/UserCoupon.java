@@ -10,24 +10,23 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class UserCoupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userCouponId;
     private String userId;
-    private Long couponId;
     private String status; // 쿠폰 상태: AVAILABLE, USED, EXPIRED
     private Timestamp issuedAt;
     private Timestamp expiredAt;
     private Timestamp usedAt;
 
-    @Transient @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coupon_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Coupon coupon;
 
     public void issue(String userId, Coupon coupon) {
         this.userId = userId;
-        this.couponId = coupon.getCouponId();
         this.coupon = coupon;
         this.issuedAt = new Timestamp(System.currentTimeMillis());
         this.expiredAt = Timestamp.from(issuedAt.toInstant().plus(7, ChronoUnit.DAYS));

@@ -4,6 +4,8 @@ import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.repository.UserCouponRepository;
+import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponCommand;
+import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,23 +17,27 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
-    public UserCoupon issueCoupon(String userId, Long couponId) {
-        Coupon coupon = couponRepository.findById(couponId).orElseThrow(() -> new RuntimeException("유효한 쿠폰이 아닙니다."));
-        if(userCouponRepository.findByUserIdAndCouponId(userId, couponId).isPresent()) throw new RuntimeException("이미 발급된 쿠폰입니다.");
-        int issuedCouponQuantity = userCouponRepository.countByCouponId(couponId);
+    public IssueCouponResult issueCoupon(IssueCouponCommand couponCommand) {
+
+        Coupon coupon = couponRepository.findById( couponCommand.getCouponId()).orElseThrow(() -> new RuntimeException("유효한 쿠폰이 아닙니다."));
+
+        if(userCouponRepository.findByUserIdAndCoupon_CouponId(couponCommand.getUserId(), couponCommand.getCouponId()).isPresent()){
+            throw new RuntimeException("이미 발급된 쿠폰입니다.");
+        }
+
+        int issuedCouponQuantity = userCouponRepository.countByCoupon_CouponId(couponCommand.getCouponId());
         coupon.checkQuantity(issuedCouponQuantity);
 
         UserCoupon userCoupon = new UserCoupon();
-        userCoupon.issue(userId, coupon);
+        userCoupon.issue(couponCommand.getUserId(), coupon);
 
-        return userCouponRepository.save(userCoupon);
+        UserCoupon savedCoupon = userCouponRepository.save(userCoupon);
+        return new IssueCouponResult(savedCoupon);
     }
 
     public UserCoupon useCoupon(String userId, Long couponId) {
         try{
-            UserCoupon userCoupon = userCouponRepository.findByUserIdAndCouponId(userId, couponId).orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다"));
-            Coupon coupon = couponRepository.findById(userCoupon.getCouponId()).orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다."));
-            userCoupon.setCoupon(coupon);
+            UserCoupon userCoupon = userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId).orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다"));
             userCoupon.useCoupon();
             return userCouponRepository.save(userCoupon);
         }

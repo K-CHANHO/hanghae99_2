@@ -3,7 +3,10 @@ package kr.hhplus.be.server.domain.coupon.controller;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
+import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponCommand;
+import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponResult;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -37,6 +41,7 @@ class CouponControllerTest {
     }
 
     @Test
+    @DisplayName("쿠폰 발급 테스트")
     void issueCoupon() throws Exception {
         // given
         String userId = "sampleUserId";
@@ -56,7 +61,9 @@ class CouponControllerTest {
                 .status("AVAILABLE")
                 .coupon(coupon)
                 .build();
-        Mockito.when(couponService.issueCoupon(userId, couponId)).thenReturn(userCoupon);
+        IssueCouponResult couponResult = new IssueCouponResult(userCoupon);
+        Mockito.when(couponService.issueCoupon(any(IssueCouponCommand.class))).thenReturn(couponResult);
+
         // when
         ResultActions result = mockMvc.perform(
                 post(url)
@@ -65,7 +72,7 @@ class CouponControllerTest {
         );
 
         // then
-        verify(couponService).issueCoupon(userId, couponId);
+        verify(couponService).issueCoupon(any(IssueCouponCommand.class));
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("쿠폰 발급 성공"))
                 .andExpect(jsonPath("$.code").value(200))

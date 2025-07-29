@@ -1,16 +1,14 @@
 package kr.hhplus.be.server.domain.order.presenter.controller.dto;
 
-import kr.hhplus.be.server.domain.order.domain.entity.Order;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class OrderResponse {
 
@@ -20,12 +18,13 @@ public class OrderResponse {
     private String status;
     private Timestamp orderDate;
 
-    public void from(Order order) {
-        this.orderId = order.getOrderId();
-        this.userId = order.getUserId();
-        this.totalPrice = order.getTotalPrice();
-        this.status = order.getStatus();
-        this.orderDate = order.getCreatedAt();
-
+    public static OrderResponse from(OrderProcessResult orderProcessResult) {
+        return OrderResponse.builder()
+                .orderId(orderProcessResult.getOrderId())
+                .userId(orderProcessResult.getUserId())
+                .totalPrice(orderProcessResult.getTotalPrice())
+                .status(orderProcessResult.getStatus())
+                .orderDate(orderProcessResult.getOrderDate())
+                .build();
     }
 }

@@ -2,10 +2,11 @@ package kr.hhplus.be.server.domain.order.presenter.controller;
 
 import kr.hhplus.be.server.apidocs.OrderApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
+import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderRequest;
 import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderResponse;
-import kr.hhplus.be.server.domain.order.domain.entity.Order;
-import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,9 @@ public class OrderController implements OrderApiDocs {
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody OrderRequest request) {
 
-        Order order = orderFacade.orderProcess(request.getUserId(), request.getOrderProductDtoList(), request.getUserCouponId());
-        OrderResponse orderResponse = new OrderResponse();
-        orderResponse.from(order);
+        OrderProcessCommand orderProcessCommand = OrderProcessCommand.from(request);
+        OrderProcessResult orderProcessResult = orderFacade.orderProcess(orderProcessCommand);
+        OrderResponse orderResponse = OrderResponse.from(orderProcessResult);
 
         ApiResponse<OrderResponse> result = new ApiResponse<>();
         result.setCode(200);

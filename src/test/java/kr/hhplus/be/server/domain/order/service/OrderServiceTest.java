@@ -1,9 +1,13 @@
 package kr.hhplus.be.server.domain.order.service;
 
 import kr.hhplus.be.server.domain.order.application.service.OrderService;
-import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
+import kr.hhplus.be.server.domain.order.application.service.dto.ChangeStatusCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.ChangeStatusResult;
+import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderResult;
 import kr.hhplus.be.server.domain.order.domain.entity.Order;
 import kr.hhplus.be.server.domain.order.domain.repository.OrderRepository;
+import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,10 +48,15 @@ public class OrderServiceTest {
                 .totalPrice(totalPrice)
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build();
+        CreateOrderCommand createOrderCommand = CreateOrderCommand.builder()
+                .userId(userId)
+                .orderProductDtoList(new ArrayList<OrderProductDto>())
+                .build();
+
         when(orderRepository.save(any())).thenReturn(order);
 
         // when
-        Order createdOrder = orderService.createOrder(userId, new ArrayList<OrderProductDto>());
+        CreateOrderResult createdOrder = orderService.createOrder(createOrderCommand);
 
         // then
         assertThat(createdOrder).isNotNull();
@@ -62,14 +71,18 @@ public class OrderServiceTest {
         // given
         Long orderId = 1L;
         String status = "PAID";
+        ChangeStatusCommand changeStatusCommand = ChangeStatusCommand.builder()
+                .orderId(orderId)
+                .status(status)
+                .build();
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(Order.builder().orderId(orderId).status("PENDING").build()));
         when(orderRepository.save(any(Order.class))).thenReturn((Order.builder().orderId(orderId).status("PAID").build()));
 
         // when
-        Order order = orderService.changeStatus(orderId, status);
+        ChangeStatusResult changeStatusResult = orderService.changeStatus(changeStatusCommand);
 
         // then
-        assertThat(order.getStatus()).isEqualTo(status);
+        assertThat(changeStatusResult.getStatus()).isEqualTo(status);
     }
 
 

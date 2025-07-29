@@ -1,22 +1,19 @@
 package kr.hhplus.be.server.domain.order.application.facade;
 
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
-import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
-import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
-import kr.hhplus.be.server.domain.order.domain.entity.Order;
-import kr.hhplus.be.server.domain.order.domain.entity.OrderProduct;
+import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.application.service.OrderService;
+import kr.hhplus.be.server.domain.order.application.service.dto.*;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
-import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,46 +26,44 @@ public class OrderFacade {
     private final ProductService productService;
 
     @Transactional
-    public Order orderProcess(String userId, List<OrderProductDto> orderProductDtoList, Long couponId) {
+    public OrderProcessResult orderProcess(OrderProcessCommand orderProcessCommand) {
 
         // 주문 생성
-        Order order = orderService.createOrder(userId, orderProductDtoList);
-
-        // 주문 상품 조회
-        List<Product> productList = orderProductDtoList.stream()
-                .map(orderProductDto -> productService.getProduct(orderProductDto.getProductId()))
-                .toList();
+        CreateOrderCommand createOrderCommand = CreateOrderCommand.from(orderProcessCommand);
+        CreateOrderResult createOrderResult = orderService.createOrder(createOrderCommand);
 
         // 주문 상품 저장
-        List<OrderProduct> orderProductList = orderProductService.save(userId, order.getOrderId(), orderProductDtoList);
+        OrderProductSaveCommand orderProductSaveCommand = OrderProductSaveCommand.from(orderProcessCommand, createOrderResult);
+        OrderProductSaveResult orderProductList = orderProductService.save(orderProductSaveCommand);
 
         // 쿠폰 적용
-        UserCoupon userCoupon = couponService.useCoupon(userId, couponId);
+        UserCoupon userCoupon = couponService.useCoupon(orderProcessCommand.getUserId(), orderProcessCommand.getUserCouponId());
         double discountRate = 0.0;
         if(userCoupon != null) {
             discountRate = userCoupon.getCoupon().getDiscountRate();
         }
 
         // 재고 차감
-        orderProductList.forEach(product -> {
+        orderProductList.getOrderProductDto2List().forEach(product -> {
             productService.reduceStock(product.getProductId(), product.getQuantity());
         });
 
         // 주문 상태 변경
-        Order paidOrder = orderService.changeStatus(order.getOrderId(), "PAID");
+        ChangeStatusCommand changeStatusCommand = ChangeStatusCommand.from(createOrderResult);
+        ChangeStatusResult changedStatusOrder = orderService.changeStatus(changeStatusCommand);
 
         // 잔액 차감
-        balanceService.useBalance(userId, order.getTotalPrice(), discountRate);
+        balanceService.useBalance(orderProcessCommand.getUserId(), createOrderResult.getTotalPrice(), discountRate);
 
         // 결제
         PayCommand payCommand = PayCommand.builder()
-                        .userId(userId)
-                        .orderId(order.getOrderId())
-                        .totalPrice(order.getTotalPrice())
+                        .userId(orderProcessCommand.getUserId())
+                        .orderId(createOrderResult.getOrderId())
+                        .totalPrice(createOrderResult.getTotalPrice())
                         .discountRate(discountRate)
                         .build();
         paymentService.pay(payCommand);
 
-        return paidOrder;
+        return OrderProcessResult.from(changedStatusOrder);
     }
 }

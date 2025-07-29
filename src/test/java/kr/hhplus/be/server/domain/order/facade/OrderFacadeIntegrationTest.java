@@ -1,13 +1,14 @@
 package kr.hhplus.be.server.domain.order.facade;
 
+import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
 import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
-import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
-import kr.hhplus.be.server.domain.order.domain.entity.Order;
-import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
+import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,8 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Sql(scripts = {
@@ -45,11 +47,17 @@ public class OrderFacadeIntegrationTest {
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(100).build();
         orderProductDtoList.add(orderProductDto1);
 
+        OrderProcessCommand orderProcessCommand = OrderProcessCommand.builder()
+                .userId("sampleUserId")
+                .userCouponId(1L)
+                .orderProductDtoList(orderProductDtoList)
+                .build();
+
         // when
         ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
 
         // then
-        assertThatThrownBy(() -> orderFacade.orderProcess(userId, orderProductDtoList, null))
+        assertThatThrownBy(() -> orderFacade.orderProcess(orderProcessCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("재고가 부족합니다.");
         assertThat(serviceResponseDto.getBalance()).isEqualTo(300000);
@@ -66,11 +74,17 @@ public class OrderFacadeIntegrationTest {
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(4L).price(1000000).quantity(1).build();
         orderProductDtoList.add(orderProductDto1);
 
+        OrderProcessCommand orderProcessCommand = OrderProcessCommand.builder()
+                .userId("sampleUserId")
+                .userCouponId(1L)
+                .orderProductDtoList(orderProductDtoList)
+                .build();
+
         // when
         Product product = productService.getProduct(4L);
 
         // then
-        assertThatThrownBy(() -> orderFacade.orderProcess(userId, orderProductDtoList, null))
+        assertThatThrownBy(() -> orderFacade.orderProcess(orderProcessCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("잔고가 부족합니다.");
         assertThat(product.getProductStock().getStockQuantity()).isEqualTo(10);
@@ -90,17 +104,22 @@ public class OrderFacadeIntegrationTest {
         orderProductDtoList.add(orderProductDto2);
         orderProductDtoList.add(orderProductDto3);
         Long couponId = 1L;
+        OrderProcessCommand orderProcessCommand = OrderProcessCommand.builder()
+                .userId(userId)
+                .userCouponId(couponId)
+                .orderProductDtoList(orderProductDtoList)
+                .build();
 
         // when
-        Order order = orderFacade.orderProcess(userId, orderProductDtoList, couponId);
-        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(order.getUserId());
+        OrderProcessResult orderProcessResult = orderFacade.orderProcess(orderProcessCommand);
+        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(orderProcessResult.getUserId());
         ViewBalanceResult viewBalanceResult = balanceService.getBalance(viewBalanceCommand);
 
 
         // then
-        assertThat(order).isNotNull();
-        assertThat(order.getStatus()).isEqualTo("PAID");
-        assertThat(order.getTotalPrice()).isEqualTo(140000);
+        assertThat(orderProcessResult).isNotNull();
+        assertThat(orderProcessResult.getStatus()).isEqualTo("PAID");
+        assertThat(orderProcessResult.getTotalPrice()).isEqualTo(140000);
         assertThat(viewBalanceResult.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
     }
 

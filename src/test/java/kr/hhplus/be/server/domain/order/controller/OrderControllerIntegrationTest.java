@@ -41,9 +41,11 @@ public class OrderControllerIntegrationTest {
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(4L).price(1000000).quantity(1).build();
         orderProductDtoList.add(orderProductDto1);
 
-        OrderRequest body = new OrderRequest();
-        body.setUserId(userId);
-        body.setOrderProductDtoList(orderProductDtoList);
+        OrderRequest body = OrderRequest.builder()
+                .userId(userId)
+                .orderProductDtoList(orderProductDtoList)
+                .build();
+
 
         Gson gson = new Gson();
         String url = "/api/v1/order";
@@ -71,9 +73,10 @@ public class OrderControllerIntegrationTest {
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(100).build();
         orderProductDtoList.add(orderProductDto1);
 
-        OrderRequest body = new OrderRequest();
-        body.setUserId(userId);
-        body.setOrderProductDtoList(orderProductDtoList);
+        OrderRequest body = OrderRequest.builder()
+                .userId(userId)
+                .orderProductDtoList(orderProductDtoList)
+                .build();
 
         Gson gson = new Gson();
         String url = "/api/v1/order";
@@ -108,10 +111,11 @@ public class OrderControllerIntegrationTest {
         orderProductDtoList.add(orderProductDto2);
         orderProductDtoList.add(orderProductDto3);
 
-        OrderRequest body = new OrderRequest();
-        body.setUserId(userId);
-        body.setUserCouponId(couponId);
-        body.setOrderProductDtoList(orderProductDtoList);
+        OrderRequest body = OrderRequest.builder()
+                .userId(userId)
+                .userCouponId(couponId)
+                .orderProductDtoList(orderProductDtoList)
+                .build();
 
         Gson gson = new Gson();
         String url = "/api/v1/order";

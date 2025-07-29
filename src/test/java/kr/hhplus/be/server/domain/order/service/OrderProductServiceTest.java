@@ -1,9 +1,10 @@
 package kr.hhplus.be.server.domain.order.service;
 
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
-import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
-import kr.hhplus.be.server.domain.order.domain.entity.OrderProduct;
+import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveResult;
 import kr.hhplus.be.server.domain.order.domain.repository.OrderProductRepository;
+import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,13 +33,19 @@ public class OrderProductServiceTest {
         String userId = "sampleUserId";
         Long orderId = 1L;
         ArrayList<OrderProductDto> productList = new ArrayList<>();
+        OrderProductSaveCommand orderProductSaveCommand = OrderProductSaveCommand.builder()
+                        .userId(userId)
+                        .orderId(orderId)
+                        .orderProductDtoList(productList)
+                        .build();
         when(orderProductRepository.saveAll(anyList())).thenReturn(new ArrayList<>(3));
+
         // when
-        List<OrderProduct> savedOrderProducts = orderProductService.save(userId, orderId, productList);
+        OrderProductSaveResult orderProductSaveResult = orderProductService.save(orderProductSaveCommand);
 
         // then
-        assertThat(savedOrderProducts).isNotNull();
-        assertThat(savedOrderProducts.size()).isEqualTo(productList.size());
+        assertThat(orderProductSaveResult.getOrderProductDto2List()).isNotNull();
+        assertThat(orderProductSaveResult.getOrderProductDto2List().size()).isEqualTo(productList.size());
     }
 
     @Test

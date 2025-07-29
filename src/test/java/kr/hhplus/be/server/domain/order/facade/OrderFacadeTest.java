@@ -1,18 +1,21 @@
 package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
+import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
-import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
-import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
-import kr.hhplus.be.server.domain.order.domain.entity.Order;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.application.service.OrderService;
-import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
+import kr.hhplus.be.server.domain.order.application.service.dto.*;
+import kr.hhplus.be.server.domain.order.domain.entity.Order;
+import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayResult;
+import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,11 +23,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +63,7 @@ public class OrderFacadeTest {
                 .orderId(1L)
                 .userId(userId)
                 .totalPrice((int) orderProductDtoList.stream().mapToLong(dto -> (long) dto.getPrice() * dto.getQuantity()).sum())
-                .status("PENDING")
+                .status("PAID")
                 .build();
         Coupon mockCoupon = Coupon.builder()
                 .couponId(couponId)
@@ -95,20 +98,61 @@ public class OrderFacadeTest {
                 .build();
         PayResult payResult = new PayResult(mockPayment);
 
-        when(orderService.createOrder(userId, orderProductDtoList)).thenReturn(mockOrder);
+        OrderProcessCommand orderProcessCommand = OrderProcessCommand.builder()
+                .userId(userId)
+                .userCouponId(couponId)
+                .orderProductDtoList(orderProductDtoList)
+                .build();
+        OrderProcessResult mockOrderProcessResult = OrderProcessResult.builder()
+                .orderId(1L)
+                .userId(userId)
+                .totalPrice(100000)
+                .status("PAID")
+                .build();
+        CreateOrderCommand createOrderCommand = CreateOrderCommand.builder()
+                .userId(userId)
+                .orderProductDtoList(orderProductDtoList)
+                .build();
+        CreateOrderResult createOrderResult = CreateOrderResult.builder()
+                .orderId(1L)
+                .userId(userId)
+                .totalPrice((int) orderProductDtoList.stream().mapToLong(dto -> (long) dto.getPrice() * dto.getQuantity()).sum())
+                .status("PENDING")
+                .build();
+        ChangeStatusCommand changeStatusCommand = ChangeStatusCommand.builder()
+                .orderId(1L)
+                .status("PAID")
+                .build();
+        ChangeStatusResult changeStatusResult = ChangeStatusResult.builder()
+                .orderId(1L)
+                .status("PAID")
+                .build();
+
+        OrderProductSaveResult.OrderProductDto2 d1 = OrderProductSaveResult.OrderProductDto2.builder()
+                .orderProductId(1L)
+                .price(10000)
+                .orderId(1L)
+                .build();
+        List<OrderProductSaveResult.OrderProductDto2> dtos = new ArrayList<>();
+        dtos.add(d1);
+        OrderProductSaveResult orderProductSaveResult = OrderProductSaveResult.builder()
+                .orderProductDto2List(dtos)
+                .build();
+        when(orderService.createOrder(any(CreateOrderCommand.class))).thenReturn(createOrderResult);
+        when(orderService.changeStatus(any(ChangeStatusCommand.class))).thenReturn(changeStatusResult);
         when(couponService.useCoupon(userId, couponId)).thenReturn(mockUserCoupon);
         when(paymentService.pay(any(PayCommand.class))).thenReturn(payResult);
+        when(orderProductService.save(any(OrderProductSaveCommand.class))).thenReturn(orderProductSaveResult);
 
         // when
-        orderFacade.orderProcess(userId, orderProductDtoList, couponId);
+        orderFacade.orderProcess(orderProcessCommand);
 
         // then
-        verify(orderService).createOrder(userId, orderProductDtoList);
-        verify(productService, times(3)).getProduct(anyLong());
-        verify(orderProductService).save(userId, mockOrder.getOrderId(), orderProductDtoList);
+        verify(orderService).createOrder(any(CreateOrderCommand.class));
+        verify(orderProductService).save(any(OrderProductSaveCommand.class));
         verify(couponService).useCoupon(userId, couponId);
         verify(paymentService).pay(any(PayCommand.class));
         verify(balanceService).useBalance(userId, mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());
-        verify(orderService).changeStatus(mockOrder.getOrderId(), "PAID");
+        verify(orderService).changeStatus(any(ChangeStatusCommand.class));
     }
 }

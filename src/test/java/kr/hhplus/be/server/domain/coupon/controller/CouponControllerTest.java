@@ -1,10 +1,11 @@
 package kr.hhplus.be.server.domain.coupon.controller;
 
-import kr.hhplus.be.server.domain.coupon.entity.Coupon;
-import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
-import kr.hhplus.be.server.domain.coupon.service.CouponService;
-import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponCommand;
-import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponResult;
+import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
+import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
+import kr.hhplus.be.server.domain.coupon.present.controller.CouponController;
+import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponCommand;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

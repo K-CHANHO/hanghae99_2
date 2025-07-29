@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.coupon.entity;
+package kr.hhplus.be.server.domain.coupon.domain.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

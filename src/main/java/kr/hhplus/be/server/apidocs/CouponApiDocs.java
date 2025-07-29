@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.coupon.controller.dto.IssueCouponRequest;
-import kr.hhplus.be.server.domain.coupon.controller.dto.IssueCouponResponse;
+import kr.hhplus.be.server.domain.coupon.present.controller.dto.IssueCouponRequest;
+import kr.hhplus.be.server.domain.coupon.present.controller.dto.IssueCouponResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 

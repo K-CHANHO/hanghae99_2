@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
-import kr.hhplus.be.server.domain.coupon.entity.Coupon;
-import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
-import kr.hhplus.be.server.domain.coupon.service.CouponService;
+import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
+import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
+import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.entity.Order;
 import kr.hhplus.be.server.domain.order.service.OrderProductService;

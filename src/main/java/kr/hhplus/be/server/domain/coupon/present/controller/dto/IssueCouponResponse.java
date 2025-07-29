@@ -1,7 +1,6 @@
-package kr.hhplus.be.server.domain.coupon.controller.dto;
+package kr.hhplus.be.server.domain.coupon.present.controller.dto;
 
-import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
-import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponResult;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponResult;
 import lombok.Data;
 
 @Data

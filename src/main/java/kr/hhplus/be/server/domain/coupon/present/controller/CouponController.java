@@ -1,13 +1,12 @@
-package kr.hhplus.be.server.domain.coupon.controller;
+package kr.hhplus.be.server.domain.coupon.present.controller;
 
 import kr.hhplus.be.server.apidocs.CouponApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.coupon.controller.dto.IssueCouponRequest;
-import kr.hhplus.be.server.domain.coupon.controller.dto.IssueCouponResponse;
-import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
-import kr.hhplus.be.server.domain.coupon.service.CouponService;
-import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponCommand;
-import kr.hhplus.be.server.domain.coupon.service.dto.IssueCouponResult;
+import kr.hhplus.be.server.domain.coupon.present.controller.dto.IssueCouponRequest;
+import kr.hhplus.be.server.domain.coupon.present.controller.dto.IssueCouponResponse;
+import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponCommand;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

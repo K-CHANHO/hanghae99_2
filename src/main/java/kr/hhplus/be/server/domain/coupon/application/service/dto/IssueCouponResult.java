@@ -1,7 +1,7 @@
-package kr.hhplus.be.server.domain.coupon.service.dto;
+package kr.hhplus.be.server.domain.coupon.application.service.dto;
 
-import kr.hhplus.be.server.domain.coupon.entity.Coupon;
-import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
+import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
+import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

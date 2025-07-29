@@ -1,7 +1,7 @@
-package kr.hhplus.be.server.domain.balance.controller.dto;
+package kr.hhplus.be.server.domain.balance.presenter.controller.dto;
 
 
-import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
 import lombok.*;
 
 @Getter

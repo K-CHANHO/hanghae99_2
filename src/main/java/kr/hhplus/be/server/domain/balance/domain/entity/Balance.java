@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.balance.entity;
+package kr.hhplus.be.server.domain.balance.domain.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

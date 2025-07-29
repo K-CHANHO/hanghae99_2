@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.domain.balance.controller.dto;
+package kr.hhplus.be.server.domain.balance.presenter.controller.dto;
 
-import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

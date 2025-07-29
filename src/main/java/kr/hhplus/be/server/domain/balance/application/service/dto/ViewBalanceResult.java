@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.domain.balance.service.dto;
+package kr.hhplus.be.server.domain.balance.application.service.dto;
 
-import kr.hhplus.be.server.domain.balance.entity.Balance;
+import kr.hhplus.be.server.domain.balance.domain.entity.Balance;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

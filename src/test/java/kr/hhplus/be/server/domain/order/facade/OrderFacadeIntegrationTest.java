@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.domain.order.facade;
 
-import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceCommand;
-import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceResult;
-import kr.hhplus.be.server.domain.balance.service.BalanceService;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.entity.Order;
 import kr.hhplus.be.server.domain.product.entity.Product;

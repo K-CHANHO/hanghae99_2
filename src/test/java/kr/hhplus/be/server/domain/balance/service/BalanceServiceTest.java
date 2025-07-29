@@ -1,11 +1,12 @@
 package kr.hhplus.be.server.domain.balance.service;
 
-import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceCommand;
-import kr.hhplus.be.server.domain.balance.service.dto.ChargeBalanceResult;
-import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceCommand;
-import kr.hhplus.be.server.domain.balance.service.dto.ViewBalanceResult;
-import kr.hhplus.be.server.domain.balance.entity.Balance;
-import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
+import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.domain.entity.Balance;
+import kr.hhplus.be.server.domain.balance.domain.repository.BalanceRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

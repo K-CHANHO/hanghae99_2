@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.balance.controller.dto;
+package kr.hhplus.be.server.domain.balance.presenter.controller.dto;
 
 import lombok.Builder;
 import lombok.Getter;

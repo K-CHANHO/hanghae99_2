@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.balance.service.dto;
+package kr.hhplus.be.server.domain.balance.application.service.dto;
 
 import lombok.Builder;
 import lombok.Getter;

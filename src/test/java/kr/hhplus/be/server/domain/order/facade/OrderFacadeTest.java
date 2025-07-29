@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain.order.facade;
 
-import kr.hhplus.be.server.domain.balance.service.BalanceService;
+import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;

@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.application.service.dto;
 
+import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,15 +23,15 @@ public class UseCouponResult {
     private Timestamp usedAt;
     private Double discountRate;
 
-    public static UseCouponResult from(UserCoupon userCoupon) {
+    public static UseCouponResult from(UserCoupon usedCoupon, Coupon coupon) {
         return UseCouponResult.builder()
-                .userCouponId(userCoupon.getUserCouponId())
-                .couponId(userCoupon.getCoupon().getCouponId())
-                .userId(userCoupon.getUserId())
-                .status(userCoupon.getStatus())
-                .issuedAt(userCoupon.getIssuedAt())
-                .usedAt(userCoupon.getUsedAt())
-                .discountRate(userCoupon.getCoupon().getDiscountRate())
+                .userCouponId(usedCoupon.getUserCouponId())
+                .couponId(usedCoupon.getCouponId())
+                .userId(usedCoupon.getUserId())
+                .status(usedCoupon.getStatus())
+                .issuedAt(usedCoupon.getIssuedAt())
+                .usedAt(usedCoupon.getUsedAt())
+                .discountRate(coupon.getDiscountRate())
                 .build();
     }
 }

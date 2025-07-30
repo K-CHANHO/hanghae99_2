@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface UserCouponJpaRepository extends JpaRepository<UserCoupon, Long> {
 
-    int countByCoupon_CouponId(Long couponId);
+    int countByCouponId(Long couponId);
 
-    Optional<UserCoupon> findByUserIdAndCoupon_CouponId(String userId, Long couponId);
+    Optional<UserCoupon> findByUserIdAndCouponId(String userId, Long couponId);
 
     List<UserCoupon> findByUserId(String userId);
 

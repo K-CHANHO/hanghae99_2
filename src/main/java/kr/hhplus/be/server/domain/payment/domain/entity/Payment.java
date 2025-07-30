@@ -22,10 +22,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
     private String userId;
-    private Long orderId;
     private String status; // PENDING, PAID
     private int paidPrice;
     private Timestamp paidAt;
+
+    private Long orderId; // order의 pk
 
     public void pay() {
         this.status = "PAID";

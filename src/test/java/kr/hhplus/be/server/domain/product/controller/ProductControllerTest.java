@@ -88,9 +88,9 @@ class ProductControllerTest {
         ProductStock productStock2 = ProductStock.builder().productId(2L).stockQuantity(20).build();
         ProductStock productStock3 = ProductStock.builder().productId(2L).stockQuantity(30).build();
         List<Product> mockTopProducts = List.of(
-                Product.builder().productId(1L).productName("항해 백엔드 9기 과정").price(1500000).productStock(productStock1).build(),
-                Product.builder().productId(2L).productName("항해 프론트엔드 9기 과정").price(1200000).productStock(productStock2).build(),
-                Product.builder().productId(3L).productName("항해 데브옵스 9기 과정").price(1600000).productStock(productStock3).build()
+                Product.builder().productId(1L).productName("항해 백엔드 9기 과정").price(1500000).build(),
+                Product.builder().productId(2L).productName("항해 프론트엔드 9기 과정").price(1200000).build(),
+                Product.builder().productId(3L).productName("항해 데브옵스 9기 과정").price(1600000).build()
         );
         GetProductsResult getProductsResult = GetProductsResult.from(mockTopProducts);
         GetTopProductsResult getTopProductsResult = GetTopProductsResult.from(getProductsResult);

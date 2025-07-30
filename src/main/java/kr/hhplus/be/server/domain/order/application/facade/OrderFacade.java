@@ -5,7 +5,6 @@ import kr.hhplus.be.server.domain.balance.application.service.dto.UseBalanceComm
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponResult;
-import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
@@ -43,7 +42,10 @@ public class OrderFacade {
         // 쿠폰 적용
         UseCouponCommand useCouponCommand = UseCouponCommand.from(orderProcessCommand);
         UseCouponResult useCouponResult = couponService.useCoupon(useCouponCommand);
-        double discountRate = useCouponResult.getDiscountRate() == null ? 0.0 : useCouponResult.getDiscountRate();
+        double discountRate = 0.0;
+        if(useCouponResult != null) {
+            discountRate = useCouponResult.getDiscountRate();
+        }
 
         // 재고 차감
         orderProductSaveResult.getOrderProductDto2List().forEach(product -> {

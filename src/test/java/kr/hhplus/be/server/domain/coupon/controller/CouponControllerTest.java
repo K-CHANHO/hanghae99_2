@@ -60,9 +60,9 @@ class CouponControllerTest {
         UserCoupon userCoupon = UserCoupon.builder()
                 .userCouponId(userCouponId)
                 .status("AVAILABLE")
-                .coupon(coupon)
+                .couponId(coupon.getCouponId())
                 .build();
-        IssueCouponResult couponResult = new IssueCouponResult(userCoupon);
+        IssueCouponResult couponResult = new IssueCouponResult(userCoupon, coupon);
         Mockito.when(couponService.issueCoupon(any(IssueCouponCommand.class))).thenReturn(couponResult);
 
         // when

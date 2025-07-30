@@ -16,6 +16,4 @@ public class Product {
     private String productName;
     private int price;
 
-    @Transient @Setter
-    private ProductStock productStock;
 }

@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.domain.order.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -13,13 +15,11 @@ public class OrderProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderProductId;
-    private Long orderId;
     private Long productId;
     private int quantity;
     private int price;
 
-    @Transient @Setter
-    private Order order;
+    private Long orderId; // order의 pk
 
     public int getTotalPrice(){
         return this.getQuantity() * this.getPrice();

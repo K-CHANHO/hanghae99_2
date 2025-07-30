@@ -11,7 +11,7 @@ public class IssueCouponResponse {
 
     public IssueCouponResponse(IssueCouponResult couponResult) {
         this.userCouponId = couponResult.getUserCouponId();
-        this.couponId = couponResult.getCoupon().getCouponId();
-        this.couponName = couponResult.getCoupon().getCouponName();
+        this.couponId = couponResult.getCouponId();
+        this.couponName = couponResult.getCouponName();
     }
 }

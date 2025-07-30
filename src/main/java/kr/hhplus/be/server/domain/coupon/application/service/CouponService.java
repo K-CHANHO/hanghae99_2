@@ -31,17 +31,22 @@ public class CouponService {
         userCoupon.issue(couponCommand.getUserId(), coupon);
 
         UserCoupon savedCoupon = userCouponRepository.save(userCoupon);
-        return new IssueCouponResult(savedCoupon);
+        return new IssueCouponResult(savedCoupon, coupon);
     }
 
     public UseCouponResult useCoupon(UseCouponCommand useCouponCommand) {
-        if(useCouponCommand.getCouponId() == null) return new UseCouponResult();
+        if(useCouponCommand.getCouponId() == null) {
+            return UseCouponResult.builder().discountRate(0.0).build();
+        }
 
         UserCoupon userCoupon = userCouponRepository.findByUserIdAndCoupon_CouponId(useCouponCommand.getUserId(), useCouponCommand.getCouponId())
                 .orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다"));
         userCoupon.useCoupon();
         UserCoupon usedCoupon = userCouponRepository.save(userCoupon);
-        return UseCouponResult.from(usedCoupon);
+
+        Coupon coupon = couponRepository.findById(useCouponCommand.getCouponId())
+                .orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다."));
+        return UseCouponResult.from(usedCoupon, coupon);
 
     }
 

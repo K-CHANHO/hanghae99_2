@@ -16,13 +16,15 @@ public class IssueCouponResult {
     private String userId;
     private String status; // 쿠폰 상태: AVAILABLE, USED, EXPIRED
     private Timestamp issuedAt;
-    private Coupon coupon;
+    private Long couponId;
+    private String couponName;
 
-    public IssueCouponResult(UserCoupon savedCoupon) {
+    public IssueCouponResult(UserCoupon savedCoupon, Coupon coupon) {
         this.userCouponId = savedCoupon.getUserCouponId();
         this.userId = savedCoupon.getUserId();
         this.status = savedCoupon.getStatus();
         this.issuedAt = savedCoupon.getIssuedAt();
-        this.coupon = savedCoupon.getCoupon();
+        this.couponId = savedCoupon.getCouponId();
+        this.couponName = coupon.getCouponName();
     }
 }

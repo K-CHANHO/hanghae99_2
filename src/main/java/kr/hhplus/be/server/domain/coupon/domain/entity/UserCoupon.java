@@ -21,13 +21,11 @@ public class UserCoupon {
     private Timestamp expiredAt;
     private Timestamp usedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Coupon coupon;
+    private Long couponId; // coupon의 pk
 
     public void issue(String userId, Coupon coupon) {
         this.userId = userId;
-        this.coupon = coupon;
+        this.couponId = coupon.getCouponId();
         this.issuedAt = new Timestamp(System.currentTimeMillis());
         this.expiredAt = Timestamp.from(issuedAt.toInstant().plus(7, ChronoUnit.DAYS));
     }

@@ -44,6 +44,7 @@ public class OrderControllerIntegrationTest {
         OrderRequest body = OrderRequest.builder()
                 .userId(userId)
                 .orderProductDtoList(orderProductDtoList)
+                //.userCouponId(1L)
                 .build();
 
 

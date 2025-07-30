@@ -9,7 +9,6 @@ import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
-import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.application.service.OrderService;
 import kr.hhplus.be.server.domain.order.application.service.dto.*;
@@ -77,7 +76,7 @@ public class OrderFacadeTest {
                 .build();
         UserCoupon mockUserCoupon = UserCoupon.builder()
                 .userId(userId)
-                .coupon(mockCoupon)
+                .couponId(mockCoupon.getCouponId())
                 .build();
         Payment mockPayment = Payment.builder()
                 .paymentId(1L)
@@ -117,7 +116,7 @@ public class OrderFacadeTest {
         OrderProductSaveResult orderProductSaveResult = OrderProductSaveResult.builder()
                 .orderProductDto2List(dtos)
                 .build();
-        UseCouponResult useCouponResult = UseCouponResult.from(mockUserCoupon);
+        UseCouponResult useCouponResult = UseCouponResult.from(mockUserCoupon, mockCoupon);
         when(orderService.createOrder(any(CreateOrderCommand.class))).thenReturn(createOrderResult);
         when(orderService.changeStatus(any(ChangeStatusCommand.class))).thenReturn(changeStatusResult);
         when(couponService.useCoupon(any(UseCouponCommand.class))).thenReturn(useCouponResult);

@@ -23,8 +23,6 @@ public class ProductService {
         ProductStock productStock = productStockRepository.findById(getProductCommand.getProductId())
                 .orElseThrow(() -> new RuntimeException("상품 재고를 조회할 수 없습니다."));
 
-        product.setProductStock(productStock);
-
         return GetProductResult.from(product, productStock);
     }
 

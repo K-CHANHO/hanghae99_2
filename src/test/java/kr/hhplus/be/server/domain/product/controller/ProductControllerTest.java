@@ -1,5 +1,9 @@
 package kr.hhplus.be.server.domain.product.controller;
 
+import kr.hhplus.be.server.domain.product.application.facade.dto.GetTopProductsResult;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductCommand;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductResult;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductsResult;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import kr.hhplus.be.server.domain.product.domain.entity.ProductStock;
 import kr.hhplus.be.server.domain.product.application.facade.ProductFacade;
@@ -18,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,9 +58,10 @@ class ProductControllerTest {
                 .productId(productId)
                 .productName("항해 백엔드 9기 과정")
                 .price(1500000)
-                .productStock(ProductStock.builder().productId(productId).stockQuantity(100).build())
                 .build();
-        when(productService.getProduct(productId)).thenReturn(product);
+        ProductStock productStock = ProductStock.builder().productId(productId).stockQuantity(100).build();
+        GetProductResult getProductResult = GetProductResult.from(product, productStock);
+        when(productService.getProduct(any(GetProductCommand.class))).thenReturn(getProductResult);
 
         // when
         ResultActions result = mockMvc.perform(
@@ -63,7 +69,7 @@ class ProductControllerTest {
         );
 
         // then
-        verify(productService).getProduct(productId);
+        verify(productService).getProduct(any(GetProductCommand.class));
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("상품 조회 성공"))
                 .andExpect(jsonPath("$.code").value(200))
@@ -86,8 +92,9 @@ class ProductControllerTest {
                 Product.builder().productId(2L).productName("항해 프론트엔드 9기 과정").price(1200000).productStock(productStock2).build(),
                 Product.builder().productId(3L).productName("항해 데브옵스 9기 과정").price(1600000).productStock(productStock3).build()
         );
-        when(productFacade.getTopProducts()).thenReturn(mockTopProducts);
-
+        GetProductsResult getProductsResult = GetProductsResult.from(mockTopProducts);
+        GetTopProductsResult getTopProductsResult = GetTopProductsResult.from(getProductsResult);
+        when(productFacade.getTopProducts()).thenReturn(getTopProductsResult);
 
         // when
         ResultActions result = mockMvc.perform(

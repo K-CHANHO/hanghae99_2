@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.product.service;
 
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
+import kr.hhplus.be.server.domain.product.application.service.dto.*;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import kr.hhplus.be.server.domain.product.domain.entity.ProductStock;
 import kr.hhplus.be.server.domain.product.domain.repository.ProductRepository;
@@ -39,17 +40,18 @@ public class ProductServiceTest {
         Long productId = 1L;
         String productName = "샘플 상품명";
         int stock = 100;
+        GetProductCommand getProductCommand = GetProductCommand.from(productId);
         when(productRepository.findById(productId)).thenReturn(Optional.of(Product.builder().productId(productId).productName(productName).price(10000).build()));
         when(productStockRepository.findById(productId)).thenReturn(Optional.of(ProductStock.builder().productId(productId).stockQuantity(stock).build()));
 
         // when
-        Product product = productService.getProduct(productId);
+        GetProductResult product = productService.getProduct(getProductCommand);
 
         // then
         assertThat(product).isNotNull();
         assertThat(productId).isEqualTo(product.getProductId());
         assertThat(productName).isEqualTo(product.getProductName());
-        assertThat(product.getProductStock().getStockQuantity()).isEqualTo(stock);
+        assertThat(product.getStock()).isEqualTo(stock);
     }
 
     @ParameterizedTest
@@ -59,10 +61,11 @@ public class ProductServiceTest {
         // given
         Long productId = 1L;
         int initialStock = 100;
+        ReduceStockCommand reduceStockCommand = ReduceStockCommand.builder().productId(productId).orderQuantity(orderQuantity).build();
         when(productStockRepository.findById(productId)).thenReturn(Optional.of(new ProductStock(productId, initialStock)));
 
         // when, then
-        assertThatThrownBy(() -> productService.reduceStock(productId, orderQuantity))
+        assertThatThrownBy(() -> productService.reduceStock(reduceStockCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("재고가 부족합니다.");
 
@@ -75,11 +78,12 @@ public class ProductServiceTest {
         // given
         Long productId = 1L;
         int initialStock = 100;
+        ReduceStockCommand reduceStockCommand = ReduceStockCommand.builder().productId(productId).orderQuantity(orderQuantity).build();
         when(productStockRepository.findById(productId)).thenReturn(Optional.of(new ProductStock(productId, 10000)));
         when(productStockRepository.save(any(ProductStock.class))).thenReturn(new ProductStock(productId,  initialStock - orderQuantity));
 
         // when
-        ProductStock productStock = productService.reduceStock(productId, orderQuantity);
+        ReduceStockResult productStock = productService.reduceStock(reduceStockCommand);
 
         // then
         assertThat(initialStock - orderQuantity).isEqualTo(productStock.getStockQuantity());
@@ -96,13 +100,14 @@ public class ProductServiceTest {
                 Product.builder().productId(4L).productName("Product 4").price(40000).build(),
                 Product.builder().productId(5L).productName("Product 5").price(50000).build()
         );
+        GetProductsCommand getProductsCommand = GetProductsCommand.builder().productIds(productIds).build();
         when(productRepository.findAllById(productIds)).thenReturn(mockProducts);
 
         // when
-        List<Product> products = productService.getProducts(productIds);
+        GetProductsResult getProductsResult = productService.getProducts(getProductsCommand);
 
         // then
-        assertThat(products).isNotNull();
-        assertThat(products).hasSizeLessThanOrEqualTo(5);
+        assertThat(getProductsResult.getProductResults()).isNotNull();
+        assertThat(getProductsResult.getProductResults()).hasSizeLessThanOrEqualTo(5);
     }
 }

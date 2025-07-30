@@ -5,6 +5,9 @@ import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProducts
 import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsResult;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.product.application.facade.ProductFacade;
+import kr.hhplus.be.server.domain.product.application.facade.dto.GetTopProductsResult;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductsCommand;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductsResult;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
@@ -49,18 +52,19 @@ public class ProductFacadeTest {
                 Product.builder().productId(4L).productName("Product 4").price(40000).build(),
                 Product.builder().productId(5L).productName("Product 5").price(50000).build()
         );
+        GetProductsResult getProductsResult = GetProductsResult.from(mockProducts);
         when(paymentService.getPaidOrderIdsWithinLastDays(3)).thenReturn(mockOrderIds);
         when(orderProductService.getOrderProductsByOrderIds(any(GetOrderProductsByOrderIdsCommand.class))).thenReturn(productIds);
-        when(productService.getProducts(mockProductIds)).thenReturn(mockProducts);
+        when(productService.getProducts(any(GetProductsCommand.class))).thenReturn(getProductsResult);
 
         // when
-        List<Product> topProducts = productFacade.getTopProducts();
+        GetTopProductsResult topProducts = productFacade.getTopProducts();
 
         // then
         verify(paymentService).getPaidOrderIdsWithinLastDays(anyInt());
         verify(orderProductService).getOrderProductsByOrderIds(any(GetOrderProductsByOrderIdsCommand.class));
-        verify(productService).getProducts(anyList());
-        assertThat(topProducts).isNotEmpty();
-        assertThat(topProducts.size()).isLessThanOrEqualTo(5);
+        verify(productService).getProducts(any(GetProductsCommand.class));
+        assertThat(topProducts.getTopProductDtoList()).isNotEmpty();
+        assertThat(topProducts.getTopProductDtoList().size()).isLessThanOrEqualTo(5);
     }
 }

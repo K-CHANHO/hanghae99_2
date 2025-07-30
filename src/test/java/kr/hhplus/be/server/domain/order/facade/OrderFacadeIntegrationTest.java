@@ -8,6 +8,8 @@ import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessComma
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductCommand;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductResult;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,14 +82,16 @@ public class OrderFacadeIntegrationTest {
                 .orderProductDtoList(orderProductDtoList)
                 .build();
 
+        GetProductCommand getProductCommand = GetProductCommand.from(4L);
+
         // when
-        Product product = productService.getProduct(4L);
+        GetProductResult product = productService.getProduct(getProductCommand);
 
         // then
         assertThatThrownBy(() -> orderFacade.orderProcess(orderProcessCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("잔고가 부족합니다.");
-        assertThat(product.getProductStock().getStockQuantity()).isEqualTo(10);
+        assertThat(product.getStock()).isEqualTo(10);
 
     }
 

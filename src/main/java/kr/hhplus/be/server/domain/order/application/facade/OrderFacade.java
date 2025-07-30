@@ -11,6 +11,7 @@ import kr.hhplus.be.server.domain.order.application.service.dto.*;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
+import kr.hhplus.be.server.domain.product.application.service.dto.ReduceStockCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +46,8 @@ public class OrderFacade {
 
         // 재고 차감
         orderProductList.getOrderProductDto2List().forEach(product -> {
-            productService.reduceStock(product.getProductId(), product.getQuantity());
+            ReduceStockCommand reduceStockCommand = ReduceStockCommand.from(product);
+            productService.reduceStock(reduceStockCommand);
         });
 
         // 주문 상태 변경

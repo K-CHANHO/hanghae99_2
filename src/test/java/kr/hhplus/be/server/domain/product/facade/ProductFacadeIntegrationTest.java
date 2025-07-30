@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.product.facade;
 
 import kr.hhplus.be.server.domain.product.application.facade.ProductFacade;
+import kr.hhplus.be.server.domain.product.application.facade.dto.GetTopProductsResult;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -29,10 +30,10 @@ public class ProductFacadeIntegrationTest {
         // given
 
         // when
-        List<Product> topProducts = productFacade.getTopProducts();
+        GetTopProductsResult topProducts = productFacade.getTopProducts();
 
         // then
-        Assertions.assertThat(topProducts).isNotEmpty();
-        Assertions.assertThat(topProducts).hasSizeLessThanOrEqualTo(5);
+        Assertions.assertThat(topProducts.getTopProductDtoList()).isNotEmpty();
+        Assertions.assertThat(topProducts.getTopProductDtoList()).hasSizeLessThanOrEqualTo(5);
     }
 }

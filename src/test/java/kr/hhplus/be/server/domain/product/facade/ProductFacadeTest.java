@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.product.facade;
 
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
+import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsResult;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.product.application.facade.ProductFacade;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
@@ -15,8 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +39,9 @@ public class ProductFacadeTest {
     public void getTopProducts(){
         // given
         List<Long> mockOrderIds = List.of(1L, 2L, 3L, 4L, 5L);
+        GetOrderProductsByOrderIdsCommand orderIdsCommand = GetOrderProductsByOrderIdsCommand.from(mockOrderIds);
         List<Long> mockProductIds = List.of(101L, 102L, 103L, 104L, 105L);
+        GetOrderProductsByOrderIdsResult productIds = GetOrderProductsByOrderIdsResult.from(mockProductIds);
         List<Product> mockProducts = List.of(
                 Product.builder().productId(1L).productName("Product 1").price(10000).build(),
                 Product.builder().productId(2L).productName("Product 2").price(20000).build(),
@@ -47,7 +50,7 @@ public class ProductFacadeTest {
                 Product.builder().productId(5L).productName("Product 5").price(50000).build()
         );
         when(paymentService.getPaidOrderIdsWithinLastDays(3)).thenReturn(mockOrderIds);
-        when(orderProductService.getOrderProductsByOrderIds(mockOrderIds)).thenReturn(mockProductIds);
+        when(orderProductService.getOrderProductsByOrderIds(any(GetOrderProductsByOrderIdsCommand.class))).thenReturn(productIds);
         when(productService.getProducts(mockProductIds)).thenReturn(mockProducts);
 
         // when
@@ -55,7 +58,7 @@ public class ProductFacadeTest {
 
         // then
         verify(paymentService).getPaidOrderIdsWithinLastDays(anyInt());
-        verify(orderProductService).getOrderProductsByOrderIds(anyList());
+        verify(orderProductService).getOrderProductsByOrderIds(any(GetOrderProductsByOrderIdsCommand.class));
         verify(productService).getProducts(anyList());
         assertThat(topProducts).isNotEmpty();
         assertThat(topProducts.size()).isLessThanOrEqualTo(5);

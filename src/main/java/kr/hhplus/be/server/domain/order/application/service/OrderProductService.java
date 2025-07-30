@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.order.application.service;
 
+import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsResult;
 import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveCommand;
 import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveResult;
 import kr.hhplus.be.server.domain.order.domain.entity.OrderProduct;
@@ -30,8 +32,9 @@ public class OrderProductService {
         return OrderProductSaveResult.from(orderProducts);
     }
 
-    // TODO : dto 분리
-    public List<Long> getOrderProductsByOrderIds(List<Long> orderIds) {
-        return orderProductRepository.findTop5OrderProducts(orderIds);
+    public GetOrderProductsByOrderIdsResult getOrderProductsByOrderIds(GetOrderProductsByOrderIdsCommand orderIdsCommand) {
+        List<Long> top5OrderProducts = orderProductRepository.findTop5OrderProducts(orderIdsCommand.getOrderIds());
+
+        return GetOrderProductsByOrderIdsResult.from(top5OrderProducts);
     }
 }

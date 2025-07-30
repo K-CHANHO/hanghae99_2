@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.order.service;
 
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
+import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsResult;
 import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveCommand;
 import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveResult;
 import kr.hhplus.be.server.domain.order.domain.repository.OrderProductRepository;
@@ -52,15 +54,16 @@ public class OrderProductServiceTest {
     void getOrderProductsByOrderIds() {
         // given
         List<Long> orderIds = List.of(1L, 2L, 3L, 4L, 5L);
+        GetOrderProductsByOrderIdsCommand orderIdsCommand = GetOrderProductsByOrderIdsCommand.from(orderIds);
         List<Long> mockProductIds = List.of(101L, 102L, 103L, 104L, 105L);
         when(orderProductRepository.findTop5OrderProducts(orderIds)).thenReturn(mockProductIds);
 
         // when
-        List<Long> topProductIds = orderProductService.getOrderProductsByOrderIds(orderIds);
+        GetOrderProductsByOrderIdsResult orderProductsByOrderIds = orderProductService.getOrderProductsByOrderIds(orderIdsCommand);
 
         // then
         verify(orderProductRepository).findTop5OrderProducts(orderIds);
-        assertThat(topProductIds.size()).isLessThanOrEqualTo(5);
+        assertThat(orderProductsByOrderIds.getProductIds().size()).isLessThanOrEqualTo(5);
 
     }
 

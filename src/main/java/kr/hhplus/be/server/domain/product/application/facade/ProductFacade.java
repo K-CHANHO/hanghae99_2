@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain.product.application.facade;
 
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
+import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsResult;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
@@ -22,10 +24,11 @@ public class ProductFacade {
         List<Long> orderIds = paymentService.getPaidOrderIdsWithinLastDays(3);
 
         // orderId로 orderProduct 조회하면서 productId로 집계 (top5)
-        List<Long> orderProductIds = orderProductService.getOrderProductsByOrderIds(orderIds);
+        GetOrderProductsByOrderIdsCommand orderIdsCommand = GetOrderProductsByOrderIdsCommand.from(orderIds);
+        GetOrderProductsByOrderIdsResult orderProductsByOrderIds = orderProductService.getOrderProductsByOrderIds(orderIdsCommand);
 
         // productId로 product 조회 (top5)
-        List<Product> productList = productService.getProducts(orderProductIds);
+        List<Product> productList = productService.getProducts(orderProductsByOrderIds.getProductIds());
 
         return productList;
     }

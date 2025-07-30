@@ -1,12 +1,11 @@
 package kr.hhplus.be.server.domain.coupon.service;
 
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.*;
 import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.domain.repository.UserCouponRepository;
-import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponCommand;
-import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -102,14 +101,15 @@ public class CouponServiceTest {
         String userId = "sampleUserId";
         Long couponId = 1L;
         UserCoupon userCoupon = new UserCoupon(1L, "sampleUserId", "USED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon());
+        UseCouponCommand useCouponCommand = UseCouponCommand.builder().userId(userId).couponId(couponId).build();
+
         when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
-        // when
-        UserCoupon usedCoupon = couponService.useCoupon(userId, couponId);
+        // when, then
+        assertThatThrownBy(() -> couponService.useCoupon(useCouponCommand))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("이미 사용한 쿠폰입니다.");
 
-        // then
-        assertThat(usedCoupon).isNull();
-        verify(userCouponRepository, never()).save(any(UserCoupon.class));
     }
 
     @Test
@@ -119,14 +119,14 @@ public class CouponServiceTest {
         String userId = "sampleUserId";
         Long couponId = 1L;
         UserCoupon userCoupon = new UserCoupon(1L, userId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS)), null, new Coupon());
+        UseCouponCommand useCouponCommand = UseCouponCommand.builder().userId(userId).couponId(couponId).build();
         when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(userCoupon));
 
-        // when
-        UserCoupon expiredCoupon = couponService.useCoupon(userId, couponId);
+        // when, then
+        assertThatThrownBy(()-> couponService.useCoupon(useCouponCommand))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("만료된 쿠폰입니다.");
 
-        // then
-        assertThat(expiredCoupon).isNull();
-        verify(userCouponRepository, never()).save(any(UserCoupon.class));
     }
 
     @Test
@@ -138,16 +138,16 @@ public class CouponServiceTest {
         Coupon coupon = Coupon.builder().couponId(couponId).build();
         UserCoupon unusedCoupon = UserCoupon.builder().coupon(coupon).status("UNUSED").expiredAt(Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS))).build();
         UserCoupon usedCoupon = UserCoupon.builder().coupon(coupon).status("USED").build();
-
+        UseCouponCommand useCouponCommand = UseCouponCommand.builder().userId(userId).couponId(couponId).build();
         when(userCouponRepository.findByUserIdAndCoupon_CouponId(userId, couponId)).thenReturn(Optional.of(unusedCoupon));
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(usedCoupon);
 
         // when
-        UserCoupon userCoupon = couponService.useCoupon(userId, couponId);
+        UseCouponResult useCouponResult = couponService.useCoupon(useCouponCommand);
 
         // then
-        assertThat(userCoupon.getCoupon().getCouponId()).isEqualTo(couponId);
-        assertThat(userCoupon.getStatus()).isEqualTo("USED");
+        assertThat(useCouponResult.getCouponId()).isEqualTo(couponId);
+        assertThat(useCouponResult.getStatus()).isEqualTo("USED");
     }
 
     @Test
@@ -159,14 +159,15 @@ public class CouponServiceTest {
                 new UserCoupon(1L, userId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon(1L, "쿠폰1", 100, "ING", 0.1)),
                 new UserCoupon(2L, userId, "UNUSED", new Timestamp(System.currentTimeMillis()), Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)), null, new Coupon(2L, "쿠폰2", 200, "ING", 0.2))
         );
-        when(userCouponRepository.findByUserId(userId)).thenReturn(Optional.of(sampleUserCoupons));
+        ViewCouponListCommand viewCouponListCommand = ViewCouponListCommand.from(userId);
+        when(userCouponRepository.findByUserId(userId)).thenReturn(sampleUserCoupons);
 
         // when
-        List<UserCoupon> userCouponList = couponService.viewCouponList(userId);
+        ViewCouponListResult viewCouponListResult = couponService.viewCouponList(viewCouponListCommand);
 
         // then
-        assertThat(userCouponList).isNotNull();
-        assertThat(userCouponList.size()).isEqualTo(2);
+        assertThat(viewCouponListResult).isNotNull();
+        assertThat(viewCouponListResult.getCouponDtoList().size()).isEqualTo(2);
     }
 
 

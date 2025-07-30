@@ -3,6 +3,8 @@ package kr.hhplus.be.server.domain.order.application.facade;
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.balance.application.service.dto.UseBalanceCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponCommand;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponResult;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
@@ -39,8 +41,9 @@ public class OrderFacade {
         OrderProductSaveResult orderProductList = orderProductService.save(orderProductSaveCommand);
 
         // 쿠폰 적용
-        UserCoupon userCoupon = couponService.useCoupon(orderProcessCommand.getUserId(), orderProcessCommand.getUserCouponId());
-        double discountRate = userCoupon.getCoupon().getDiscountRate() == null ? 0.0 : userCoupon.getCoupon().getDiscountRate();
+        UseCouponCommand useCouponCommand = UseCouponCommand.from(orderProcessCommand);
+        UseCouponResult useCouponResult = couponService.useCoupon(useCouponCommand);
+        double discountRate = useCouponResult.getDiscountRate() == null ? 0.0 : useCouponResult.getDiscountRate();
 
         // 재고 차감
         orderProductList.getOrderProductDto2List().forEach(product -> {
@@ -53,7 +56,7 @@ public class OrderFacade {
         ChangeStatusResult changedStatusOrder = orderService.changeStatus(changeStatusCommand);
 
         // 잔액 차감
-        UseBalanceCommand useBalanceCommand = UseBalanceCommand.from(createOrderResult, userCoupon);
+        UseBalanceCommand useBalanceCommand = UseBalanceCommand.from(createOrderResult, useCouponResult);
         balanceService.useBalance(useBalanceCommand);
 
         // 결제

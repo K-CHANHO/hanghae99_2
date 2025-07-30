@@ -10,7 +10,7 @@ public interface UserCouponRepository {
 
     Optional<UserCoupon> findByUserIdAndCoupon_CouponId(String userId, Long couponId);
 
-    Optional<List<UserCoupon>> findByUserId(String userId);
+    List<UserCoupon> findByUserId(String userId);
 
     UserCoupon save(UserCoupon userCoupon);
 

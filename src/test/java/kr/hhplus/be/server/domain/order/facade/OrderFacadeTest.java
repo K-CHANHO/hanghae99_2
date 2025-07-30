@@ -3,6 +3,8 @@ package kr.hhplus.be.server.domain.order.facade;
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.balance.application.service.dto.UseBalanceCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponCommand;
+import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponResult;
 import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
@@ -84,19 +86,7 @@ public class OrderFacadeTest {
                 .paidPrice((int) (mockOrder.getTotalPrice() * (1 - mockCoupon.getDiscountRate())))
                 .status("PENDING")
                 .build();
-        Payment mockPaidPayment = Payment.builder()
-                .paymentId(1L)
-                .userId(userId)
-                .orderId(mockOrder.getOrderId())
-                .paidPrice((int) (mockOrder.getTotalPrice() * (1 - mockCoupon.getDiscountRate())))
-                .status("PAID")
-                .build();
-        PayCommand mockPayCommand = PayCommand.builder()
-                .userId(userId)
-                .orderId(mockOrder.getOrderId())
-                .totalPrice(mockOrder.getTotalPrice())
-                .discountRate(mockCoupon.getDiscountRate())
-                .build();
+
         PayResult payResult = new PayResult(mockPayment);
 
         OrderProcessCommand orderProcessCommand = OrderProcessCommand.builder()
@@ -104,26 +94,14 @@ public class OrderFacadeTest {
                 .userCouponId(couponId)
                 .orderProductDtoList(orderProductDtoList)
                 .build();
-        OrderProcessResult mockOrderProcessResult = OrderProcessResult.builder()
-                .orderId(1L)
-                .userId(userId)
-                .totalPrice(100000)
-                .status("PAID")
-                .build();
-        CreateOrderCommand createOrderCommand = CreateOrderCommand.builder()
-                .userId(userId)
-                .orderProductDtoList(orderProductDtoList)
-                .build();
+
         CreateOrderResult createOrderResult = CreateOrderResult.builder()
                 .orderId(1L)
                 .userId(userId)
                 .totalPrice((int) orderProductDtoList.stream().mapToLong(dto -> (long) dto.getPrice() * dto.getQuantity()).sum())
                 .status("PENDING")
                 .build();
-        ChangeStatusCommand changeStatusCommand = ChangeStatusCommand.builder()
-                .orderId(1L)
-                .status("PAID")
-                .build();
+
         ChangeStatusResult changeStatusResult = ChangeStatusResult.builder()
                 .orderId(1L)
                 .status("PAID")
@@ -139,9 +117,10 @@ public class OrderFacadeTest {
         OrderProductSaveResult orderProductSaveResult = OrderProductSaveResult.builder()
                 .orderProductDto2List(dtos)
                 .build();
+        UseCouponResult useCouponResult = UseCouponResult.from(mockUserCoupon);
         when(orderService.createOrder(any(CreateOrderCommand.class))).thenReturn(createOrderResult);
         when(orderService.changeStatus(any(ChangeStatusCommand.class))).thenReturn(changeStatusResult);
-        when(couponService.useCoupon(userId, couponId)).thenReturn(mockUserCoupon);
+        when(couponService.useCoupon(any(UseCouponCommand.class))).thenReturn(useCouponResult);
         when(paymentService.pay(any(PayCommand.class))).thenReturn(payResult);
         when(orderProductService.save(any(OrderProductSaveCommand.class))).thenReturn(orderProductSaveResult);
 
@@ -151,7 +130,7 @@ public class OrderFacadeTest {
         // then
         verify(orderService).createOrder(any(CreateOrderCommand.class));
         verify(orderProductService).save(any(OrderProductSaveCommand.class));
-        verify(couponService).useCoupon(userId, couponId);
+        verify(couponService).useCoupon(any(UseCouponCommand.class));
         verify(paymentService).pay(any(PayCommand.class));
         verify(balanceService).useBalance(any(UseBalanceCommand.class));
         verify(orderService).changeStatus(any(ChangeStatusCommand.class));

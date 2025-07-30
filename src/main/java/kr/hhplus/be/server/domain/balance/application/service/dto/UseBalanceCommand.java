@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.balance.application.service.dto;
 
+import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponResult;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderResult;
 import lombok.AllArgsConstructor;
@@ -14,11 +15,11 @@ public class UseBalanceCommand {
     private int useAmount;
     private double discountRate;
 
-    public static UseBalanceCommand from(CreateOrderResult createOrderResult, UserCoupon userCoupon) {
+    public static UseBalanceCommand from(CreateOrderResult createOrderResult, UseCouponResult useCouponResult) {
         return UseBalanceCommand.builder()
                 .userId(createOrderResult.getUserId())
                 .useAmount(createOrderResult.getTotalPrice())
-                .discountRate(userCoupon.getCoupon().getDiscountRate())
+                .discountRate(useCouponResult.getDiscountRate())
                 .build();
     }
 }

@@ -25,7 +25,7 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     }
 
     @Override
-    public Optional<List<UserCoupon>> findByUserId(String userId) {
+    public List<UserCoupon> findByUserId(String userId) {
         return jpaRepository.findByUserId(userId);
     }
 

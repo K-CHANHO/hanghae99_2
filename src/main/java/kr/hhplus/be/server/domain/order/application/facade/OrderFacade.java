@@ -38,7 +38,7 @@ public class OrderFacade {
 
         // 주문 상품 저장
         OrderProductSaveCommand orderProductSaveCommand = OrderProductSaveCommand.from(orderProcessCommand, createOrderResult);
-        OrderProductSaveResult orderProductList = orderProductService.save(orderProductSaveCommand);
+        OrderProductSaveResult orderProductSaveResult = orderProductService.save(orderProductSaveCommand);
 
         // 쿠폰 적용
         UseCouponCommand useCouponCommand = UseCouponCommand.from(orderProcessCommand);
@@ -46,28 +46,23 @@ public class OrderFacade {
         double discountRate = useCouponResult.getDiscountRate() == null ? 0.0 : useCouponResult.getDiscountRate();
 
         // 재고 차감
-        orderProductList.getOrderProductDto2List().forEach(product -> {
+        orderProductSaveResult.getOrderProductDto2List().forEach(product -> {
             ReduceStockCommand reduceStockCommand = ReduceStockCommand.from(product);
             productService.reduceStock(reduceStockCommand);
         });
 
         // 주문 상태 변경
         ChangeStatusCommand changeStatusCommand = ChangeStatusCommand.from(createOrderResult);
-        ChangeStatusResult changedStatusOrder = orderService.changeStatus(changeStatusCommand);
+        ChangeStatusResult changeStatusResult = orderService.changeStatus(changeStatusCommand);
 
         // 잔액 차감
         UseBalanceCommand useBalanceCommand = UseBalanceCommand.from(createOrderResult, useCouponResult);
         balanceService.useBalance(useBalanceCommand);
 
         // 결제
-        PayCommand payCommand = PayCommand.builder()
-                        .userId(orderProcessCommand.getUserId())
-                        .orderId(createOrderResult.getOrderId())
-                        .totalPrice(createOrderResult.getTotalPrice())
-                        .discountRate(discountRate)
-                        .build();
+        PayCommand payCommand = PayCommand.from(createOrderResult, useCouponResult);
         paymentService.pay(payCommand);
 
-        return OrderProcessResult.from(changedStatusOrder);
+        return OrderProcessResult.from(changeStatusResult);
     }
 }

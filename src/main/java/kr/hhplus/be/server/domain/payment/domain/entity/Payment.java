@@ -35,7 +35,7 @@ public class Payment {
     public void create(PayCommand payCommand) {
         this.userId = payCommand.getUserId();
         this.orderId = payCommand.getOrderId();
-        this.status = payCommand.getStatus();
+        this.status = "PENDING";
         this.paidPrice = (int) (payCommand.getTotalPrice() * (1 - payCommand.getDiscountRate()));
     }
 }

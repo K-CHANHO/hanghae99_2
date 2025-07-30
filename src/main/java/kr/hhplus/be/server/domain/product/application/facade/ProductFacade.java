@@ -27,11 +27,11 @@ public class ProductFacade {
         List<Long> orderIds = paymentService.getPaidOrderIdsWithinLastDays(3);
 
         // orderId로 orderProduct 조회하면서 productId로 집계 (top5)
-        GetOrderProductsByOrderIdsCommand orderIdsCommand = GetOrderProductsByOrderIdsCommand.from(orderIds);
-        GetOrderProductsByOrderIdsResult orderProductsByOrderIds = orderProductService.getOrderProductsByOrderIds(orderIdsCommand);
+        GetOrderProductsByOrderIdsCommand getOrderProductsByOrderIdsCommand = GetOrderProductsByOrderIdsCommand.from(orderIds);
+        GetOrderProductsByOrderIdsResult getOrderProductsByOrderIdsResult = orderProductService.getOrderProductsByOrderIds(getOrderProductsByOrderIdsCommand);
 
         // productId로 product 조회 (top5)
-        GetProductsCommand getProductsCommand = GetProductsCommand.from(orderProductsByOrderIds);
+        GetProductsCommand getProductsCommand = GetProductsCommand.from(getOrderProductsByOrderIdsResult);
         GetProductsResult getProductsResult = productService.getProducts(getProductsCommand);
 
         return GetTopProductsResult.from(getProductsResult);

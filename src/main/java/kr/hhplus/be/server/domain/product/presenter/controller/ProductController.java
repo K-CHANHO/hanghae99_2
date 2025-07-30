@@ -32,9 +32,9 @@ public class ProductController implements ProductApiDocs {
     public ResponseEntity<ApiResponse<ViewProductResponse>> viewProduct(@PathVariable Long productId){
 
         GetProductCommand getProductCommand = GetProductCommand.from(productId);
-        GetProductResult product = productService.getProduct(getProductCommand);
+        GetProductResult getProductResult = productService.getProduct(getProductCommand);
 
-        ViewProductResponse response = ViewProductResponse.from(product);
+        ViewProductResponse response = ViewProductResponse.from(getProductResult);
 
         ApiResponse<ViewProductResponse> result = new ApiResponse<>();
         result.setMessage("상품 조회 성공");

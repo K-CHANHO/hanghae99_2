@@ -8,7 +8,9 @@ import lombok.Getter;
 public class ViewBalanceCommand {
     private String userId;
 
-    public ViewBalanceCommand(String userId) {
-        this.userId = userId;
+    public static ViewBalanceCommand from(String userId) {
+        return ViewBalanceCommand.builder()
+                .userId(userId)
+                .build();
     }
 }

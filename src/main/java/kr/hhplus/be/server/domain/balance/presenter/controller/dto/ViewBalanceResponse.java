@@ -13,9 +13,10 @@ public class ViewBalanceResponse {
     private String userId;
     private int balance;
 
-    public ViewBalanceResponse(ViewBalanceResult serviceResponse) {
-        this.userId = serviceResponse.getUserId();
-        this.balance = serviceResponse.getBalance();
+    public static ViewBalanceResponse from(ViewBalanceResult viewBalanceResult) {
+        return ViewBalanceResponse.builder()
+                .userId(viewBalanceResult.getUserId())
+                .balance(viewBalanceResult.getBalance())
+                .build();
     }
-
 }

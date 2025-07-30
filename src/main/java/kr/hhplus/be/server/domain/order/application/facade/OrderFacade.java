@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.order.application.facade;
 
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
+import kr.hhplus.be.server.domain.balance.application.service.dto.UseBalanceCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
@@ -39,10 +40,7 @@ public class OrderFacade {
 
         // 쿠폰 적용
         UserCoupon userCoupon = couponService.useCoupon(orderProcessCommand.getUserId(), orderProcessCommand.getUserCouponId());
-        double discountRate = 0.0;
-        if(userCoupon != null) {
-            discountRate = userCoupon.getCoupon().getDiscountRate();
-        }
+        double discountRate = userCoupon.getCoupon().getDiscountRate() == null ? 0.0 : userCoupon.getCoupon().getDiscountRate();
 
         // 재고 차감
         orderProductList.getOrderProductDto2List().forEach(product -> {
@@ -55,7 +53,8 @@ public class OrderFacade {
         ChangeStatusResult changedStatusOrder = orderService.changeStatus(changeStatusCommand);
 
         // 잔액 차감
-        balanceService.useBalance(orderProcessCommand.getUserId(), createOrderResult.getTotalPrice(), discountRate);
+        UseBalanceCommand useBalanceCommand = UseBalanceCommand.from(createOrderResult, userCoupon);
+        balanceService.useBalance(useBalanceCommand);
 
         // 결제
         PayCommand payCommand = PayCommand.builder()

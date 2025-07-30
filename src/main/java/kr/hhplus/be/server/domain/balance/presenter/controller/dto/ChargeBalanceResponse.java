@@ -13,8 +13,10 @@ public class ChargeBalanceResponse {
     private String userId; // 사용자 ID
     private int newBalance; // 업데이트된 잔액
 
-    public ChargeBalanceResponse(ChargeBalanceResult serviceResponse) {
-        this.userId = serviceResponse.getUserId();
-        this.newBalance = serviceResponse.getBalance();
+    public static ChargeBalanceResponse from(ChargeBalanceResult chargeBalanceResult) {
+        return ChargeBalanceResponse.builder()
+                .userId(chargeBalanceResult.getUserId())
+                .newBalance(chargeBalanceResult.getBalance())
+                .build();
     }
 }

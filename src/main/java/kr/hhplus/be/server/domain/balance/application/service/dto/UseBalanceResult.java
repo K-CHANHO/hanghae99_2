@@ -5,17 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter
 @Builder
+@Getter
 @AllArgsConstructor
-public class ChargeBalanceResult {
+public class UseBalanceResult {
     private String userId;
     private int balance;
 
-    public static ChargeBalanceResult from(Balance chargedBalance) {
-        return ChargeBalanceResult.builder()
-                .userId(chargedBalance.getUserId())
-                .balance(chargedBalance.getBalance())
+    public static UseBalanceResult from(Balance usedBalance) {
+        return UseBalanceResult.builder()
+                .userId(usedBalance.getUserId())
+                .balance(usedBalance.getBalance())
                 .build();
     }
 }

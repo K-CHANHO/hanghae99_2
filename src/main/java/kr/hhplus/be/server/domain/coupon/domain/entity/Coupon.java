@@ -22,7 +22,7 @@ public class Coupon {
     private String couponName;
     private int quantity;
     private String status; // "ACTIVE", "INACTIVE"
-    private double discountRate;
+    private Double discountRate;
 
     public void checkQuantity(int issuedCouponQuantity) {
         if(this.quantity <= issuedCouponQuantity) throw new RuntimeException("쿠폰이 소진되었습니다.");

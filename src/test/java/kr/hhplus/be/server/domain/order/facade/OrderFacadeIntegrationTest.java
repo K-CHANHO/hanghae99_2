@@ -44,7 +44,7 @@ public class OrderFacadeIntegrationTest {
     public void orderProcessWithLessStock(){
         // given
         String userId = "sampleUserId";
-        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(userId);
+        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(userId);
         ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(100).build();
         orderProductDtoList.add(orderProductDto1);
@@ -116,7 +116,7 @@ public class OrderFacadeIntegrationTest {
 
         // when
         OrderProcessResult orderProcessResult = orderFacade.orderProcess(orderProcessCommand);
-        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(orderProcessResult.getUserId());
+        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(orderProcessResult.getUserId());
         ViewBalanceResult viewBalanceResult = balanceService.getBalance(viewBalanceCommand);
 
 

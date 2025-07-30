@@ -26,10 +26,10 @@ public class BalanceController implements BalanceApiDocs {
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId) {
 
-        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(userId);
+        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(userId);
 
-        ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
-        ViewBalanceResponse viewBalanceResponse = new ViewBalanceResponse(serviceResponseDto);
+        ViewBalanceResult viewBalanceResult = balanceService.getBalance(viewBalanceCommand);
+        ViewBalanceResponse viewBalanceResponse = ViewBalanceResponse.from(viewBalanceResult);
 
         ApiResponse<ViewBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 조회 성공");
@@ -40,13 +40,12 @@ public class BalanceController implements BalanceApiDocs {
     }
 
     @PatchMapping
-    @Tag(name = "잔액", description = "잔액과 관련된 API")
     public ResponseEntity<ApiResponse<ChargeBalanceResponse>> updateBalance(@RequestBody ChargeBalanceRequest request) {
 
-        ChargeBalanceCommand serviceRequest = new ChargeBalanceCommand(request);
+        ChargeBalanceCommand chargeBalanceCommand = ChargeBalanceCommand.from(request);
 
-        ChargeBalanceResult serviceResponse = balanceService.chargeBalance(serviceRequest);
-        ChargeBalanceResponse chargeBalanceResponse = new ChargeBalanceResponse(serviceResponse);
+        ChargeBalanceResult chargeBalanceResult = balanceService.chargeBalance(chargeBalanceCommand);
+        ChargeBalanceResponse chargeBalanceResponse = ChargeBalanceResponse.from(chargeBalanceResult);
 
         ApiResponse<ChargeBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 충전 성공");

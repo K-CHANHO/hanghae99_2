@@ -1,10 +1,7 @@
 package kr.hhplus.be.server.domain.balance.service;
 
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceCommand;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceResult;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.*;
 import kr.hhplus.be.server.domain.balance.domain.entity.Balance;
 import kr.hhplus.be.server.domain.balance.domain.repository.BalanceRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +34,7 @@ public class BalanceServiceTest {
     public void getBalance(){
         // given
         String userId = "sampleUserId";
-        ViewBalanceCommand viewBalanceCommand = new ViewBalanceCommand(userId);
+        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(userId);
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when
@@ -94,9 +91,10 @@ public class BalanceServiceTest {
         // given
         String userId = "sampleUserId";
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
+        UseBalanceCommand balanceCommand = UseBalanceCommand.builder().userId(userId).useAmount(useAmount).discountRate(0.1).build();
 
         // when, then
-        assertThatThrownBy(() -> balanceService.useBalance(userId, useAmount, 0.1))
+        assertThatThrownBy(() -> balanceService.useBalance(balanceCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("사용은 양수 값만 가능합니다.");
 
@@ -109,9 +107,10 @@ public class BalanceServiceTest {
         // given
         String userId = "sampleUserId";
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
+        UseBalanceCommand balanceCommand = UseBalanceCommand.builder().userId(userId).useAmount(useAmount).discountRate(0.1).build();
 
         // when, then
-        assertThatThrownBy(() -> balanceService.useBalance(userId, useAmount, 0.1))
+        assertThatThrownBy(() -> balanceService.useBalance(balanceCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("잔고가 부족합니다.");
 
@@ -124,17 +123,19 @@ public class BalanceServiceTest {
         // given
         String userId = "sampleUserId";
         int initialBalance = 100000;
+        UseBalanceCommand balanceCommand = UseBalanceCommand.builder().userId(userId).useAmount(useAmount).discountRate(0.1).build();
+
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, initialBalance)));
         when(balanceRepository.save(Mockito.any(Balance.class))).thenReturn(
                 new Balance(userId, initialBalance - useAmount)
         );
 
         // when
-        Balance balance = balanceService.useBalance(userId, useAmount, 0.1);
+        UseBalanceResult useBalanceResult = balanceService.useBalance(balanceCommand);
 
         // then
-        assertThat(balance).isNotNull();
-        assertThat(balance.getUserId()).isEqualTo(userId);
-        assertThat(balance.getBalance()).isEqualTo(100000 - useAmount);
+        assertThat(useBalanceResult).isNotNull();
+        assertThat(useBalanceResult.getUserId()).isEqualTo(userId);
+        assertThat(useBalanceResult.getBalance()).isEqualTo(100000 - useAmount);
     }
 }

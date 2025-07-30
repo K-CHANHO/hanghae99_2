@@ -13,8 +13,10 @@ public class ViewBalanceResult {
     private String userId;
     private int balance;
 
-    public ViewBalanceResult(Balance balance){
-        this.userId = balance.getUserId();
-        this.balance = balance.getBalance();
+    public static ViewBalanceResult from(Balance balance) {
+        return ViewBalanceResult.builder()
+                .userId(balance.getUserId())
+                .balance(balance.getBalance())
+                .build();
     }
 }

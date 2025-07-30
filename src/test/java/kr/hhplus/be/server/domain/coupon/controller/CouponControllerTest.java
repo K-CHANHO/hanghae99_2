@@ -53,7 +53,7 @@ class CouponControllerTest {
         Coupon coupon = Coupon.builder()
                 .couponId(couponId)
                 .couponName("깜짝 10% 할인쿠폰")
-                .discountRate(10)
+                .discountRate(10d)
                 .quantity(100)
                 .status("AVAILABLE")
                 .build();

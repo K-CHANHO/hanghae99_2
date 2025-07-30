@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
+import kr.hhplus.be.server.domain.balance.application.service.dto.UseBalanceCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
@@ -152,7 +153,7 @@ public class OrderFacadeTest {
         verify(orderProductService).save(any(OrderProductSaveCommand.class));
         verify(couponService).useCoupon(userId, couponId);
         verify(paymentService).pay(any(PayCommand.class));
-        verify(balanceService).useBalance(userId, mockOrder.getTotalPrice(), mockCoupon.getDiscountRate());
+        verify(balanceService).useBalance(any(UseBalanceCommand.class));
         verify(orderService).changeStatus(any(ChangeStatusCommand.class));
     }
 }

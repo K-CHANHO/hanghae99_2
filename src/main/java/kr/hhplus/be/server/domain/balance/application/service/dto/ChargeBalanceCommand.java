@@ -13,8 +13,10 @@ public class ChargeBalanceCommand {
     private String userId;
     private int amount;
 
-    public ChargeBalanceCommand(ChargeBalanceRequest request) {
-        this.userId = request.getUserId();
-        this.amount = request.getAmount();
+    public static ChargeBalanceCommand from(ChargeBalanceRequest request) {
+        return ChargeBalanceCommand.builder()
+                .userId(request.getUserId())
+                .amount(request.getAmount())
+                .build();
     }
 }

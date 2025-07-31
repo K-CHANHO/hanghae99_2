@@ -1,9 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +16,10 @@ public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long couponId;
+    @Column(length = 100)
     private String couponName;
     private int quantity;
+    @Column(length = 10)
     private String status; // "ACTIVE", "INACTIVE"
     private Double discountRate;
 

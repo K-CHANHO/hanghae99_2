@@ -1,9 +1,6 @@
 package kr.hhplus.be.server.domain.payment.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +10,9 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_payment_status_paid_at", columnList = "status, paid_at")
+})
 @Getter
 @Builder
 @NoArgsConstructor
@@ -21,7 +21,9 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
+    @Column(length = 20)
     private String userId;
+    @Column(length = 10)
     private String status; // PENDING, PAID
     private int paidPrice;
     private Timestamp paidAt;

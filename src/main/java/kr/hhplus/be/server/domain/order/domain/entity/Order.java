@@ -19,7 +19,9 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+    @Column(length = 20)
     private String userId;
+    @Column(length = 10)
     private String status; // PENDING, PAID
     private int totalPrice;
     private Timestamp createdAt;

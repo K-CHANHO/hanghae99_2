@@ -15,12 +15,12 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     private final UserCouponJpaRepository jpaRepository;
 
     @Override
-    public int countByCoupon_CouponId(Long couponId) {
+    public int countByCouponId(Long couponId) {
         return jpaRepository.countByCouponId(couponId);
     }
 
     @Override
-    public Optional<UserCoupon> findByUserIdAndCoupon_CouponId(String userId, Long couponId) {
+    public Optional<UserCoupon> findByUserIdAndCouponId(String userId, Long couponId) {
         return jpaRepository.findByUserIdAndCouponId(userId, couponId);
     }
 

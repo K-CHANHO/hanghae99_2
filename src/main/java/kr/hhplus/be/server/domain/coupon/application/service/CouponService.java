@@ -20,11 +20,11 @@ public class CouponService {
 
         Coupon coupon = couponRepository.findById( couponCommand.getCouponId()).orElseThrow(() -> new RuntimeException("유효한 쿠폰이 아닙니다."));
 
-        if(userCouponRepository.findByUserIdAndCoupon_CouponId(couponCommand.getUserId(), couponCommand.getCouponId()).isPresent()){
+        if(userCouponRepository.findByUserIdAndCouponId(couponCommand.getUserId(), couponCommand.getCouponId()).isPresent()){
             throw new RuntimeException("이미 발급된 쿠폰입니다.");
         }
 
-        int issuedCouponQuantity = userCouponRepository.countByCoupon_CouponId(couponCommand.getCouponId());
+        int issuedCouponQuantity = userCouponRepository.countByCouponId(couponCommand.getCouponId());
         coupon.checkQuantity(issuedCouponQuantity);
 
         UserCoupon userCoupon = new UserCoupon();
@@ -39,7 +39,7 @@ public class CouponService {
             return UseCouponResult.builder().discountRate(0.0).build();
         }
 
-        UserCoupon userCoupon = userCouponRepository.findByUserIdAndCoupon_CouponId(useCouponCommand.getUserId(), useCouponCommand.getCouponId())
+        UserCoupon userCoupon = userCouponRepository.findByUserIdAndCouponId(useCouponCommand.getUserId(), useCouponCommand.getCouponId())
                 .orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다"));
         userCoupon.useCoupon();
         UserCoupon usedCoupon = userCouponRepository.save(userCoupon);

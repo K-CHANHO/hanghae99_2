@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.product.dto.ViewProductResponse;
-import kr.hhplus.be.server.domain.product.dto.ViewTopProductResponse;
+import kr.hhplus.be.server.domain.product.presenter.controller.dto.ViewProductResponse;
+import kr.hhplus.be.server.domain.product.presenter.controller.dto.ViewTopProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 

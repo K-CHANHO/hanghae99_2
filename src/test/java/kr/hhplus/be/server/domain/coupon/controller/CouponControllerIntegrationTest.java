@@ -16,14 +16,63 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Sql(scripts = "/testSql/test-data.sql")
+@Sql(scripts = {
+        "/testSql/cleanup.sql",
+        "/testSql/balance.sql",
+        "/testSql/product.sql",
+        "/testSql/coupon.sql"
+})
 class CouponControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("쿠폰 발급 API 테스트")
+    @DisplayName("쿠폰 발급 API 테스트_이미 발급받은 쿠폰일 경우")
+    void issueCouponWithAlreadyIssued() throws Exception {
+        // given
+        Long couponId = 1L;
+        String userId = "sampleUserId";
+        String url = "/api/v1/coupon/issue";
+        String requestBody = "{ \"userId\": \"" + userId + "\", \"couponId\": "+ couponId +" }";
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+        );
+
+        // then
+        result.andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("이미 발급된 쿠폰입니다."))
+                .andExpect(jsonPath("$.code").value(500));
+    }
+
+    @Test
+    @DisplayName("쿠폰 발급 API 테스트_쿠폰이 소진된 경우")
+    void issueCouponWithExhausted() throws Exception {
+        // given
+        Long couponId = 1L;
+        String userId = "sampleUserId1";
+        String url = "/api/v1/coupon/issue";
+        String requestBody = "{ \"userId\": \"" + userId + "\", \"couponId\": "+ couponId +" }";
+
+        // when
+        ResultActions result = mockMvc.perform(
+                post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+        );
+
+        // then
+        result.andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("쿠폰이 소진되었습니다."))
+                .andExpect(jsonPath("$.code").value(500));
+    }
+
+    @Test
+    @DisplayName("쿠폰 발급 API 테스트_성공")
     void issueCoupon() throws Exception {
         // given
         Long couponId = 2L;

@@ -1,70 +1,70 @@
 ```mermaid
 erDiagram
     user{
-        string userId PK
-        int balance
+        STRING userId PK
+        INT balance
     }
 
     product{
-        string productId PK
-        string productName
-        int stock
-        int price
+        BIGINT productId PK
+        STRING productName
+        INT price
+    }
+    
+    productStock{
+        BIGINT productId PK
+        INT stockQuantity
     }
 
     order{
-        string orderId PK
-        string userId FK "user"
-        string userCouponId FK "userCoupon"
-        int totalPrice
-        string status
-        string orderDate
+        BIGINT orderId PK
+        STRING userId FK "user"
+        INT totalPrice
+        STRING status
+        TIMESTAMP createdAt
     }
 
     orderProduct{
-        string orderProductId PK
-        string orderId FK "order"
-        string productId FK "product"
-        int quantity
-        int price
+        BIGINT orderProductId PK
+        BIGINT orderId FK "order"
+        BIGINT productId FK "product"
+        INT quantity
+        INT price
     }
 
     coupon{
-        string couponId PK
-        string ruleId FK "couponRule"
-        string couponName
-        string status
-        int totalQuantity
-        int remainQuantity
-    }
-
-    couponRule{
-        string ruleId PK
-        int saleRate
+        BIGINT couponId PK
+        STRING couponName
+        STRING status
+        INT quantity
+        DOUBLE discountRate
     }
 
     userCoupon{
-        string userCouponId PK
-        string userId FK "user"
-        string couponId FK "coupon"
-        timestamp issuedAt
+        BIGINT userCouponId PK
+        STRING userId FK "user"
+        BIGINT couponId FK "coupon"
+        STRING status
+        TIMESTAMP issuedAt
+        TIMESTAMP expiredAt
+        TIMESTAMP usedAt
     }
 
     payment {
-        string paymentId PK
-        string userId FK "user"
-        string orderId FK "order"
-        string status
-        string price
+        LONG paymentId PK
+        STRING userId FK "user"
+        BIGINT orderId FK "order"
+        STRING status
+        INT paidPrice
+        TIMESTAMP paidAt
     }
 
     user ||--o{ order : places
-    order ||--o{ orderProduct : contains
-    orderProduct ||--o{ product : relates
     user ||--o{ payment : places
-    payment ||--o| order : contains
-    order ||--o| userCoupon : relates
     user ||--o{ userCoupon : places
+    order ||--o{ orderProduct : contains
+    product ||--o| productStock : contains
+    payment ||--o| order : contains
+    orderProduct ||--o| product : relates
     userCoupon ||--o| coupon : relates
-    coupon ||--o| couponRule : contains
 ```

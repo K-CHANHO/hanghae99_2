@@ -1,0 +1,51 @@
+package kr.hhplus.be.server.domain.payment.application.service;
+
+import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
+import kr.hhplus.be.server.domain.payment.domain.repository.PaymentRepository;
+import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
+import kr.hhplus.be.server.domain.payment.application.service.dto.PayResult;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class PaymentService {
+    private final PaymentRepository paymentRepository;
+
+    public PayResult pay(PayCommand payCommand){
+
+        // 결제 생성
+        Payment payment = new Payment();
+        payment.create(payCommand);
+
+        // 결제 요청
+        Payment createdPayment = paymentRepository.save(payment);
+        createdPayment.pay();
+
+        // 알림 전송
+        sendPaymentNotification(createdPayment);
+
+        return new PayResult(createdPayment);
+    }
+
+    public List<Long> getPaidOrderIdsWithinLastDays(int days) {
+        List<Payment> paidOrder = paymentRepository.findOrderIdByStatusAndPaidAtAfter("PAID", new Timestamp(System.currentTimeMillis() - Duration.ofDays(days).toMillis()));
+        return paidOrder.stream()
+                .map(Payment::getOrderId)
+                .toList();
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    private void sendPaymentNotification(Payment payment) {
+        System.out.println("결제정보 외부 전송");
+    }
+
+
+}

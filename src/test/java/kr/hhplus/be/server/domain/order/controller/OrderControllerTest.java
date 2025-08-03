@@ -1,10 +1,12 @@
 package kr.hhplus.be.server.domain.order.controller;
 
 import com.google.gson.Gson;
+import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
+import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
-import kr.hhplus.be.server.domain.order.dto.OrderRequest;
-import kr.hhplus.be.server.domain.order.entity.Order;
-import kr.hhplus.be.server.domain.order.facade.OrderFacade;
+import kr.hhplus.be.server.domain.order.presenter.controller.OrderController;
+import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,33 +45,33 @@ class OrderControllerTest {
     void createOrder() throws Exception {
         // given
         String url = "/api/v1/order";
-        OrderRequest request = new OrderRequest();
-        request.setUserId("sampleUserId");
-        request.setUserCouponId(1L);
 
         OrderProductDto orderProductDto1 = new OrderProductDto();
         orderProductDto1.setProductId(1L);
         orderProductDto1.setPrice(100000);
         orderProductDto1.setQuantity(3);
-
         OrderProductDto orderProductDto2 = new OrderProductDto();
         orderProductDto2.setProductId(2L);
         orderProductDto2.setPrice(100000);
         orderProductDto2.setQuantity(3);
 
-        request.setOrderProductDtoList(List.of(orderProductDto1, orderProductDto2));
+        OrderRequest request = OrderRequest.builder()
+                .userId("sampleUserId")
+                .userCouponId(1L)
+                .orderProductDtoList(List.of(orderProductDto1, orderProductDto2))
+                .build();
 
         Gson gson = new Gson();
         String content = gson.toJson(request);
 
-        Order mockOrder = Order.builder()
+        OrderProcessResult mockOrderProcessResult = OrderProcessResult.builder()
                 .orderId(1L)
                 .userId("sampleUserId")
                 .totalPrice(600000)
                 .status("PAID")
                 .build();
 
-        when(orderFacade.orderProcess(anyString(), anyList(), anyLong())).thenReturn(mockOrder);
+        when(orderFacade.orderProcess(any(OrderProcessCommand.class))).thenReturn(mockOrderProcessResult);
 
         // when
         ResultActions result = mockMvc.perform(

@@ -1,7 +1,10 @@
 package kr.hhplus.be.server.domain.balance.service;
 
-import kr.hhplus.be.server.domain.balance.entity.BalanceHistory;
-import kr.hhplus.be.server.domain.balance.repository.BalanceHistoryRepository;
+import kr.hhplus.be.server.domain.balance.application.service.BalanceHistoryService;
+import kr.hhplus.be.server.domain.balance.application.service.dto.SaveBalanceHistoryCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.SaveBalanceHistoryResult;
+import kr.hhplus.be.server.domain.balance.domain.entity.BalanceHistory;
+import kr.hhplus.be.server.domain.balance.domain.repository.BalanceHistoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,16 +33,17 @@ public class BalanceHistoryServiceTest {
         // given
         String userId = "sampleUserId";
         int chargeAmount = 10000;
+        SaveBalanceHistoryCommand saveBalanceHistoryCommand = SaveBalanceHistoryCommand.builder().userId(userId).amount(chargeAmount).type(type).build();
         when(balanceHistoryRepository.save(any(BalanceHistory.class)))
                 .thenReturn(new BalanceHistory(userId, chargeAmount, type));
 
         // when
-        BalanceHistory balanceHistory = balanceHistoryService.saveBalanceHistory(userId, chargeAmount, type);
+        SaveBalanceHistoryResult saveBalanceHistoryResult = balanceHistoryService.saveBalanceHistory(saveBalanceHistoryCommand);
 
         // then
-        assertThat(balanceHistory).isNotNull();
-        assertThat(balanceHistory.getUserId()).isEqualTo(userId);
-        assertThat(balanceHistory.getAmount()).isEqualTo(chargeAmount);
-        assertThat(balanceHistory.getType()).isEqualTo(type);
+        assertThat(saveBalanceHistoryResult).isNotNull();
+        assertThat(saveBalanceHistoryResult.getUserId()).isEqualTo(userId);
+        assertThat(saveBalanceHistoryResult.getAmount()).isEqualTo(chargeAmount);
+        assertThat(saveBalanceHistoryResult.getType()).isEqualTo(type);
     }
 }

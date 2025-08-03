@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.domain.balance.service;
 
-import kr.hhplus.be.server.domain.balance.entity.Balance;
-import kr.hhplus.be.server.domain.balance.repository.BalanceRepository;
+import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
+import kr.hhplus.be.server.domain.balance.application.service.dto.*;
+import kr.hhplus.be.server.domain.balance.domain.entity.Balance;
+import kr.hhplus.be.server.domain.balance.domain.repository.BalanceRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,15 +34,16 @@ public class BalanceServiceTest {
     public void getBalance(){
         // given
         String userId = "sampleUserId";
+        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(userId);
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when
-        Balance balance = balanceService.getBalance(userId);
+        ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
 
         // then
-        assertThat(balance).isNotNull();
-        assertThat(userId).isEqualTo(balance.getUserId());
-        assertThat(100000).isEqualTo(balance.getBalance());
+        assertThat(serviceResponseDto).isNotNull();
+        assertThat(userId).isEqualTo(serviceResponseDto.getUserId());
+        assertThat(100000).isEqualTo(serviceResponseDto.getBalance());
     }
 
     @ParameterizedTest
@@ -49,10 +52,11 @@ public class BalanceServiceTest {
     public void chargeBalanceWithNegativeValue(int chargeAmount){
         // given
         String userId = "sampleUserId";
+        ChargeBalanceCommand serviceRequest = ChargeBalanceCommand.builder().userId(userId).amount(chargeAmount).build();
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when, then
-        assertThatThrownBy(() -> balanceService.chargeBalance(userId, chargeAmount))
+        assertThatThrownBy(() -> balanceService.chargeBalance(serviceRequest))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("충전은 양수 값만 가능합니다.");
 
@@ -65,6 +69,7 @@ public class BalanceServiceTest {
         // given
         String userId = "sampleUserId";
         int initialBalance = 100000;
+        ChargeBalanceCommand serviceRequest = ChargeBalanceCommand.builder().userId(userId).amount(chargeAmount).build();
 
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, initialBalance)));
         when(balanceRepository.save(Mockito.any(Balance.class))).thenReturn(
@@ -72,11 +77,11 @@ public class BalanceServiceTest {
         );
 
         // when
-        Balance updatedBalance = balanceService.chargeBalance(userId, chargeAmount);
+        ChargeBalanceResult serviceResponse = balanceService.chargeBalance(serviceRequest);
 
         // then
-        assertThat(updatedBalance).isNotNull();
-        assertThat(updatedBalance.getBalance()).isEqualTo(initialBalance + chargeAmount);
+        assertThat(serviceResponse).isNotNull();
+        assertThat(serviceResponse.getBalance()).isEqualTo(initialBalance + chargeAmount);
     }
 
     @ParameterizedTest
@@ -86,9 +91,10 @@ public class BalanceServiceTest {
         // given
         String userId = "sampleUserId";
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
+        UseBalanceCommand balanceCommand = UseBalanceCommand.builder().userId(userId).useAmount(useAmount).discountRate(0.1).build();
 
         // when, then
-        assertThatThrownBy(() -> balanceService.useBalance(userId, useAmount))
+        assertThatThrownBy(() -> balanceService.useBalance(balanceCommand))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("사용은 양수 값만 가능합니다.");
 
@@ -101,11 +107,12 @@ public class BalanceServiceTest {
         // given
         String userId = "sampleUserId";
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
+        UseBalanceCommand balanceCommand = UseBalanceCommand.builder().userId(userId).useAmount(useAmount).discountRate(0.1).build();
 
         // when, then
-        assertThatThrownBy(() -> balanceService.useBalance(userId, useAmount))
+        assertThatThrownBy(() -> balanceService.useBalance(balanceCommand))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessage("잔액보다 많이 사용할 수 없습니다.");
+                .hasMessage("잔고가 부족합니다.");
 
     }
 
@@ -116,17 +123,19 @@ public class BalanceServiceTest {
         // given
         String userId = "sampleUserId";
         int initialBalance = 100000;
+        UseBalanceCommand balanceCommand = UseBalanceCommand.builder().userId(userId).useAmount(useAmount).discountRate(0.1).build();
+
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, initialBalance)));
         when(balanceRepository.save(Mockito.any(Balance.class))).thenReturn(
                 new Balance(userId, initialBalance - useAmount)
         );
 
         // when
-        Balance balance = balanceService.useBalance(userId, useAmount);
+        UseBalanceResult useBalanceResult = balanceService.useBalance(balanceCommand);
 
         // then
-        assertThat(balance).isNotNull();
-        assertThat(balance.getUserId()).isEqualTo(userId);
-        assertThat(balance.getBalance()).isEqualTo(100000 - useAmount);
+        assertThat(useBalanceResult).isNotNull();
+        assertThat(useBalanceResult.getUserId()).isEqualTo(userId);
+        assertThat(useBalanceResult.getBalance()).isEqualTo(100000 - useAmount);
     }
 }

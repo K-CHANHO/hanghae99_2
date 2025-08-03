@@ -1,0 +1,10 @@
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (1, 'sampleUserId', 'PAID', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (2, 'sampleUserId', 'PAID', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (3, 'sampleUserId', 'PAID', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (4, 'sampleUserId', 'PAID', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (5, 'sampleUserId', 'PAID', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (6, 'sampleUserId', 'PENDING', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (7, 'sampleUserId', 'PENDING', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (8, 'sampleUserId', 'PENDING', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (9, 'sampleUserId', 'PENDING', 100000, '2025-07-27 00:50:00');
+INSERT INTO `order` (order_id, user_id, status, total_price, created_at) VALUES (10, 'sampleUserId', 'PENDING', 100000, '2025-07-27 00:50:00');

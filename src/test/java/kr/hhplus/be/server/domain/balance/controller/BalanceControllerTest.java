@@ -1,7 +1,11 @@
 package kr.hhplus.be.server.domain.balance.controller;
 
-import kr.hhplus.be.server.domain.balance.entity.Balance;
-import kr.hhplus.be.server.domain.balance.service.BalanceService;
+import kr.hhplus.be.server.domain.balance.presenter.controller.BalanceController;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -45,8 +50,8 @@ public class BalanceControllerTest {
         // given
         String url = "/api/v1/balance/{userId}";
         String userId = "sampleUserId";
-        Balance mockBalance = Balance.builder().userId(userId).balance(100000).build();
-        when(balanceService.getBalance(userId)).thenReturn(mockBalance);
+        ViewBalanceResult viewBalanceResult = ViewBalanceResult.builder().userId(userId).balance(100000).build();
+        when(balanceService.getBalance(any(ViewBalanceCommand.class))).thenReturn(viewBalanceResult);
 
         // when
         ResultActions result = mockMvc.perform(
@@ -69,8 +74,10 @@ public class BalanceControllerTest {
         String url = "/api/v1/balance";
         String userId = "sampleUserId";
         String requestBody = "{\"userId\" : \"" + userId+ "\", \"amount\" : \""+ chargeAmount + "\", \"transactionId\" : \"tx12345\"}";
-        Balance mockBalance = Balance.builder().userId(userId).balance(100000 + chargeAmount).build();
-        when(balanceService.chargeBalance(userId, chargeAmount)).thenReturn(mockBalance);
+
+        ChargeBalanceResult serviceResponse = ChargeBalanceResult.builder().userId(userId).balance(100000 + chargeAmount).build();
+        when(balanceService.chargeBalance(any(ChargeBalanceCommand.class))).thenReturn(serviceResponse);
+
         // when
         ResultActions result = mockMvc.perform(
                 patch(url)

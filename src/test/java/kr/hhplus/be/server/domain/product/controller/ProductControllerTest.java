@@ -1,9 +1,14 @@
 package kr.hhplus.be.server.domain.product.controller;
 
-import kr.hhplus.be.server.domain.product.entity.Product;
-import kr.hhplus.be.server.domain.product.entity.ProductStock;
-import kr.hhplus.be.server.domain.product.facade.ProductFacade;
-import kr.hhplus.be.server.domain.product.service.ProductService;
+import kr.hhplus.be.server.domain.product.application.facade.dto.GetTopProductsResult;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductCommand;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductResult;
+import kr.hhplus.be.server.domain.product.application.service.dto.GetProductsResult;
+import kr.hhplus.be.server.domain.product.domain.entity.Product;
+import kr.hhplus.be.server.domain.product.domain.entity.ProductStock;
+import kr.hhplus.be.server.domain.product.application.facade.ProductFacade;
+import kr.hhplus.be.server.domain.product.presenter.controller.ProductController;
+import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,9 +58,10 @@ class ProductControllerTest {
                 .productId(productId)
                 .productName("항해 백엔드 9기 과정")
                 .price(1500000)
-                .productStock(ProductStock.builder().productId(productId).stockQuantity(100).build())
                 .build();
-        when(productService.getProduct(productId)).thenReturn(product);
+        ProductStock productStock = ProductStock.builder().productId(productId).stockQuantity(100).build();
+        GetProductResult getProductResult = GetProductResult.from(product, productStock);
+        when(productService.getProduct(any(GetProductCommand.class))).thenReturn(getProductResult);
 
         // when
         ResultActions result = mockMvc.perform(
@@ -62,7 +69,7 @@ class ProductControllerTest {
         );
 
         // then
-        verify(productService).getProduct(productId);
+        verify(productService).getProduct(any(GetProductCommand.class));
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("상품 조회 성공"))
                 .andExpect(jsonPath("$.code").value(200))
@@ -81,12 +88,13 @@ class ProductControllerTest {
         ProductStock productStock2 = ProductStock.builder().productId(2L).stockQuantity(20).build();
         ProductStock productStock3 = ProductStock.builder().productId(2L).stockQuantity(30).build();
         List<Product> mockTopProducts = List.of(
-                Product.builder().productId(1L).productName("항해 백엔드 9기 과정").price(1500000).productStock(productStock1).build(),
-                Product.builder().productId(2L).productName("항해 프론트엔드 9기 과정").price(1200000).productStock(productStock2).build(),
-                Product.builder().productId(3L).productName("항해 데브옵스 9기 과정").price(1600000).productStock(productStock3).build()
+                Product.builder().productId(1L).productName("항해 백엔드 9기 과정").price(1500000).build(),
+                Product.builder().productId(2L).productName("항해 프론트엔드 9기 과정").price(1200000).build(),
+                Product.builder().productId(3L).productName("항해 데브옵스 9기 과정").price(1600000).build()
         );
-        when(productFacade.getTopProducts()).thenReturn(mockTopProducts);
-
+        GetProductsResult getProductsResult = GetProductsResult.from(mockTopProducts);
+        GetTopProductsResult getTopProductsResult = GetTopProductsResult.from(getProductsResult);
+        when(productFacade.getTopProducts()).thenReturn(getTopProductsResult);
 
         // when
         ResultActions result = mockMvc.perform(
@@ -102,17 +110,14 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.data.topProducts.size()").value(3))
                 .andExpect(jsonPath("$.data.topProducts[0].productId").value(1L))
                 .andExpect(jsonPath("$.data.topProducts[0].productName").value("항해 백엔드 9기 과정"))
-                .andExpect(jsonPath("$.data.topProducts[0].stock").value(10))
                 .andExpect(jsonPath("$.data.topProducts[0].price").value(1500000))
 
                 .andExpect(jsonPath("$.data.topProducts[1].productId").value(2L))
                 .andExpect(jsonPath("$.data.topProducts[1].productName").value("항해 프론트엔드 9기 과정"))
-                .andExpect(jsonPath("$.data.topProducts[1].stock").value(20))
                 .andExpect(jsonPath("$.data.topProducts[1].price").value(1200000))
 
                 .andExpect(jsonPath("$.data.topProducts[2].productId").value(3L))
                 .andExpect(jsonPath("$.data.topProducts[2].productName").value("항해 데브옵스 9기 과정"))
-                .andExpect(jsonPath("$.data.topProducts[2].stock").value(30))
                 .andExpect(jsonPath("$.data.topProducts[2].price").value(1600000))
         ;
     }

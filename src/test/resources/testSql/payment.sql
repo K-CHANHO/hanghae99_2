@@ -1,0 +1,10 @@
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (1, 'sampleUserId', 1, 'PAID', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (2, 'sampleUserId', 2, 'PAID', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (3, 'sampleUserId', 3, 'PAID', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (4, 'sampleUserId', 4, 'PAID', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (5, 'sampleUserId', 5, 'PAID', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (6, 'sampleUserId', 6, 'PENDING', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (7, 'sampleUserId', 7, 'PENDING', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (8, 'sampleUserId', 8, 'PENDING', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (9, 'sampleUserId', 9, 'PENDING', 100000, '2025-07-30 00:50:00');
+INSERT INTO payment (payment_id, user_id, order_id, status, paid_price, paid_at) VALUES (10, 'sampleUserId', 10, 'PENDING', 100000, '2025-07-30 00:50:00');

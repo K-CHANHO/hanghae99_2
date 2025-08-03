@@ -7,6 +7,9 @@ import java.sql.Timestamp;
 import java.time.temporal.ChronoUnit;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_user_coupon_user_id_coupon_id", columnList = "user_id, coupon_id")
+})
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +18,9 @@ public class UserCoupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userCouponId;
+    @Column(length = 20)
     private String userId;
+    @Column(length = 10)
     private String status; // 쿠폰 상태: AVAILABLE, USED, EXPIRED
     private Timestamp issuedAt;
     private Timestamp expiredAt;

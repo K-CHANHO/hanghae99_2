@@ -8,7 +8,8 @@ import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(indexes = {
-        @Index(name = "idx_user_coupon_user_id_coupon_id", columnList = "user_id, coupon_id")
+        @Index(name = "idx_user_coupon_user_id", columnList = "user_id"),
+        @Index(name = "idx_user_coupon_coupon_id", columnList = "coupon_id")
 })
 @Getter
 @AllArgsConstructor

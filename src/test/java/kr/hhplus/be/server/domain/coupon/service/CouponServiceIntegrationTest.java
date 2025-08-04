@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +31,6 @@ public class CouponServiceIntegrationTest {
 
     @Test
     @DisplayName("쿠폰발급_동시성 테스트")
-    @Transactional
     void coupon_concurrency_fail() throws InterruptedException {
         // given
         int threadCount = 200;

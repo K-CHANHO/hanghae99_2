@@ -8,5 +8,8 @@ public interface CouponStockRepository {
 
     Optional<CouponStock> findById(Long couponId);
 
+    Optional<CouponStock> findByIdWithPessimisticLock(Long couponId);
+
+
     CouponStock save(CouponStock couponStock);
 }

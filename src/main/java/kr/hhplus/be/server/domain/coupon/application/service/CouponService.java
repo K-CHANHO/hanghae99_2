@@ -35,7 +35,7 @@ public class CouponService {
         //int issuedCouponQuantity = userCouponRepository.countByCouponId(couponCommand.getCouponId());
         //coupon.checkQuantity(issuedCouponQuantity);
         // 쿠폰 잔여수량 차감
-        CouponStock couponStock = couponStockRepository.findById(couponCommand.getCouponId())
+        CouponStock couponStock = couponStockRepository.findByIdWithPessimisticLock(couponCommand.getCouponId())
                 .orElseThrow(() -> new RuntimeException("쿠폰 잔여수량을 확인할 수 없습니다."));
         couponStock.reduce();
         couponStockRepository.save(couponStock);

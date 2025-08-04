@@ -12,11 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderProductSaveResult {
 
-    private List<OrderProductDto2> orderProductDto2List;
+    private List<OrderProductDto> orderProductDtoList;
 
     @Builder
     @Getter
-    public static class OrderProductDto2 {
+    public static class OrderProductDto {
         private Long orderProductId;
         private Long orderId;
         private Long productId;
@@ -24,8 +24,8 @@ public class OrderProductSaveResult {
         private int price;
     }
 
-    public static OrderProductDto2 toDto(OrderProduct orderProduct){
-        return OrderProductDto2.builder()
+    public static OrderProductDto toDto(OrderProduct orderProduct){
+        return OrderProductDto.builder()
                 .orderProductId(orderProduct.getOrderProductId())
                 .orderId(orderProduct.getOrderId())
                 .productId(orderProduct.getProductId())
@@ -35,10 +35,10 @@ public class OrderProductSaveResult {
     }
 
     public static OrderProductSaveResult from(List<OrderProduct> orderProducts) {
-        List<OrderProductDto2> list = orderProducts.stream().map(OrderProductSaveResult::toDto).toList();
+        List<OrderProductDto> list = orderProducts.stream().map(OrderProductSaveResult::toDto).toList();
 
         return OrderProductSaveResult.builder()
-                .orderProductDto2List(list)
+                .orderProductDtoList(list)
                 .build();
     }
 

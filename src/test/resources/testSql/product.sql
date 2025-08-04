@@ -16,7 +16,7 @@ INSERT INTO product_stock (product_id, stock_quantity) VALUES (2, 20);
 INSERT INTO product_stock (product_id, stock_quantity) VALUES (3, 30);
 INSERT INTO product_stock (product_id, stock_quantity) VALUES (4, 10);
 INSERT INTO product_stock (product_id, stock_quantity) VALUES (5, 10);
-INSERT INTO product_stock (product_id, stock_quantity) VALUES (6, 10);
+INSERT INTO product_stock (product_id, stock_quantity) VALUES (6, 200);
 INSERT INTO product_stock (product_id, stock_quantity) VALUES (7, 10);
 INSERT INTO product_stock (product_id, stock_quantity) VALUES (8, 10);
 INSERT INTO product_stock (product_id, stock_quantity) VALUES (9, 10);

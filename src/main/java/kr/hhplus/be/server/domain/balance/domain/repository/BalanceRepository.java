@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface BalanceRepository {
 
     Optional<Balance> findById(String userId);
+    Optional<Balance> findByIdWithPessimisticLock(String userId);
 
     Balance save(Balance balance);
 }

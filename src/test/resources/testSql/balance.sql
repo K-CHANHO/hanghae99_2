@@ -7,5 +7,5 @@ INSERT INTO balance (user_id, balance) VALUES ('sampleUserId4', 300000);
 INSERT INTO balance (user_id, balance) VALUES ('sampleUserId5', 300000);
 INSERT INTO balance (user_id, balance) VALUES ('sampleUserId6', 300000);
 INSERT INTO balance (user_id, balance) VALUES ('sampleUserId7', 300000);
-INSERT INTO balance (user_id, balance) VALUES ('sampleUserId8', 300000);
-INSERT INTO balance (user_id, balance) VALUES ('sampleUserId9', 300000);
+INSERT INTO balance (user_id, balance) VALUES ('sampleUserId8', 4000000);
+INSERT INTO balance (user_id, balance) VALUES ('sampleUserId9', 0);

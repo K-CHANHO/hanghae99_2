@@ -50,6 +50,8 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok:1.18.30")
 	implementation("com.google.code.gson:gson")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+	implementation ("org.springframework.retry:spring-retry")
+	implementation ("org.springframework.boot:spring-boot-starter-aop")
 }
 
 tasks.withType<Test> {

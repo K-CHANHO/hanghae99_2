@@ -3,6 +3,8 @@ package kr.hhplus.be.server.domain.balance.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Version;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Balance {
 
@@ -17,6 +20,9 @@ public class Balance {
     @Column(length = 20)
     private String userId;
     private int balance;
+
+    @Version
+    private Long version;
 
     public Balance(String userId, int balance) {
         if(balance < 0){

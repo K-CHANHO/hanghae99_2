@@ -20,7 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Sql(scripts = {
-        "/testSql/balance.sql",
+        "/testSql/cleanup.sql",
+        "/testSql/balance.sql"
 })
 public class BalanceServiceIntegrationTest {
     @Autowired

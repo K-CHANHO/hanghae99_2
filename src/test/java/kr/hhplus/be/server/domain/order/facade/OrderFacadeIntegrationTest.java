@@ -154,7 +154,6 @@ public class OrderFacadeIntegrationTest {
         // when
         AtomicInteger failCnt = new AtomicInteger();
         for(int i = 0; i< threadCount; i++){
-            int finalI = i;
 
             executorService.submit(() -> {
                 try{

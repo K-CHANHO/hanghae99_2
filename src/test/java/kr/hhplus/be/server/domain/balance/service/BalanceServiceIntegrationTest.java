@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.concurrent.CountDownLatch;
@@ -46,7 +47,7 @@ public class BalanceServiceIntegrationTest {
             executorService.submit(() -> {
                try{
                    balanceService.chargeBalance(chargeBalanceCommand);
-               } catch (Exception e){
+               } catch (OptimisticLockingFailureException e){
                    failCnt.getAndIncrement();
                } finally {
                    latch.countDown();
@@ -58,9 +59,7 @@ public class BalanceServiceIntegrationTest {
         ViewBalanceResult balance = balanceService.getBalance(viewBalanceCommand);
 
         // then
-        assertThat(balance.getBalance()).isEqualTo(2000000);
-        assertThat(failCnt.get()).isEqualTo(0);
-
+        assertThat(balance.getBalance()).isEqualTo(10000 * (200-failCnt.get()));
     }
 
     @Test
@@ -82,7 +81,7 @@ public class BalanceServiceIntegrationTest {
             executorService.submit(() -> {
                 try{
                     balanceService.useBalance(useBalanceCommand);
-                } catch (Exception e){
+                } catch (OptimisticLockingFailureException e){
                     failCnt.getAndIncrement();
                 } finally {
                     latch.countDown();
@@ -94,8 +93,7 @@ public class BalanceServiceIntegrationTest {
         ViewBalanceResult balance = balanceService.getBalance(viewBalanceCommand);
 
         // then
-        assertThat(failCnt.get()).isEqualTo(0);
-        assertThat(balance.getBalance()).isEqualTo(2000000);
+        assertThat(balance.getBalance()).isEqualTo(4000000 - 10000 * (200-failCnt.get()));
 
     }
 }

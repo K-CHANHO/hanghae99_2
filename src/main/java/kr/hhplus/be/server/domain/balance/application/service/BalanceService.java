@@ -25,7 +25,7 @@ public class BalanceService{
 
     @Retryable(
             retryFor = {ObjectOptimisticLockingFailureException.class},
-            maxAttempts = 10,
+            maxAttempts = 3,
             backoff = @Backoff(delay = 200)
     )
     @Transactional
@@ -41,7 +41,7 @@ public class BalanceService{
 
     @Retryable(
             retryFor = {ObjectOptimisticLockingFailureException.class},
-            maxAttempts = 10,
+            maxAttempts = 3,
             backoff = @Backoff(delay = 200)
     )
     @Transactional

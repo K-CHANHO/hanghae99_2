@@ -4,7 +4,8 @@ import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponCommand;
 import kr.hhplus.be.server.domain.coupon.domain.repository.CouponStockRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -29,17 +30,18 @@ public class CouponServiceIntegrationTest {
     @Autowired
     private CouponStockRepository couponStockRepository;
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {1,99,100,101,200})
     @DisplayName("쿠폰발급_동시성 테스트")
-    void coupon_concurrency_fail() throws InterruptedException {
+    void coupon_concurrency_fail(int issueAmount) throws InterruptedException {
         // given
         int threadCount = 200;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch latch = new CountDownLatch(threadCount);
+        CountDownLatch latch = new CountDownLatch(issueAmount);
 
         // when
         AtomicInteger failCnt = new AtomicInteger();
-        for(int i = 0; i< threadCount; i++){
+        for(int i = 0; i< issueAmount; i++){
             int finalI = i;
 
             executorService.submit(() -> {
@@ -47,7 +49,9 @@ public class CouponServiceIntegrationTest {
                     IssueCouponCommand issueCouponCommand = new IssueCouponCommand("sampleUserId"+ finalI, 5L);
                     couponService.issueCoupon(issueCouponCommand);
                 } catch (Exception e){
-                    failCnt.getAndIncrement();
+                    if(e.getMessage().equals("쿠폰이 소진되었습니다.")) {
+                        failCnt.getAndIncrement();
+                    }
                 } finally{
                     latch.countDown();
                 }
@@ -56,9 +60,11 @@ public class CouponServiceIntegrationTest {
 
         latch.await();
 
+        Long couponStock = couponStockRepository.findById(5L).get().getQuantity();
+
         // then
-        assertThat(couponStockRepository.findById(5L).get().getQuantity()).isEqualTo(0);
-        assertThat(failCnt.get()).isEqualTo(100);
+        assertThat(couponStock).isEqualTo(Math.max(100-issueAmount, 0));
+        assertThat(failCnt.get()).isEqualTo(Math.max(issueAmount-100, 0));
 
     }
 }

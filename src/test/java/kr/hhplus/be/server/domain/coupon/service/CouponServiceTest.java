@@ -52,7 +52,8 @@ public class CouponServiceTest {
         IssueCouponCommand couponCommand = IssueCouponCommand.builder().userId(userId).couponId(couponId).build();
 
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(couponStockRepository.findById(couponId)).thenReturn(couponStock);
+        lenient().when(couponStockRepository.findById(couponId)).thenReturn(couponStock);
+        lenient().when(couponStockRepository.findByIdWithPessimisticLock(couponId)).thenReturn(couponStock);
 
         // when, then
         assertThatThrownBy(() -> couponService.issueCoupon(couponCommand))
@@ -69,7 +70,7 @@ public class CouponServiceTest {
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
         IssueCouponCommand couponCommand = IssueCouponCommand.builder().userId(userId).couponId(couponId).build();
 
-        when(couponRepository.findById(couponId)).thenReturn(coupon);
+        lenient().when(couponRepository.findById(couponId)).thenReturn(coupon);
         when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(new UserCoupon()));
 
         // when, then
@@ -99,7 +100,8 @@ public class CouponServiceTest {
 
         when(couponRepository.findById(couponId)).thenReturn(coupon);
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(userCoupon);
-        when(couponStockRepository.findById(couponId)).thenReturn(Optional.of(couponStock));
+        lenient().when(couponStockRepository.findById(couponId)).thenReturn(Optional.of(couponStock));
+        lenient().when(couponStockRepository.findByIdWithPessimisticLock(couponId)).thenReturn(Optional.of(couponStock));
 
         // when
         IssueCouponResult couponResult = couponService.issueCoupon(couponCommand);

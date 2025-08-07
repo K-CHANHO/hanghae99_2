@@ -13,6 +13,8 @@ import kr.hhplus.be.server.domain.product.application.service.dto.GetProductResu
 import kr.hhplus.be.server.domain.product.domain.repository.ProductStockRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -133,33 +135,35 @@ public class OrderFacadeIntegrationTest {
         assertThat(viewBalanceResult.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {1, 199,200,201, 300})
     @DisplayName("주문/결제 - 재고 차감 동시성 테스트")
-    public void orderProcessForProductStockReduce() throws InterruptedException {
+    public void orderProcessForProductStockReduce(int orderAmount) throws InterruptedException {
         // given
         int threadCount = 200;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch latch = new CountDownLatch(threadCount);
+        CountDownLatch latch = new CountDownLatch(orderAmount);
 
         String userId = "sampleUserId";
         ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(6L).price(10).quantity(1).build();
         orderProductDtoList.add(orderProductDto1);
 
-        OrderProcessCommand orderProcessCommand = OrderProcessCommand.builder()
-                .userId(userId)
-                .orderProductDtoList(orderProductDtoList)
-                .build();
-
         // when
         AtomicInteger failCnt = new AtomicInteger();
-        for(int i = 0; i< threadCount; i++){
-
+        for(int i = 0; i< orderAmount; i++){
+            final int finalI = i;
             executorService.submit(() -> {
                 try{
+                    OrderProcessCommand orderProcessCommand = OrderProcessCommand.builder()
+                            .userId(userId + (finalI%8))
+                            .orderProductDtoList(orderProductDtoList)
+                            .build();
                     orderFacade.orderProcess(orderProcessCommand);
                 } catch (Exception e){
-                    failCnt.getAndIncrement();
+                    if(e.getMessage().equals("재고가 부족합니다.")) {
+                        failCnt.getAndIncrement();
+                    }
                 } finally{
                     latch.countDown();
                 }
@@ -170,8 +174,8 @@ public class OrderFacadeIntegrationTest {
         int stockQuantity = productStockRepository.findById(6L).get().getStockQuantity();
 
         // then
-        assertThat(stockQuantity).isEqualTo(0);
-        assertThat(failCnt.get()).isEqualTo(0);
+        assertThat(stockQuantity).isEqualTo(Math.max(200-orderAmount, 0));
+        assertThat(failCnt.get()).isEqualTo(Math.max(orderAmount-200, 0));
     }
 
 }

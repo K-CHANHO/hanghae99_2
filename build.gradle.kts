@@ -51,6 +51,7 @@ dependencies {
 	implementation("com.google.code.gson:gson")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 	implementation ("org.springframework.retry:spring-retry")
+	implementation("org.redisson:redisson-spring-boot-starter:3.50.0")
 }
 
 tasks.withType<Test> {

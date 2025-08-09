@@ -7,3 +7,4 @@ DELETE FROM order_product;
 DELETE FROM coupon;
 DELETE FROM user_coupon;
 DELETE FROM payment;
+DELETE FROM coupon_stock;

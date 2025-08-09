@@ -46,8 +46,8 @@ public class OrderProductServiceTest {
         OrderProductSaveResult orderProductSaveResult = orderProductService.save(orderProductSaveCommand);
 
         // then
-        assertThat(orderProductSaveResult.getOrderProductDto2List()).isNotNull();
-        assertThat(orderProductSaveResult.getOrderProductDto2List().size()).isEqualTo(productList.size());
+        assertThat(orderProductSaveResult.getOrderProductDtoList()).isNotNull();
+        assertThat(orderProductSaveResult.getOrderProductDtoList().size()).isEqualTo(productList.size());
     }
 
     @Test

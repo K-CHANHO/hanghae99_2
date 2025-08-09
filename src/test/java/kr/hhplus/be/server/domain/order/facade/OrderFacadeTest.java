@@ -54,7 +54,7 @@ public class OrderFacadeTest {
         // given
         String userId = "sampleUserId";
         List<OrderProductDto> orderProductDtoList = IntStream.rangeClosed(1, 3)
-                .mapToObj(i -> OrderProductDto.builder()
+                .mapToObj(i -> kr.hhplus.be.server.domain.order.dto.OrderProductDto.builder()
                         .productId((long) i)
                         .price(i * 10000)
                         .quantity(i)
@@ -106,15 +106,15 @@ public class OrderFacadeTest {
                 .status("PAID")
                 .build();
 
-        OrderProductSaveResult.OrderProductDto2 d1 = OrderProductSaveResult.OrderProductDto2.builder()
+        OrderProductSaveResult.OrderProductDto d1 = OrderProductSaveResult.OrderProductDto.builder()
                 .orderProductId(1L)
                 .price(10000)
                 .orderId(1L)
                 .build();
-        List<OrderProductSaveResult.OrderProductDto2> dtos = new ArrayList<>();
+        List<OrderProductSaveResult.OrderProductDto> dtos = new ArrayList<>();
         dtos.add(d1);
         OrderProductSaveResult orderProductSaveResult = OrderProductSaveResult.builder()
-                .orderProductDto2List(dtos)
+                .orderProductDtoList(dtos)
                 .build();
         UseCouponResult useCouponResult = UseCouponResult.from(mockUserCoupon, mockCoupon);
         when(orderService.createOrder(any(CreateOrderCommand.class))).thenReturn(createOrderResult);

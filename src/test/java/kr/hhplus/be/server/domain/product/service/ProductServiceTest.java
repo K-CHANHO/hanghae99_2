@@ -21,6 +21,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,7 +63,8 @@ public class ProductServiceTest {
         Long productId = 1L;
         int initialStock = 100;
         ReduceStockCommand reduceStockCommand = ReduceStockCommand.builder().productId(productId).orderQuantity(orderQuantity).build();
-        when(productStockRepository.findById(productId)).thenReturn(Optional.of(new ProductStock(productId, initialStock)));
+        lenient().when(productStockRepository.findById(productId)).thenReturn(Optional.of(new ProductStock(productId, initialStock)));
+        lenient().when(productStockRepository.findByIdWithPessimisticLock(productId)).thenReturn(Optional.of(new ProductStock(productId, initialStock)));
 
         // when, then
         assertThatThrownBy(() -> productService.reduceStock(reduceStockCommand))
@@ -79,7 +81,8 @@ public class ProductServiceTest {
         Long productId = 1L;
         int initialStock = 100;
         ReduceStockCommand reduceStockCommand = ReduceStockCommand.builder().productId(productId).orderQuantity(orderQuantity).build();
-        when(productStockRepository.findById(productId)).thenReturn(Optional.of(new ProductStock(productId, 10000)));
+        lenient().when(productStockRepository.findById(productId)).thenReturn(Optional.of(new ProductStock(productId, 10000)));
+        lenient().when(productStockRepository.findByIdWithPessimisticLock(productId)).thenReturn(Optional.of(new ProductStock(productId, 10000)));
         when(productStockRepository.save(any(ProductStock.class))).thenReturn(new ProductStock(productId,  initialStock - orderQuantity));
 
         // when

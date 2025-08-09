@@ -19,6 +19,11 @@ public class ProductStockRepositoryImpl implements ProductStockRepository {
     }
 
     @Override
+    public Optional<ProductStock> findByIdWithPessimisticLock(Long productId) {
+        return jpaRepository.findByIdWithPessimisticLock(productId);
+    }
+
+    @Override
     public ProductStock save(ProductStock productStock) {
         return jpaRepository.save(productStock);
     }

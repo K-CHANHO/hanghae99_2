@@ -34,7 +34,7 @@ public class ProductService {
     }
 
     public ReduceStockResult reduceStock(ReduceStockCommand reduceStockCommand) {
-        ProductStock productStock = productStockRepository.findById(reduceStockCommand.getProductId())
+        ProductStock productStock = productStockRepository.findByIdWithPessimisticLock(reduceStockCommand.getProductId())
                 .orElseThrow(() -> new RuntimeException("상품 재고를 조회할 수 없습니다."));
         productStock.reduceStock(reduceStockCommand.getOrderQuantity());
 

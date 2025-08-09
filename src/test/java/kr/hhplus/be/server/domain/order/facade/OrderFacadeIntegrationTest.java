@@ -10,14 +10,20 @@ import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import kr.hhplus.be.server.domain.product.application.service.dto.GetProductCommand;
 import kr.hhplus.be.server.domain.product.application.service.dto.GetProductResult;
-import kr.hhplus.be.server.domain.product.domain.entity.Product;
+import kr.hhplus.be.server.domain.product.domain.repository.ProductStockRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,6 +42,8 @@ public class OrderFacadeIntegrationTest {
     private BalanceService balanceService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductStockRepository productStockRepository;
 
 
     // 재고 부족 -> 잔고 그대로 인지
@@ -125,6 +133,49 @@ public class OrderFacadeIntegrationTest {
         assertThat(orderProcessResult.getStatus()).isEqualTo("PAID");
         assertThat(orderProcessResult.getTotalPrice()).isEqualTo(140000);
         assertThat(viewBalanceResult.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 199,200,201, 300})
+    @DisplayName("주문/결제 - 재고 차감 동시성 테스트")
+    public void orderProcessForProductStockReduce(int orderAmount) throws InterruptedException {
+        // given
+        int threadCount = 200;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch latch = new CountDownLatch(orderAmount);
+
+        String userId = "sampleUserId";
+        ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
+        OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(6L).price(10).quantity(1).build();
+        orderProductDtoList.add(orderProductDto1);
+
+        // when
+        AtomicInteger failCnt = new AtomicInteger();
+        for(int i = 0; i< orderAmount; i++){
+            final int finalI = i;
+            executorService.submit(() -> {
+                try{
+                    OrderProcessCommand orderProcessCommand = OrderProcessCommand.builder()
+                            .userId(userId + (finalI%8))
+                            .orderProductDtoList(orderProductDtoList)
+                            .build();
+                    orderFacade.orderProcess(orderProcessCommand);
+                } catch (Exception e){
+                    if(e.getMessage().equals("재고가 부족합니다.")) {
+                        failCnt.getAndIncrement();
+                    }
+                } finally{
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+
+        int stockQuantity = productStockRepository.findById(6L).get().getStockQuantity();
+
+        // then
+        assertThat(stockQuantity).isEqualTo(Math.max(200-orderAmount, 0));
+        assertThat(failCnt.get()).isEqualTo(Math.max(orderAmount-200, 0));
     }
 
 }

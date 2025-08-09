@@ -12,7 +12,7 @@ public class ReduceStockCommand {
     private Long productId;
     private int orderQuantity;
 
-    public static ReduceStockCommand from(OrderProductSaveResult.OrderProductDto2 product) {
+    public static ReduceStockCommand from(OrderProductSaveResult.OrderProductDto product) {
         return ReduceStockCommand.builder()
                 .productId(product.getProductId())
                 .orderQuantity(product.getQuantity())

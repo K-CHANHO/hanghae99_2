@@ -3,8 +3,10 @@ package kr.hhplus.be.server.domain.coupon.service;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.*;
 import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
+import kr.hhplus.be.server.domain.coupon.domain.entity.CouponStock;
 import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.domain.repository.CouponRepository;
+import kr.hhplus.be.server.domain.coupon.domain.repository.CouponStockRepository;
 import kr.hhplus.be.server.domain.coupon.domain.repository.UserCouponRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,9 @@ public class CouponServiceTest {
     @Mock
     private UserCouponRepository userCouponRepository;
 
+    @Mock
+    private CouponStockRepository couponStockRepository;
+
     @ParameterizedTest
     @ValueSource(ints = {100, 101, 999})
     @DisplayName("쿠폰 발급 테스트_쿠폰 소진")
@@ -43,10 +48,12 @@ public class CouponServiceTest {
         Long couponId = 1L;
         String userId = "sampleUserId";
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "END", 0.1));
+        Optional<CouponStock> couponStock = Optional.of(new CouponStock(couponId, 0L));
         IssueCouponCommand couponCommand = IssueCouponCommand.builder().userId(userId).couponId(couponId).build();
 
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.countByCouponId(couponId)).thenReturn(issuedQuantity);
+        lenient().when(couponStockRepository.findById(couponId)).thenReturn(couponStock);
+        lenient().when(couponStockRepository.findByIdWithPessimisticLock(couponId)).thenReturn(couponStock);
 
         // when, then
         assertThatThrownBy(() -> couponService.issueCoupon(couponCommand))
@@ -63,7 +70,7 @@ public class CouponServiceTest {
         Optional<Coupon> coupon = Optional.of(new Coupon(couponId, "샘플쿠폰", 100, "ING", 0.1));
         IssueCouponCommand couponCommand = IssueCouponCommand.builder().userId(userId).couponId(couponId).build();
 
-        when(couponRepository.findById(couponId)).thenReturn(coupon);
+        lenient().when(couponRepository.findById(couponId)).thenReturn(coupon);
         when(userCouponRepository.findByUserIdAndCouponId(userId, couponId)).thenReturn(Optional.of(new UserCoupon()));
 
         // when, then
@@ -87,11 +94,14 @@ public class CouponServiceTest {
                 .issuedAt(new Timestamp(System.currentTimeMillis()))
                 .expiredAt(Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().plus(7, ChronoUnit.DAYS)))
                 .build();
+        CouponStock couponStock = CouponStock.builder()
+                .couponId(couponId).quantity(100L).build();
         IssueCouponCommand couponCommand = IssueCouponCommand.builder().userId(userId).couponId(couponId).build();
 
         when(couponRepository.findById(couponId)).thenReturn(coupon);
-        when(userCouponRepository.countByCouponId(couponId)).thenReturn(10);
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(userCoupon);
+        lenient().when(couponStockRepository.findById(couponId)).thenReturn(Optional.of(couponStock));
+        lenient().when(couponStockRepository.findByIdWithPessimisticLock(couponId)).thenReturn(Optional.of(couponStock));
 
         // when
         IssueCouponResult couponResult = couponService.issueCoupon(couponCommand);

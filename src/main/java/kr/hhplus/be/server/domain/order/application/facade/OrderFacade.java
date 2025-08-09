@@ -48,7 +48,7 @@ public class OrderFacade {
         }
 
         // 재고 차감
-        orderProductSaveResult.getOrderProductDto2List().forEach(product -> {
+        orderProductSaveResult.getOrderProductDtoList().forEach(product -> {
             ReduceStockCommand reduceStockCommand = ReduceStockCommand.from(product);
             productService.reduceStock(reduceStockCommand);
         });

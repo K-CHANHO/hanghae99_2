@@ -20,6 +20,11 @@ public class BalanceRepositoryImpl implements BalanceRepository {
     }
 
     @Override
+    public Optional<Balance> findByIdWithPessimisticLock(String userId) {
+        return jpaRepository.findByIdWithPessimisticLock(userId);
+    }
+
+    @Override
     public Balance save(Balance balance) {
         return jpaRepository.save(balance);
     }

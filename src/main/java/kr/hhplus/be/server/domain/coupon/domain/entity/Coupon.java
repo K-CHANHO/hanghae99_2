@@ -18,7 +18,7 @@ public class Coupon {
     private Long couponId;
     @Column(length = 100)
     private String couponName;
-    private int quantity;
+    private int quantity; // 총 발급 수량
     @Column(length = 10)
     private String status; // "ACTIVE", "INACTIVE"
     private Double discountRate;

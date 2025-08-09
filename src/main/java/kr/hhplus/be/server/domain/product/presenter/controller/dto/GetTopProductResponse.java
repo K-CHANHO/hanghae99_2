@@ -1,10 +1,8 @@
 package kr.hhplus.be.server.domain.product.presenter.controller.dto;
 
 import kr.hhplus.be.server.domain.product.application.facade.dto.GetTopProductsResult;
-import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.List;
 @Builder
 @Getter
 @AllArgsConstructor
-public class ViewTopProductResponse {
+public class GetTopProductResponse {
 
     private List<topProductDto> topProducts;
 
@@ -24,7 +22,7 @@ public class ViewTopProductResponse {
         private int price;
     }
 
-    public static ViewTopProductResponse from(GetTopProductsResult topProductsResult) {
+    public static GetTopProductResponse from(GetTopProductsResult topProductsResult) {
         List<topProductDto> list = topProductsResult.getTopProductDtoList().stream().map(product -> topProductDto.builder()
                         .productId(product.getProductId())
                         .productName(product.getProductName())
@@ -32,7 +30,7 @@ public class ViewTopProductResponse {
                         .build())
                 .toList();
 
-        return ViewTopProductResponse.builder()
+        return GetTopProductResponse.builder()
                 .topProducts(list)
                 .build();
     }

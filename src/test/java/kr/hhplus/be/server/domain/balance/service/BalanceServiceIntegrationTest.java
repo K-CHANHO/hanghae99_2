@@ -3,8 +3,8 @@ package kr.hhplus.be.server.domain.balance.service;
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceCommand;
 import kr.hhplus.be.server.domain.balance.application.service.dto.UseBalanceCommand;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class BalanceServiceIntegrationTest {
         ChargeBalanceCommand chargeBalanceCommand = ChargeBalanceCommand.builder()
                 .userId("sampleUserId9").amount(10000)
                 .build();
-        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.builder()
+        GetBalanceCommand getBalanceCommand = GetBalanceCommand.builder()
                 .userId("sampleUserId9").build();
 
         // when
@@ -56,7 +56,7 @@ public class BalanceServiceIntegrationTest {
         }
         latch.await();
 
-        ViewBalanceResult balance = balanceService.getBalance(viewBalanceCommand);
+        GetBalanceResult balance = balanceService.getBalance(getBalanceCommand);
 
         // then
         assertThat(balance.getBalance()).isEqualTo(10000 * (200-failCnt.get()));
@@ -72,7 +72,7 @@ public class BalanceServiceIntegrationTest {
         UseBalanceCommand useBalanceCommand = UseBalanceCommand.builder()
                 .userId("sampleUserId8").useAmount(10000)
                 .build();
-        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.builder()
+        GetBalanceCommand getBalanceCommand = GetBalanceCommand.builder()
                 .userId("sampleUserId8").build();
 
         // when
@@ -90,7 +90,7 @@ public class BalanceServiceIntegrationTest {
         }
         latch.await();
 
-        ViewBalanceResult balance = balanceService.getBalance(viewBalanceCommand);
+        GetBalanceResult balance = balanceService.getBalance(getBalanceCommand);
 
         // then
         assertThat(balance.getBalance()).isEqualTo(4000000 - 10000 * (200-failCnt.get()));

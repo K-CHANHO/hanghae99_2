@@ -182,7 +182,7 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("쿠폰 확인 테스트")
-    public void viewCouponList(){
+    public void getCouponList(){
         // given
         String userId = "sampleUserId";
         List<UserCoupon> sampleUserCoupons = List.of(
@@ -190,15 +190,15 @@ public class CouponServiceTest {
                 UserCoupon.builder().userCouponId(2L).userId(userId).status("UNUSED").issuedAt(new Timestamp(System.currentTimeMillis())).expiredAt(Timestamp.from(new Timestamp(System.currentTimeMillis()).toInstant().minus(1, ChronoUnit.DAYS))).couponId(2L).build()
         );
 
-        ViewCouponListCommand viewCouponListCommand = ViewCouponListCommand.from(userId);
+        GetCouponListCommand getCouponListCommand = GetCouponListCommand.from(userId);
         when(userCouponRepository.findByUserId(userId)).thenReturn(sampleUserCoupons);
 
         // when
-        ViewCouponListResult viewCouponListResult = couponService.viewCouponList(viewCouponListCommand);
+        GetCouponListResult getCouponListResult = couponService.getCouponList(getCouponListCommand);
 
         // then
-        assertThat(viewCouponListResult).isNotNull();
-        assertThat(viewCouponListResult.getCouponDtoList().size()).isEqualTo(2);
+        assertThat(getCouponListResult).isNotNull();
+        assertThat(getCouponListResult.getCouponDtoList().size()).isEqualTo(2);
     }
 
 

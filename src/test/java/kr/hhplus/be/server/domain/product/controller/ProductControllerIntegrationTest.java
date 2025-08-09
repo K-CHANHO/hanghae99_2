@@ -39,7 +39,7 @@ public class ProductControllerIntegrationTest {
 
     @Test
     @DisplayName("상품 조회 API 테스트_없는 상품일 경우")
-    public void viewProduct() throws Exception {
+    public void getProduct() throws Exception {
         // given
         String url = "/api/v1/product/{productId}";
 
@@ -57,7 +57,7 @@ public class ProductControllerIntegrationTest {
     @ParameterizedTest
     @ValueSource(longs = {1L, 2L, 3L, 4L, 5L})
     @DisplayName("상품 조회 API 테스트")
-    public void viewProduct(Long productId) throws Exception {
+    public void getProduct(Long productId) throws Exception {
         // given
         String url = "/api/v1/product/{productId}";
 
@@ -74,7 +74,7 @@ public class ProductControllerIntegrationTest {
 
     @Test
     @DisplayName("인기 상품 조회 API 테스트")
-    public void viewTopProducts() throws Exception {
+    public void getTopProducts() throws Exception {
         // given
         String url = "/api/v1/product/top";
 

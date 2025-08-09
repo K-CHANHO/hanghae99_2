@@ -34,11 +34,11 @@ public class BalanceServiceTest {
     public void getBalance(){
         // given
         String userId = "sampleUserId";
-        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(userId);
+        GetBalanceCommand getBalanceCommand = GetBalanceCommand.from(userId);
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when
-        ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
+        GetBalanceResult serviceResponseDto = balanceService.getBalance(getBalanceCommand);
 
         // then
         assertThat(serviceResponseDto).isNotNull();

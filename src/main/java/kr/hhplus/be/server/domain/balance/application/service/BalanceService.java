@@ -16,11 +16,11 @@ public class BalanceService{
 
     private final BalanceRepository balanceRepository;
 
-    public ViewBalanceResult getBalance(ViewBalanceCommand viewBalanceCommand){
+    public GetBalanceResult getBalance(GetBalanceCommand getBalanceCommand){
 
-        Balance balance = balanceRepository.findById(viewBalanceCommand.getUserId())
+        Balance balance = balanceRepository.findById(getBalanceCommand.getUserId())
                 .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
-        return ViewBalanceResult.from(balance);
+        return GetBalanceResult.from(balance);
     }
 
     @Retryable(

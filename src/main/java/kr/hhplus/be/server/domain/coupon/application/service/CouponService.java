@@ -63,9 +63,9 @@ public class CouponService {
 
     }
 
-    public ViewCouponListResult viewCouponList(ViewCouponListCommand viewCouponListCommand) {
-        List<UserCoupon> userCouponList = userCouponRepository.findByUserId(viewCouponListCommand.getUserId());
+    public GetCouponListResult getCouponList(GetCouponListCommand getCouponListCommand) {
+        List<UserCoupon> userCouponList = userCouponRepository.findByUserId(getCouponListCommand.getUserId());
 
-        return ViewCouponListResult.from(userCouponList);
+        return GetCouponListResult.from(userCouponList);
     }
 }

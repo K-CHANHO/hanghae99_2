@@ -46,12 +46,11 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	// self
-	implementation("org.projectlombok:lombok:1.18.30")
-	annotationProcessor("org.projectlombok:lombok:1.18.30")
+	implementation("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
 	implementation("com.google.code.gson:gson")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 	implementation ("org.springframework.retry:spring-retry")
-	implementation ("org.springframework.boot:spring-boot-starter-aop")
 }
 
 tasks.withType<Test> {

@@ -12,6 +12,14 @@ services:
     volumes:
       - ./data/mysql/:/var/lib/mysql
 
+  reids:
+    image: redis:7.4.1-alpine3.20
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"] # AOF 모드로 영속화
+    volumes:
+      - ./data/redis:/data
+
 networks:
   default:
     driver: bridge

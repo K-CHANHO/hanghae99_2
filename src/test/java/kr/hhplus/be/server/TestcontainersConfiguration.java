@@ -26,15 +26,22 @@ class TestcontainersConfiguration {
 		System.setProperty("spring.datasource.password", MYSQL_CONTAINER.getPassword());
 
 		// redis 테스트 컨테이너 설정
-		REDIS_CONTAINER = new GenericContainer<>("redis:7.0")
+		REDIS_CONTAINER = new GenericContainer<>("redis:7.4.1-alpine3.20")
 				.withExposedPorts(REDIS_PORT)
 				.waitingFor(Wait.forListeningPort());
 		REDIS_CONTAINER.start();
 
-		System.setProperty("spring.data.redis.host", REDIS_CONTAINER.getHost());
-		System.setProperty("spring.data.redis.port", REDIS_CONTAINER.getMappedPort(REDIS_PORT).toString());
+		System.setProperty("spring.redis.host", REDIS_CONTAINER.getHost());
+		System.setProperty("spring.redis.port", REDIS_CONTAINER.getMappedPort(REDIS_PORT).toString());
 
 	}
+
+//	@DynamicPropertySource
+//	static void registerProperties(DynamicPropertyRegistry registry){
+//		REDIS_CONTAINER.start();
+//		registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
+//		registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(REDIS_PORT));
+//	}
 
 	@PreDestroy
 	public void preDestroy() {

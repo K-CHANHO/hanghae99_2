@@ -32,31 +32,38 @@ public class BalanceService{
         return GetBalanceResult.from(balance);
     }
 
+    @Retryable(
+            retryFor = {ObjectOptimisticLockingFailureException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 200)
+    )
     public ChargeBalanceResult chargeBalance(ChargeBalanceCommand chargeBalanceCommand) {
         RLock lock = redissonClient.getLock("lock:chargeBalance:" + chargeBalanceCommand.getUserId());
 
         try{
-            lock.lock();
-            TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
-            try{
-                Balance balance = balanceRepository.findById(chargeBalanceCommand.getUserId())
-                        .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
-                balance.charge(chargeBalanceCommand.getAmount());
-                Balance chargedBalance = balanceRepository.save(balance);
-                transactionManager.commit(status);
-                return ChargeBalanceResult.from(chargedBalance);
-            } catch (Exception e){
-                transactionManager.rollback(status);
-                throw e;
+            if(lock.tryLock(10, 5, TimeUnit.SECONDS)) {
+                TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+                try {
+                    Balance balance = balanceRepository.findById(chargeBalanceCommand.getUserId())
+                            .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
+                    balance.charge(chargeBalanceCommand.getAmount());
+                    Balance chargedBalance = balanceRepository.save(balance);
+                    transactionManager.commit(status);
+                    return ChargeBalanceResult.from(chargedBalance);
+                } catch (Exception e) {
+                    transactionManager.rollback(status);
+                    throw e;
+                }
+            } else {
+                throw new RuntimeException("락을 획득하지 못하였습니다.");
             }
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException();
         } finally {
             if(lock.isHeldByCurrentThread()){
                 lock.unlock();
             }
         }
-
     }
 
     @Retryable(
@@ -66,14 +73,31 @@ public class BalanceService{
     )
     @Transactional
     public UseBalanceResult useBalance(UseBalanceCommand useBalanceCommand) {
-        Balance balance = balanceRepository.findById(useBalanceCommand.getUserId())
-                .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
+        RLock lock = redissonClient.getLock("lock:chargeBalance:" + useBalanceCommand.getUserId());
 
-        balance.use(useBalanceCommand.getUseAmount(), useBalanceCommand.getDiscountRate());
-
-        Balance usedBalance = balanceRepository.save(balance);
-
-        return UseBalanceResult.from(usedBalance);
+        try{
+            if(lock.tryLock(5,10, TimeUnit.SECONDS)){
+                TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+                try {
+                    Balance balance = balanceRepository.findById(useBalanceCommand.getUserId())
+                            .orElseThrow(() -> new RuntimeException("잔액을 조회할 수 없습니다."));
+                    balance.use(useBalanceCommand.getUseAmount(), useBalanceCommand.getDiscountRate());
+                    Balance usedBalance = balanceRepository.save(balance);
+                    return UseBalanceResult.from(usedBalance);
+                } catch (Exception e){
+                    transactionManager.rollback(status);
+                    throw e;
+                }
+            } else {
+                throw new RuntimeException("락을 획득하지 못하였습니다.");
+            }
+        } catch (InterruptedException e){
+            throw new RuntimeException();
+        } finally {
+            if(lock.isHeldByCurrentThread()){
+                lock.unlock();
+            }
+        }
 
     }
 }

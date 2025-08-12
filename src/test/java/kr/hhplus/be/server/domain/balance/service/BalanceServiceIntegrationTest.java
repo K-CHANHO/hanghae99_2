@@ -49,7 +49,9 @@ public class BalanceServiceIntegrationTest {
                    balanceService.chargeBalance(chargeBalanceCommand);
                } catch (OptimisticLockingFailureException e){
                    failCnt.getAndIncrement();
-               } finally {
+               } catch (RuntimeException e){
+                   failCnt.getAndIncrement();
+               } finally{
                    latch.countDown();
                }
             });
@@ -82,6 +84,8 @@ public class BalanceServiceIntegrationTest {
                 try{
                     balanceService.useBalance(useBalanceCommand);
                 } catch (OptimisticLockingFailureException e){
+                    failCnt.getAndIncrement();
+                } catch (RuntimeException e){
                     failCnt.getAndIncrement();
                 } finally {
                     latch.countDown();

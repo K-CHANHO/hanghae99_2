@@ -41,6 +41,7 @@ public class DistributedLockApp {
 
         try{
             if(!rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), TimeUnit.SECONDS)){
+                log.info("락 획득 실패..");
                 throw new RuntimeException("락을 획득에 실패하였습니다.");
             }
             log.info("락 획득 성공..");

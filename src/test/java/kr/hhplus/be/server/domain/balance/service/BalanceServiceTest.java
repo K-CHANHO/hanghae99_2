@@ -13,17 +13,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,10 +28,6 @@ public class BalanceServiceTest {
 
     @Mock
     private BalanceRepository balanceRepository;
-    @Mock
-    private RedissonClient redissonClient;
-    @Mock
-    private PlatformTransactionManager transactionManager;
 
     @Test
     @DisplayName("잔액 조회 서비스 테스트")
@@ -65,11 +55,6 @@ public class BalanceServiceTest {
         ChargeBalanceCommand serviceRequest = ChargeBalanceCommand.builder().userId(userId).amount(chargeAmount).build();
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
-        RLock mockRLock = Mockito.mock(RLock.class);
-        when(redissonClient.getLock(Mockito.anyString())).thenReturn(mockRLock);
-        when(mockRLock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(true);
-        when(transactionManager.getTransaction(any())).thenReturn(any());
-
         // when, then
         assertThatThrownBy(() -> balanceService.chargeBalance(serviceRequest))
                 .isInstanceOf(RuntimeException.class)
@@ -91,11 +76,6 @@ public class BalanceServiceTest {
                 new Balance(userId, initialBalance + chargeAmount)
         );
 
-        RLock mockRLock = Mockito.mock(RLock.class);
-        when(redissonClient.getLock(Mockito.anyString())).thenReturn(mockRLock);
-        when(mockRLock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(true);
-        when(transactionManager.getTransaction(any())).thenReturn(any());
-
         // when
         ChargeBalanceResult serviceResponse = balanceService.chargeBalance(serviceRequest);
 
@@ -113,11 +93,6 @@ public class BalanceServiceTest {
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
         UseBalanceCommand balanceCommand = UseBalanceCommand.builder().userId(userId).useAmount(useAmount).discountRate(0.1).build();
 
-        RLock mockRLock = Mockito.mock(RLock.class);
-        when(redissonClient.getLock(Mockito.anyString())).thenReturn(mockRLock);
-        when(mockRLock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(true);
-        when(transactionManager.getTransaction(any())).thenReturn(any());
-
         // when, then
         assertThatThrownBy(() -> balanceService.useBalance(balanceCommand))
                 .isInstanceOf(RuntimeException.class)
@@ -133,11 +108,6 @@ public class BalanceServiceTest {
         String userId = "sampleUserId";
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
         UseBalanceCommand balanceCommand = UseBalanceCommand.builder().userId(userId).useAmount(useAmount).discountRate(0.1).build();
-
-        RLock mockRLock = Mockito.mock(RLock.class);
-        when(redissonClient.getLock(Mockito.anyString())).thenReturn(mockRLock);
-        when(mockRLock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(true);
-        when(transactionManager.getTransaction(any())).thenReturn(any());
 
         // when, then
         assertThatThrownBy(() -> balanceService.useBalance(balanceCommand))
@@ -159,11 +129,6 @@ public class BalanceServiceTest {
         when(balanceRepository.save(Mockito.any(Balance.class))).thenReturn(
                 new Balance(userId, initialBalance - useAmount)
         );
-
-        RLock mockRLock = Mockito.mock(RLock.class);
-        when(redissonClient.getLock(Mockito.anyString())).thenReturn(mockRLock);
-        when(mockRLock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(true);
-        when(transactionManager.getTransaction(any())).thenReturn(any());
 
         // when
         UseBalanceResult useBalanceResult = balanceService.useBalance(balanceCommand);

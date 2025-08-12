@@ -35,20 +35,20 @@ public class DistributedLockApp {
     @Around("@annotation(distributedLock)")
     public Object lock(ProceedingJoinPoint joinPoint, DistributedLock distributedLock) throws Throwable {
         String key = getLockKey(joinPoint, distributedLock.key());
-        log.info("락 획득 시도.. lockKey : {}", key);
+        log.info("락 획득 시도.. key : {}", key);
 
         RLock rLock = redissonClient.getLock(key);
 
         try{
             if(!rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), TimeUnit.SECONDS)){
-                log.info("락 획득 실패..");
+                log.info("락 획득 실패.. key : {}", key);
                 throw new RuntimeException("락을 획득에 실패하였습니다.");
             }
-            log.info("락 획득 성공..");
+            log.info("락 획득 성공.. key : {}", key);
             return joinPoint.proceed();
         } finally {
             if(rLock.isHeldByCurrentThread()){
-                log.info("락 해제..");
+                log.info("락 해제.. key : {}", key);
                 rLock.unlock();
             }
         }

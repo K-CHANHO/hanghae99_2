@@ -58,3 +58,7 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 	systemProperty("user.timezone", "UTC")
 }
+
+tasks.withType<JavaCompile> {
+	options.compilerArgs.add("-parameters")
+}

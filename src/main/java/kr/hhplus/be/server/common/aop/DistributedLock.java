@@ -8,9 +8,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DistributedLock {
-    String key();
-
+    String[] keys();
+    String prefix();
     long waitTime() default 5L;
-
     long leaseTime() default 3L;
 }

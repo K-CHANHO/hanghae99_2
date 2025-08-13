@@ -25,7 +25,7 @@ public class BalanceService{
         return GetBalanceResult.from(balance);
     }
 
-    @DistributedLock(key = "'balance:charge:' + #chargeBalanceCommand.userId")
+    @DistributedLock(prefix = "balance:charge:", keys = "#chargeBalanceCommand.userId")
     @Transactional
     public ChargeBalanceResult chargeBalance(ChargeBalanceCommand chargeBalanceCommand) {
         Balance balance = balanceRepository.findById(chargeBalanceCommand.getUserId())
@@ -36,7 +36,7 @@ public class BalanceService{
 
     }
 
-    @DistributedLock(key = "'balance:use:' + #useBalanceCommand.userId")
+    @DistributedLock(prefix = "balance:use:", keys = "#useBalanceCommand.userId")
     @Transactional
     public UseBalanceResult useBalance(UseBalanceCommand useBalanceCommand) {
         Balance balance = balanceRepository.findById(useBalanceCommand.getUserId())

@@ -21,7 +21,7 @@ public class CouponService {
     private final UserCouponRepository userCouponRepository;
     private final CouponStockRepository couponStockRepository;
 
-    @DistributedLock(key = "'coupon:issue:' + #couponCommand.couponId")
+    @DistributedLock(prefix = "coupon:issue:", keys = "#couponCommand.couponId")
     @Transactional
     public IssueCouponResult issueCoupon(IssueCouponCommand couponCommand) {
 

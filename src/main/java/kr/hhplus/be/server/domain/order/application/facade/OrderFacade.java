@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.order.application.facade;
 
+import kr.hhplus.be.server.common.aop.DistributedLock;
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.balance.application.service.dto.UseBalanceCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
@@ -29,6 +30,7 @@ public class OrderFacade {
     private final ProductService productService;
 
     @Transactional
+    @DistributedLock(prefix = "order:process:", keys = {"#orderProcessCommand.orderProductDtoList.!['productId:'+ productId]"})
     public OrderProcessResult orderProcess(OrderProcessCommand orderProcessCommand) {
 
         // 주문 생성

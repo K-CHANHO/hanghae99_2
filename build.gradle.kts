@@ -48,6 +48,8 @@ dependencies {
 	// self
 	implementation("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
+	testCompileOnly ("org.projectlombok:lombok")
+	testAnnotationProcessor ("org.projectlombok:lombok")
 	implementation("com.google.code.gson:gson")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 	implementation ("org.springframework.retry:spring-retry")

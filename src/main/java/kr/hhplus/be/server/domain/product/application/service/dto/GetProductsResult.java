@@ -5,13 +5,14 @@ import kr.hhplus.be.server.domain.product.domain.entity.ProductStock;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class GetProductsResult {
     List<GetProductResult> productResults;
 

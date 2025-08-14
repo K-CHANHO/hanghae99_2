@@ -52,6 +52,12 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 	implementation ("org.springframework.retry:spring-retry")
 	implementation("org.redisson:redisson-spring-boot-starter:3.50.0")
+	implementation ("com.fasterxml.jackson.core:jackson-databind")
+	implementation ("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation ("org.springframework.boot:spring-boot-starter-cache")
+	implementation ("com.fasterxml.jackson.core:jackson-databind")
+	implementation ("org.springframework.boot:spring-boot-starter")
+
 }
 
 tasks.withType<Test> {

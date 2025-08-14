@@ -5,9 +5,8 @@ import kr.hhplus.be.server.common.ApiResponse;
 import kr.hhplus.be.server.domain.product.application.facade.dto.GetTopProductsResult;
 import kr.hhplus.be.server.domain.product.application.service.dto.GetProductCommand;
 import kr.hhplus.be.server.domain.product.application.service.dto.GetProductResult;
-import kr.hhplus.be.server.domain.product.presenter.controller.dto.ViewProductResponse;
-import kr.hhplus.be.server.domain.product.presenter.controller.dto.ViewTopProductResponse;
-import kr.hhplus.be.server.domain.product.domain.entity.Product;
+import kr.hhplus.be.server.domain.product.presenter.controller.dto.GetProductResponse;
+import kr.hhplus.be.server.domain.product.presenter.controller.dto.GetTopProductResponse;
 import kr.hhplus.be.server.domain.product.application.facade.ProductFacade;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/product")
@@ -29,14 +26,14 @@ public class ProductController implements ProductApiDocs {
     private final ProductService productService;
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ApiResponse<ViewProductResponse>> viewProduct(@PathVariable Long productId){
+    public ResponseEntity<ApiResponse<GetProductResponse>> getProduct(@PathVariable Long productId){
 
         GetProductCommand getProductCommand = GetProductCommand.from(productId);
         GetProductResult getProductResult = productService.getProduct(getProductCommand);
 
-        ViewProductResponse response = ViewProductResponse.from(getProductResult);
+        GetProductResponse response = GetProductResponse.from(getProductResult);
 
-        ApiResponse<ViewProductResponse> result = new ApiResponse<>();
+        ApiResponse<GetProductResponse> result = new ApiResponse<>();
         result.setMessage("상품 조회 성공");
         result.setCode(200);
         result.setData(response);
@@ -46,13 +43,13 @@ public class ProductController implements ProductApiDocs {
     }
 
     @GetMapping("/top")
-    public ResponseEntity<ApiResponse<ViewTopProductResponse>> viewTopProducts() {
+    public ResponseEntity<ApiResponse<GetTopProductResponse>> getTopProducts() {
 
         GetTopProductsResult topProducts = productFacade.getTopProducts();
 
-        ViewTopProductResponse response = ViewTopProductResponse.from(topProducts);
+        GetTopProductResponse response = GetTopProductResponse.from(topProducts);
 
-        ApiResponse<ViewTopProductResponse> result = new ApiResponse<>();
+        ApiResponse<GetTopProductResponse> result = new ApiResponse<>();
         result.setMessage("인기 상품 조회 성공");
         result.setCode(200);
         result.setData(response);

@@ -10,12 +10,12 @@ import java.util.List;
 
 @Builder
 @Getter
-public class ViewCouponListResult {
+public class GetCouponListResult {
     private List<CouponDto> couponDtoList;
 
-    public static ViewCouponListResult from(List<UserCoupon> userCouponList) {
+    public static GetCouponListResult from(List<UserCoupon> userCouponList) {
         List<CouponDto> list = userCouponList.stream().map(CouponDto::from).toList();
-        return ViewCouponListResult.builder()
+        return GetCouponListResult.builder()
                 .couponDtoList(list)
                 .build();
 

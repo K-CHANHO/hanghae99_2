@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.common.ApiResponse;
 import kr.hhplus.be.server.domain.balance.presenter.controller.dto.ChargeBalanceRequest;
 import kr.hhplus.be.server.domain.balance.presenter.controller.dto.ChargeBalanceResponse;
-import kr.hhplus.be.server.domain.balance.presenter.controller.dto.ViewBalanceResponse;
+import kr.hhplus.be.server.domain.balance.presenter.controller.dto.GetBalanceResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +18,7 @@ public interface BalanceApiDocs {
     @Operation(summary = "잔액 조회", description = "사용자의 현재 잔액을 조회합니다.")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "잔액 조회 성공")
     @Parameter(name = "userId", description = "사용자 ID", required = true, in = ParameterIn.PATH)
-    ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId);
+    ResponseEntity<ApiResponse<GetBalanceResponse>> getBalance(@PathVariable String userId);
 
 
     @Tag(name = "잔액", description = "잔액과 관련된 API")

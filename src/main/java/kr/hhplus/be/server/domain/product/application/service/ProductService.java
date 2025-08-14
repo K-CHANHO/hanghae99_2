@@ -6,6 +6,7 @@ import kr.hhplus.be.server.domain.product.domain.entity.ProductStock;
 import kr.hhplus.be.server.domain.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.domain.product.domain.repository.ProductStockRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class ProductService {
         return GetProductResult.from(product, productStock);
     }
 
+    @Cacheable(value = "topProducts", key = "'top::products'")
     public GetProductsResult getProducts(GetProductsCommand getProductsCommand) {
 
         List<Product> products = productRepository.findAllById(getProductsCommand.getProductIds());

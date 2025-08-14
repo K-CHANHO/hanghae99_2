@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.domain.order.facade;
 
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceResult;
 import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
@@ -52,7 +52,7 @@ public class OrderFacadeIntegrationTest {
     public void orderProcessWithLessStock(){
         // given
         String userId = "sampleUserId";
-        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(userId);
+        GetBalanceCommand getBalanceCommand = GetBalanceCommand.from(userId);
         ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
         OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(100).build();
         orderProductDtoList.add(orderProductDto1);
@@ -64,7 +64,7 @@ public class OrderFacadeIntegrationTest {
                 .build();
 
         // when
-        ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
+        GetBalanceResult serviceResponseDto = balanceService.getBalance(getBalanceCommand);
 
         // then
         assertThatThrownBy(() -> orderFacade.orderProcess(orderProcessCommand))
@@ -124,15 +124,15 @@ public class OrderFacadeIntegrationTest {
 
         // when
         OrderProcessResult orderProcessResult = orderFacade.orderProcess(orderProcessCommand);
-        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(orderProcessResult.getUserId());
-        ViewBalanceResult viewBalanceResult = balanceService.getBalance(viewBalanceCommand);
+        GetBalanceCommand getBalanceCommand = GetBalanceCommand.from(orderProcessResult.getUserId());
+        GetBalanceResult getBalanceResult = balanceService.getBalance(getBalanceCommand);
 
 
         // then
         assertThat(orderProcessResult).isNotNull();
         assertThat(orderProcessResult.getStatus()).isEqualTo("PAID");
         assertThat(orderProcessResult.getTotalPrice()).isEqualTo(140000);
-        assertThat(viewBalanceResult.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
+        assertThat(getBalanceResult.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
     }
 
     @ParameterizedTest

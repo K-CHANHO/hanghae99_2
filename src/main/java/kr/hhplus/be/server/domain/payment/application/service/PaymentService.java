@@ -1,10 +1,11 @@
 package kr.hhplus.be.server.domain.payment.application.service;
 
-import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
-import kr.hhplus.be.server.domain.payment.domain.repository.PaymentRepository;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayResult;
+import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
+import kr.hhplus.be.server.domain.payment.domain.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class PaymentService {
         return new PayResult(createdPayment);
     }
 
+    @Cacheable(value = "topOrderIds", key = "'top::orderIds'")
     public List<Long> getPaidOrderIdsWithinLastDays(int days) {
         List<Payment> paidOrder = paymentRepository.findOrderIdByStatusAndPaidAtAfter("PAID", new Timestamp(System.currentTimeMillis() - Duration.ofDays(days).toMillis()));
         return paidOrder.stream()

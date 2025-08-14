@@ -50,7 +50,7 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("상품 조회 API 테스트")
-    void viewProduct() throws Exception {
+    void getProduct() throws Exception {
         // given
         Long productId = 1L;
         String url = "/api/v1/product/{productId}";
@@ -81,7 +81,7 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("인기 상품 조회 API 테스트")
-    void viewTopProducts() throws Exception {
+    void getTopProducts() throws Exception {
         // given
         String url = "/api/v1/product/top";
         ProductStock productStock1 = ProductStock.builder().productId(1L).stockQuantity(10).build();

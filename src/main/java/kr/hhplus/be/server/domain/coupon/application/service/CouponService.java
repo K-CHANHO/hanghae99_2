@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.application.service;
 
+import kr.hhplus.be.server.common.aop.DistributedLock;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.*;
 import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.CouponStock;
@@ -20,6 +21,7 @@ public class CouponService {
     private final UserCouponRepository userCouponRepository;
     private final CouponStockRepository couponStockRepository;
 
+    @DistributedLock(prefix = "coupon:issue:", keys = "#couponCommand.couponId")
     @Transactional
     public IssueCouponResult issueCoupon(IssueCouponCommand couponCommand) {
 
@@ -31,11 +33,8 @@ public class CouponService {
             throw new RuntimeException("이미 발급된 쿠폰입니다.");
         }
 
-        // 발급된 쿠폰 수 확인
-        //int issuedCouponQuantity = userCouponRepository.countByCouponId(couponCommand.getCouponId());
-        //coupon.checkQuantity(issuedCouponQuantity);
         // 쿠폰 잔여수량 차감
-        CouponStock couponStock = couponStockRepository.findByIdWithPessimisticLock(couponCommand.getCouponId())
+        CouponStock couponStock = couponStockRepository.findById(couponCommand.getCouponId())
                 .orElseThrow(() -> new RuntimeException("쿠폰 잔여수량을 확인할 수 없습니다."));
         couponStock.reduce();
         couponStockRepository.save(couponStock);
@@ -63,9 +62,9 @@ public class CouponService {
 
     }
 
-    public ViewCouponListResult viewCouponList(ViewCouponListCommand viewCouponListCommand) {
-        List<UserCoupon> userCouponList = userCouponRepository.findByUserId(viewCouponListCommand.getUserId());
+    public GetCouponListResult getCouponList(GetCouponListCommand getCouponListCommand) {
+        List<UserCoupon> userCouponList = userCouponRepository.findByUserId(getCouponListCommand.getUserId());
 
-        return ViewCouponListResult.from(userCouponList);
+        return GetCouponListResult.from(userCouponList);
     }
 }

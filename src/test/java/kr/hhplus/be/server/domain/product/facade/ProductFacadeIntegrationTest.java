@@ -71,11 +71,18 @@ public class ProductFacadeIntegrationTest {
 
         // when
         log.info("첫번째 호출 시작 - DB 조회");
+        long start = System.currentTimeMillis();
         GetTopProductsResult topProducts = productFacade.getTopProducts();
-        log.info("첫번째 호출 시작");
+        long end = System.currentTimeMillis();
+        log.info("첫번째 호출 끝");
+        log.info("DB 조회 소요시간 : {}", (end - start) + "ms");
+
         log.info("두번째 호출 시작 - 캐시 조회");
+        start = System.currentTimeMillis();
         GetTopProductsResult topProducts2 = productFacade.getTopProducts();
+        end = System.currentTimeMillis();
         log.info("두번째 호출 끝");
+        log.info("캐시 조회 소요시간 : {}", (end - start) + "ms");
 
         List<Long> orderIds = (List<Long>)redisTemplate.opsForValue().get(topOrderIdsKey);
         GetOrderProductsByOrderIdsResult getOrderProductsByOrderIdsResult = (GetOrderProductsByOrderIdsResult)redisTemplate.opsForValue().get(topProductIdsKey);

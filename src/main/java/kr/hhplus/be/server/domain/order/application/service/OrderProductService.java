@@ -7,6 +7,7 @@ import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSave
 import kr.hhplus.be.server.domain.order.domain.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.domain.repository.OrderProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class OrderProductService {
         return OrderProductSaveResult.from(orderProducts);
     }
 
+    @Cacheable(value = "topProductIds", key = "'top::productIds'")
     public GetOrderProductsByOrderIdsResult getOrderProductsByOrderIds(GetOrderProductsByOrderIdsCommand orderIdsCommand) {
         List<Long> top5OrderProducts = orderProductRepository.findTop5OrderProducts(orderIdsCommand.getOrderIds());
 

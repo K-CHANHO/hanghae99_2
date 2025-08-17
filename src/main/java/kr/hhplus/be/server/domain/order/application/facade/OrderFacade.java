@@ -13,11 +13,14 @@ import kr.hhplus.be.server.domain.order.application.service.OrderService;
 import kr.hhplus.be.server.domain.order.application.service.dto.*;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
+import kr.hhplus.be.server.domain.product.application.service.ProductRankingService;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import kr.hhplus.be.server.domain.product.application.service.dto.ReduceStockCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class OrderFacade {
     private final PaymentService paymentService;
     private final BalanceService balanceService;
     private final ProductService productService;
+    private final ProductRankingService productRankingService;
 
     @Transactional
     @DistributedLock(prefix = "order:process:", keys = {"#orderProcessCommand.orderProductDtoList.!['productId:'+ productId]"})
@@ -66,6 +70,17 @@ public class OrderFacade {
         // 결제
         PayCommand payCommand = PayCommand.from(createOrderResult, useCouponResult);
         paymentService.pay(payCommand);
+
+        // 판매량 누적. 커밋된 이후에 반영하여 정합성 보장.
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                // 판매량 누적
+                orderProcessCommand.getOrderProductDtoList().forEach(
+                        orderProductDto -> productRankingService.increaseSales(orderProductDto.getProductId(), orderProductDto.getQuantity())
+                );
+            }
+        });
 
         return OrderProcessResult.from(changeStatusResult);
     }

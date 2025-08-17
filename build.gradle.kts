@@ -57,7 +57,6 @@ dependencies {
 	implementation ("com.fasterxml.jackson.core:jackson-databind")
 	implementation ("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation ("org.springframework.boot:spring-boot-starter-cache")
-	implementation ("com.fasterxml.jackson.core:jackson-databind")
 	implementation ("org.springframework.boot:spring-boot-starter")
 
 }

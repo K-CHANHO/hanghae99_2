@@ -7,12 +7,12 @@ import lombok.Getter;
 @Builder
 @Getter
 @AllArgsConstructor
-public class ViewCouponListCommand {
+public class GetCouponListCommand {
 
     private String userId;
 
-    public static ViewCouponListCommand from(String userId) {
-        return ViewCouponListCommand.builder()
+    public static GetCouponListCommand from(String userId) {
+        return GetCouponListCommand.builder()
                 .userId(userId)
                 .build();
     }

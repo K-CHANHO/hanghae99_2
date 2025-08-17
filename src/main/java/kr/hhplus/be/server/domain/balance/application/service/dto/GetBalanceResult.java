@@ -8,13 +8,13 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ViewBalanceResult {
+public class GetBalanceResult {
 
     private String userId;
     private int balance;
 
-    public static ViewBalanceResult from(Balance balance) {
-        return ViewBalanceResult.builder()
+    public static GetBalanceResult from(Balance balance) {
+        return GetBalanceResult.builder()
                 .userId(balance.getUserId())
                 .balance(balance.getBalance())
                 .build();

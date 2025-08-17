@@ -3,8 +3,8 @@ package kr.hhplus.be.server.domain.balance.controller;
 import kr.hhplus.be.server.domain.balance.presenter.controller.BalanceController;
 import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceCommand;
 import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceResult;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceResult;
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,8 +50,8 @@ public class BalanceControllerTest {
         // given
         String url = "/api/v1/balance/{userId}";
         String userId = "sampleUserId";
-        ViewBalanceResult viewBalanceResult = ViewBalanceResult.builder().userId(userId).balance(100000).build();
-        when(balanceService.getBalance(any(ViewBalanceCommand.class))).thenReturn(viewBalanceResult);
+        GetBalanceResult getBalanceResult = GetBalanceResult.builder().userId(userId).balance(100000).build();
+        when(balanceService.getBalance(any(GetBalanceCommand.class))).thenReturn(getBalanceResult);
 
         // when
         ResultActions result = mockMvc.perform(

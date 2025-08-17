@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ViewBalanceCommand {
+public class GetBalanceCommand {
     private String userId;
 
-    public static ViewBalanceCommand from(String userId) {
-        return ViewBalanceCommand.builder()
+    public static GetBalanceCommand from(String userId) {
+        return GetBalanceCommand.builder()
                 .userId(userId)
                 .build();
     }

@@ -34,11 +34,11 @@ public class BalanceServiceTest {
     public void getBalance(){
         // given
         String userId = "sampleUserId";
-        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(userId);
+        GetBalanceCommand getBalanceCommand = GetBalanceCommand.from(userId);
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
 
         // when
-        ViewBalanceResult serviceResponseDto = balanceService.getBalance(viewBalanceCommand);
+        GetBalanceResult serviceResponseDto = balanceService.getBalance(getBalanceCommand);
 
         // then
         assertThat(serviceResponseDto).isNotNull();
@@ -49,7 +49,7 @@ public class BalanceServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -100, -50000})
     @DisplayName("잔액 충전 서비스 테스트 - 음수 값을 충전한 경우")
-    public void chargeBalanceWithNegativeValue(int chargeAmount){
+    public void chargeBalanceWithNegativeValue(int chargeAmount) throws InterruptedException {
         // given
         String userId = "sampleUserId";
         ChargeBalanceCommand serviceRequest = ChargeBalanceCommand.builder().userId(userId).amount(chargeAmount).build();
@@ -65,7 +65,7 @@ public class BalanceServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 10000, 50000})
     @DisplayName("잔액 충전 서비스 테스트")
-    public void chargeBalance(int chargeAmount) {
+    public void chargeBalance(int chargeAmount) throws InterruptedException {
         // given
         String userId = "sampleUserId";
         int initialBalance = 100000;
@@ -87,7 +87,7 @@ public class BalanceServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -10000, -50000})
     @DisplayName("잔액 사용 서비스 테스트 - 음수 값을 사용한 경우")
-    public void useBalanceWithNegativeValue(int useAmount){
+    public void useBalanceWithNegativeValue(int useAmount) throws InterruptedException {
         // given
         String userId = "sampleUserId";
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
@@ -103,7 +103,7 @@ public class BalanceServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {100001, 150000, 999999})
     @DisplayName("잔액 사용 서비스 테스트 - 잔액보다 큰 금액 사용한 경우")
-    public void useBalanceOver(int useAmount){
+    public void useBalanceOver(int useAmount) throws InterruptedException {
         // given
         String userId = "sampleUserId";
         when(balanceRepository.findById(userId)).thenReturn(Optional.of(new Balance(userId, 100000)));
@@ -119,7 +119,7 @@ public class BalanceServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 50000, 99999, 100000})
     @DisplayName("잔액 사용 서비스 테스트 - 정상")
-    public void useBalance(int useAmount){
+    public void useBalance(int useAmount) throws InterruptedException {
         // given
         String userId = "sampleUserId";
         int initialBalance = 100000;

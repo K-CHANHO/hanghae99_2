@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ViewBalanceRequest {
+public class GetBalanceRequest {
     private String userId;
 }

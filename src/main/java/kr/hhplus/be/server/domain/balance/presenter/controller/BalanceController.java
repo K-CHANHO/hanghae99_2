@@ -1,16 +1,15 @@
 package kr.hhplus.be.server.domain.balance.presenter.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.hhplus.be.server.apidocs.BalanceApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
 import kr.hhplus.be.server.domain.balance.presenter.controller.dto.ChargeBalanceRequest;
 import kr.hhplus.be.server.domain.balance.presenter.controller.dto.ChargeBalanceResponse;
-import kr.hhplus.be.server.domain.balance.presenter.controller.dto.ViewBalanceResponse;
+import kr.hhplus.be.server.domain.balance.presenter.controller.dto.GetBalanceResponse;
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceCommand;
 import kr.hhplus.be.server.domain.balance.application.service.dto.ChargeBalanceResult;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceCommand;
-import kr.hhplus.be.server.domain.balance.application.service.dto.ViewBalanceResult;
+import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceCommand;
+import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,17 +23,17 @@ public class BalanceController implements BalanceApiDocs {
     private final BalanceService balanceService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<ViewBalanceResponse>> getBalance(@PathVariable String userId) {
+    public ResponseEntity<ApiResponse<GetBalanceResponse>> getBalance(@PathVariable String userId) {
 
-        ViewBalanceCommand viewBalanceCommand = ViewBalanceCommand.from(userId);
+        GetBalanceCommand getBalanceCommand = GetBalanceCommand.from(userId);
 
-        ViewBalanceResult viewBalanceResult = balanceService.getBalance(viewBalanceCommand);
-        ViewBalanceResponse viewBalanceResponse = ViewBalanceResponse.from(viewBalanceResult);
+        GetBalanceResult getBalanceResult = balanceService.getBalance(getBalanceCommand);
+        GetBalanceResponse getBalanceResponse = GetBalanceResponse.from(getBalanceResult);
 
-        ApiResponse<ViewBalanceResponse> result = new ApiResponse<>();
+        ApiResponse<GetBalanceResponse> result = new ApiResponse<>();
         result.setMessage("잔액 조회 성공");
         result.setCode(200);
-        result.setData(viewBalanceResponse);
+        result.setData(getBalanceResponse);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

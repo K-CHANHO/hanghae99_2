@@ -56,7 +56,7 @@ public class ProductFacadeIntegrationTest {
 
         // 값 가져오기
         Object value = redisTemplate.opsForValue().get(testKey);
-        System.out.println("Redis returned: " + value);
+        log.info("Redis returned: {}", value);
 
         Assertions.assertThat(testValue).isEqualTo(value);
     }

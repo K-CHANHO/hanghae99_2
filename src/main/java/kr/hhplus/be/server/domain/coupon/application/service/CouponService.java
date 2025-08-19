@@ -9,6 +9,8 @@ import kr.hhplus.be.server.domain.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.domain.repository.CouponStockRepository;
 import kr.hhplus.be.server.domain.coupon.domain.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,8 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
     private final CouponStockRepository couponStockRepository;
+    private final RedissonClient redissonClient;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @DistributedLock(prefix = "coupon:issue:", keys = "#couponCommand.couponId")
     @Transactional
@@ -45,6 +49,21 @@ public class CouponService {
         UserCoupon savedCoupon = userCouponRepository.save(userCoupon);
         return new IssueCouponResult(savedCoupon, coupon);
     }
+
+    public void issueCouponAsync(IssueCouponCommand couponCommand) {
+        // 이미 발급 받았는 지 확인, 발급받지 않은 경우 대기열에 추가
+        Boolean isAbsent = redisTemplate.opsForZSet().addIfAbsent("coupon:queue:" + couponCommand.getCouponId(), couponCommand.getUserId(), System.currentTimeMillis());
+        if (Boolean.FALSE.equals(isAbsent)) {
+            throw new RuntimeException("이미 발급된 쿠폰입니다.");
+        }
+
+        Long stock = redisTemplate.opsForValue().decrement("coupon:stock:" + couponCommand.getCouponId());// 쿠폰 재고 차감
+        if (stock < 0) {
+            throw new RuntimeException("쿠폰이 소진되었습니다.");
+        }
+
+    }
+
 
     public UseCouponResult useCoupon(UseCouponCommand useCouponCommand) {
         if(useCouponCommand.getCouponId() == null) {

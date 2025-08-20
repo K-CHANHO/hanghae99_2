@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.product.facade;
 
+import kr.hhplus.be.server.common.RedisHealthChecker;
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
 import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsCommand;
 import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsResult;
@@ -34,6 +35,8 @@ public class ProductFacadeTest {
     private OrderProductService orderProductService;
     @Mock
     private ProductService productService;
+    @Mock
+    private RedisHealthChecker redisHealthChecker;
 
 
     // 인기 상품 조회 테스트
@@ -56,6 +59,7 @@ public class ProductFacadeTest {
         when(paymentService.getPaidOrderIdsWithinLastDays(3)).thenReturn(mockOrderIds);
         when(orderProductService.getOrderProductsByOrderIds(any(GetOrderProductsByOrderIdsCommand.class))).thenReturn(productIds);
         when(productService.getProducts(any(GetProductsCommand.class))).thenReturn(getProductsResult);
+        when(redisHealthChecker.isRedisAlive()).thenReturn(false); // Redis가 없는 경우로 설정
 
         // when
         GetTopProductsResult topProducts = productFacade.getTopProducts();

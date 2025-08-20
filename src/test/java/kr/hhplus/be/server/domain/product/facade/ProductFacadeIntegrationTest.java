@@ -65,9 +65,9 @@ public class ProductFacadeIntegrationTest {
     @DisplayName("상위 상품 조회 캐시 데이터 확인 테스트")
     public void getTopProductsInCache(){
         // given
-        String topOrderIdsKey = "topOrderIds::top::orderIds";
-        String topProductIdsKey = "topProductIds::top::productIds";
-        String topProductsKey = "topProducts::top::products";
+        String topOrderIdsKey = "topOrderIds:top:orderIds";
+        String topProductIdsKey = "topProductIds:top:productIds";
+        String topProductsKey = "topProducts:top:products";
 
         // when
         log.info("첫번째 호출 시작 - DB 조회");

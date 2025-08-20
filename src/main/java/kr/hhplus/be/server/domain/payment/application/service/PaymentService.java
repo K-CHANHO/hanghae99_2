@@ -37,7 +37,7 @@ public class PaymentService {
         return new PayResult(createdPayment);
     }
 
-    @Cacheable(value = "topOrderIds", key = "'top::orderIds'")
+    @Cacheable(value = "topOrderIds", key = "'top:orderIds'")
     public List<Long> getPaidOrderIdsWithinLastDays(int days) {
         List<Payment> paidOrder = paymentRepository.findOrderIdByStatusAndPaidAtAfter("PAID", new Timestamp(System.currentTimeMillis() - Duration.ofDays(days).toMillis()));
         return paidOrder.stream()

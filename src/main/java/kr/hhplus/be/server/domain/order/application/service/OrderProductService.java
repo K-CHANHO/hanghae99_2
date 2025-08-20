@@ -33,7 +33,7 @@ public class OrderProductService {
         return OrderProductSaveResult.from(orderProducts);
     }
 
-    @Cacheable(value = "topProductIds", key = "'top::productIds'")
+    @Cacheable(value = "topProductIds", key = "'top:productIds'")
     public GetOrderProductsByOrderIdsResult getOrderProductsByOrderIds(GetOrderProductsByOrderIdsCommand orderIdsCommand) {
         List<Long> top5OrderProducts = orderProductRepository.findTop5OrderProducts(orderIdsCommand.getOrderIds());
 

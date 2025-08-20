@@ -27,7 +27,7 @@ public class ProductService {
         return GetProductResult.from(product, productStock);
     }
 
-    @Cacheable(value = "topProducts", key = "'top::products'")
+    @Cacheable(value = "topProducts", key = "'top:products'")
     public GetProductsResult getProducts(GetProductsCommand getProductsCommand) {
 
         List<Product> products = productRepository.findAllById(getProductsCommand.getProductIds());

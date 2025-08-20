@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -20,7 +21,7 @@ public class RedisCacheConfig {
 
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory factory){
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper());
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper());
 
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(30)) // TTL 30분
@@ -39,7 +40,7 @@ public class RedisCacheConfig {
         template.setConnectionFactory(factory);
 
         // 직렬화 설정
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper());
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper());
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(serializer);
 
@@ -50,8 +51,8 @@ public class RedisCacheConfig {
         return template;
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
+    @Bean("redisObjectMapper")
+    public ObjectMapper redisObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.activateDefaultTyping(
                 BasicPolymorphicTypeValidator.builder().allowIfSubType(Object.class).build(),
@@ -59,6 +60,12 @@ public class RedisCacheConfig {
                 JsonTypeInfo.As.PROPERTY
         );
         return mapper;
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper jacksonObjectMapper() {
+        return new ObjectMapper(); // HTTP 요청용 기본 ObjectMapper
     }
 
 }

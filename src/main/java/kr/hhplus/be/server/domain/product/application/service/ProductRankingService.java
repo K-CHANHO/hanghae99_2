@@ -45,7 +45,7 @@ public class ProductRankingService {
 
         List<Long> topProductIds = new ArrayList<>();
         if(zSet != null){
-            zSet.stream().map(tuple ->
+            zSet.stream().forEach(tuple ->
                     topProductIds.add(Long.parseLong(tuple.getValue()))
             );
         }

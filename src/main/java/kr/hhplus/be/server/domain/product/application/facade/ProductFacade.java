@@ -29,22 +29,25 @@ public class ProductFacade {
 
         GetProductsResult getProductsResult;
 
-        if(!redisHealthChecker.isRedisAlive()) { // 레디스 서버가 없는 경우 디비 직접 조회
-            // 결제 상태가 PAID이면서 3일 안에 결제된 orderId 조회 (최근 3일)
-            List<Long> orderIds = paymentService.getPaidOrderIdsWithinLastDays(3);
-
-            // orderId로 orderProduct 조회하면서 productId로 집계 (top5)
-            GetOrderProductsByOrderIdsCommand getOrderProductsByOrderIdsCommand = GetOrderProductsByOrderIdsCommand.from(orderIds);
-            GetOrderProductsByOrderIdsResult getOrderProductsByOrderIdsResult = orderProductService.getOrderProductsByOrderIds(getOrderProductsByOrderIdsCommand);
-
-            // productId로 product 조회 (top5)
-            GetProductsCommand getProductsCommand = GetProductsCommand.from(getOrderProductsByOrderIdsResult);
-            getProductsResult = productService.getProducts(getProductsCommand);
-        } else {
+        if(redisHealthChecker.isRedisAlive()){
             List<Long> topProductIds = productRankingService.getTopProductIdsLastNDays(3, 5);
-            GetProductsCommand getProductsCommand = GetProductsCommand.builder().productIds(topProductIds).build();
-            getProductsResult = productService.getProducts(getProductsCommand);
+            if(topProductIds != null && !topProductIds.isEmpty()) {
+                GetProductsCommand getProductsCommand = GetProductsCommand.builder().productIds(topProductIds).build();
+                getProductsResult = productService.getProducts(getProductsCommand);
+                return GetTopProductsResult.from(getProductsResult);
+            }
         }
+
+        // 결제 상태가 PAID이면서 3일 안에 결제된 orderId 조회 (최근 3일)
+        List<Long> orderIds = paymentService.getPaidOrderIdsWithinLastDays(3);
+
+        // orderId로 orderProduct 조회하면서 productId로 집계 (top5)
+        GetOrderProductsByOrderIdsCommand getOrderProductsByOrderIdsCommand = GetOrderProductsByOrderIdsCommand.from(orderIds);
+        GetOrderProductsByOrderIdsResult getOrderProductsByOrderIdsResult = orderProductService.getOrderProductsByOrderIds(getOrderProductsByOrderIdsCommand);
+
+        // productId로 product 조회 (top5)
+        GetProductsCommand getProductsCommand = GetProductsCommand.from(getOrderProductsByOrderIdsResult);
+        getProductsResult = productService.getProducts(getProductsCommand);
 
         return GetTopProductsResult.from(getProductsResult);
     }

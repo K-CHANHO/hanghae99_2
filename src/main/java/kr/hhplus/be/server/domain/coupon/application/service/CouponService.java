@@ -53,7 +53,7 @@ public class CouponService {
 
     @DistributedLock(prefix = "coupon:issue:", keys = "#couponCommand.couponId")
     public void issueCouponRedis(IssueCouponCommand couponCommand){
-        String userKey = "coupon:issue:" + couponCommand.getCouponId() + ":" + couponCommand.getUserId(); // 중복 확인 키
+        String userKey = "coupon:issue:" + couponCommand.getCouponId() + ":" + "userSet"; // 중복 확인 키
         String stockKey = "coupon:stock:" + couponCommand.getCouponId(); // 쿠폰 재고 키
 
         // 1. 중복 여부 확인

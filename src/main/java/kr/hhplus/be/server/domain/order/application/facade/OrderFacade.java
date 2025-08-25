@@ -6,6 +6,7 @@ import kr.hhplus.be.server.domain.balance.application.service.dto.UseBalanceComm
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponCommand;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponResult;
+import kr.hhplus.be.server.domain.order.application.event.OrderCompletedEvent;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
 import kr.hhplus.be.server.domain.order.application.service.OrderProductService;
@@ -13,10 +14,12 @@ import kr.hhplus.be.server.domain.order.application.service.OrderService;
 import kr.hhplus.be.server.domain.order.application.service.dto.*;
 import kr.hhplus.be.server.domain.payment.application.service.PaymentService;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
+import kr.hhplus.be.server.domain.payment.application.service.dto.PayResult;
 import kr.hhplus.be.server.domain.product.application.service.ProductRankingService;
 import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import kr.hhplus.be.server.domain.product.application.service.dto.ReduceStockCommand;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -32,6 +35,7 @@ public class OrderFacade {
     private final BalanceService balanceService;
     private final ProductService productService;
     private final ProductRankingService productRankingService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     @DistributedLock(prefix = "order:process:", keys = {"#orderProcessCommand.orderProductDtoList.!['productId:'+ productId]"})
@@ -69,7 +73,7 @@ public class OrderFacade {
 
         // 결제
         PayCommand payCommand = PayCommand.from(createOrderResult, useCouponResult);
-        paymentService.pay(payCommand);
+        PayResult paidResult = paymentService.pay(payCommand);
 
         // 판매량 누적. 커밋된 이후에 반영하여 정합성 보장.
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -81,6 +85,9 @@ public class OrderFacade {
                 );
             }
         });
+
+        // 주문 완료 이벤트 발행
+        publisher.publishEvent(new OrderCompletedEvent(createOrderResult.getOrderId(), paidResult.getPaidPrice()));
 
         return OrderProcessResult.from(changeStatusResult);
     }

@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Duration;
@@ -31,9 +29,6 @@ public class PaymentService {
         Payment createdPayment = paymentRepository.save(payment);
         createdPayment.pay();
 
-        // 알림 전송
-        sendPaymentNotification(createdPayment);
-
         return new PayResult(createdPayment);
     }
 
@@ -45,11 +40,5 @@ public class PaymentService {
                 .toList();
 
     }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private void sendPaymentNotification(Payment payment) {
-        log.info("결제정보 외부 전송");
-    }
-
 
 }

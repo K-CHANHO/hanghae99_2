@@ -2,11 +2,10 @@ package kr.hhplus.be.server.domain.coupon.presenter.controller;
 
 import kr.hhplus.be.server.apidocs.CouponApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
-import kr.hhplus.be.server.domain.coupon.presenter.controller.dto.IssueCouponRequest;
-import kr.hhplus.be.server.domain.coupon.presenter.controller.dto.IssueCouponResponse;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponCommand;
-import kr.hhplus.be.server.domain.coupon.application.service.dto.IssueCouponResult;
+import kr.hhplus.be.server.domain.coupon.presenter.controller.dto.IssueCouponRequest;
+import kr.hhplus.be.server.domain.coupon.presenter.controller.dto.IssueCouponResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +25,14 @@ public class CouponController implements CouponApiDocs {
     public ResponseEntity<ApiResponse<IssueCouponResponse>> issueCoupon(@RequestBody IssueCouponRequest request) {
 
         IssueCouponCommand couponCommand = new IssueCouponCommand(request);
-        IssueCouponResult couponResult = couponService.issueCoupon(couponCommand);
-        IssueCouponResponse response = new IssueCouponResponse(couponResult);
+//        IssueCouponResult couponResult = couponService.issueCoupon(couponCommand);
+//        IssueCouponResponse response = new IssueCouponResponse(couponResult);
+        couponService.issueCouponRedis(couponCommand);
 
         ApiResponse<IssueCouponResponse> result = new ApiResponse<>();
         result.setCode(200);
-        result.setMessage("쿠폰 발급 성공");
-        result.setData(response);
+        result.setMessage("쿠폰 발급 요청 성공");
+//        result.setData(response);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

@@ -5,6 +5,7 @@ import kr.hhplus.be.server.domain.payment.application.service.dto.PayResult;
 import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
 import kr.hhplus.be.server.domain.payment.domain.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentService {
     private final PaymentRepository paymentRepository;
 
@@ -46,7 +48,7 @@ public class PaymentService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void sendPaymentNotification(Payment payment) {
-        System.out.println("결제정보 외부 전송");
+        log.info("결제정보 외부 전송");
     }
 
 

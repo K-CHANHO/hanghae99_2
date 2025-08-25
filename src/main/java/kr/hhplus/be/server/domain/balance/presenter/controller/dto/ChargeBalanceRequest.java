@@ -1,12 +1,16 @@
 package kr.hhplus.be.server.domain.balance.presenter.controller.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChargeBalanceRequest {
     private String userId;
-    private int amount; // 충전할 금액
+    private Integer amount; // 충전할 금액
     private String transactionId; // 거래 ID (중복 방지용)
 }

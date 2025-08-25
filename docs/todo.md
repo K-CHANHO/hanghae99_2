@@ -16,3 +16,19 @@
 ### 5) repository에 findByIdOrElseThrow 메서드를 만들어서 공통으로 사용하기
 
 ### 6) 현재는 Service에 모든 기능이 한꺼번에 구현되어있음. 유스케이스별로 나누기 (단일책임의 원칙 지키기)
+
+### 7) build.gradle.kts 버전관리
+> 아래 url에 있는 라이브러리들은 자동으로 버전관리가 됨. 불필요한 버전 제거
+> 
+>참고 URL : https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html
+
+### 8) 분산락 키 생성 인터페이스화하기
+> SpEL문법은 문법오류가 발생할 가능성이 있음. 인터페이스화하여 유지보수성 올리기.
+
+### 9) record 클래스 학습하고 적용하기 (dto)
+
+### 10) 테스트코드 가독성 높히기
+> assertAll, hasSize 등으로 가독성 높히기 
+
+### 11) 로깅 활용
+> System.out.println 대신 로깅 프레임워크 활용하기

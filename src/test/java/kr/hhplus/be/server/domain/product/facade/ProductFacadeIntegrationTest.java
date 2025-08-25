@@ -7,13 +7,13 @@ import kr.hhplus.be.server.domain.product.application.service.dto.GetProductResu
 import kr.hhplus.be.server.domain.product.application.service.dto.GetProductsResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootTest
@@ -31,11 +31,25 @@ public class ProductFacadeIntegrationTest {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @BeforeEach
+    public void initRedis(){
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
+    }
+
     @Test
     @DisplayName("상위 상품 조회 테스트")
     public void getTopProducts(){
         // given
+        LocalDate today = LocalDate.now();
+        String key1 = "product:ranking:" + today;
+        String key2 = "product:ranking:" + today.minusDays(1);
+        String key3 = "product:ranking:" + today.minusDays(2);
 
+        redisTemplate.opsForZSet().add(key1, 1, 10);
+        redisTemplate.opsForZSet().add(key1, 2, 20);
+        redisTemplate.opsForZSet().add(key2, 2, 5);
+        redisTemplate.opsForZSet().add(key2, 3, 15);
+        redisTemplate.opsForZSet().add(key3, 1, 30);
 
         // when
         GetTopProductsResult topProducts = productFacade.getTopProducts();
@@ -56,7 +70,7 @@ public class ProductFacadeIntegrationTest {
 
         // 값 가져오기
         Object value = redisTemplate.opsForValue().get(testKey);
-        System.out.println("Redis returned: " + value);
+        log.info("Redis returned: {}", value);
 
         Assertions.assertThat(testValue).isEqualTo(value);
     }

@@ -55,7 +55,7 @@ public class BalanceControllerIntegrationTest {
         // given
         String url = "/api/v1/balance";
         String userId = "sampleUserId";
-        Long chargeAmount = -100000L;
+        int chargeAmount = -100000;
         String requestBody = "{\"userId\" : \"" + userId + "\", \"amount\" : " + chargeAmount + ", \"transactionId\" : \"tx12345\"}";
 
         // when

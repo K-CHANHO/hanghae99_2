@@ -3,6 +3,8 @@ package kr.hhplus.be.server.domain.order.facade;
 import kr.hhplus.be.server.domain.balance.application.service.BalanceService;
 import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceCommand;
 import kr.hhplus.be.server.domain.balance.application.service.dto.GetBalanceResult;
+import kr.hhplus.be.server.domain.external.application.MockUseCase;
+import kr.hhplus.be.server.domain.order.application.event.OrderCompletedEvent;
 import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
@@ -17,6 +19,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
@@ -27,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @Sql(scripts = {
@@ -44,6 +49,11 @@ public class OrderFacadeIntegrationTest {
     private ProductService productService;
     @Autowired
     private ProductStockRepository productStockRepository;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
+    @MockitoSpyBean
+    private MockUseCase mockUseCase;
 
 
     // 재고 부족 -> 잔고 그대로 인지
@@ -105,7 +115,7 @@ public class OrderFacadeIntegrationTest {
 
     @Test
     @DisplayName("주문/결제 테스트")
-    public void orderProcess(){
+    public void orderProcess() throws InterruptedException {
         // given
         String userId = "sampleUserId";
         ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
@@ -124,6 +134,11 @@ public class OrderFacadeIntegrationTest {
 
         // when
         OrderProcessResult orderProcessResult = orderFacade.orderProcess(orderProcessCommand);
+
+        Thread.sleep(1000); // 이벤트 비동기 처리 대기
+        verify(mockUseCase, times(1))
+                .handleCompletedOrder(any(OrderCompletedEvent.class));
+
         GetBalanceCommand getBalanceCommand = GetBalanceCommand.from(orderProcessResult.getUserId());
         GetBalanceResult getBalanceResult = balanceService.getBalance(getBalanceCommand);
 

@@ -49,6 +49,12 @@ public class OrderFacade {
         OrderProductSaveCommand orderProductSaveCommand = OrderProductSaveCommand.from(orderProcessCommand, createOrderResult);
         OrderProductSaveResult orderProductSaveResult = orderProductService.save(orderProductSaveCommand);
 
+        // 재고 차감
+        orderProductSaveResult.getOrderProductDtoList().forEach(product -> {
+            ReduceStockCommand reduceStockCommand = ReduceStockCommand.from(product);
+            productService.reduceStock(reduceStockCommand);
+        });
+
         // 쿠폰 적용
         UseCouponCommand useCouponCommand = UseCouponCommand.from(orderProcessCommand);
         UseCouponResult useCouponResult = couponService.useCoupon(useCouponCommand);
@@ -57,23 +63,18 @@ public class OrderFacade {
             discountRate = useCouponResult.getDiscountRate();
         }
 
-        // 재고 차감
-        orderProductSaveResult.getOrderProductDtoList().forEach(product -> {
-            ReduceStockCommand reduceStockCommand = ReduceStockCommand.from(product);
-            productService.reduceStock(reduceStockCommand);
-        });
-
-        // 주문 상태 변경
-        ChangeStatusCommand changeStatusCommand = ChangeStatusCommand.from(createOrderResult);
-        ChangeStatusResult changeStatusResult = orderService.changeStatus(changeStatusCommand);
+        // 결제
+        PayCommand payCommand = PayCommand.from(createOrderResult, useCouponResult);
+        PayResult paidResult = paymentService.pay(payCommand);
 
         // 잔액 차감
         UseBalanceCommand useBalanceCommand = UseBalanceCommand.from(createOrderResult, useCouponResult);
         balanceService.useBalance(useBalanceCommand);
 
-        // 결제
-        PayCommand payCommand = PayCommand.from(createOrderResult, useCouponResult);
-        PayResult paidResult = paymentService.pay(payCommand);
+        // 주문 상태 변경
+        ChangeStatusCommand changeStatusCommand = ChangeStatusCommand.from(createOrderResult);
+        ChangeStatusResult changeStatusResult = orderService.changeStatus(changeStatusCommand);
+
 
         // 판매량 누적. 커밋된 이후에 반영하여 정합성 보장.
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -87,7 +88,7 @@ public class OrderFacade {
         });
 
         // 주문 완료 이벤트 발행
-        publisher.publishEvent(new OrderCompletedEvent(createOrderResult.getOrderId(), paidResult.getPaidPrice()));
+        publisher.publishEvent(new OrderCompletedEvent(createOrderResult.getOrderId(), paidResult.getPaidPrice(), orderProcessCommand.getOrderProductDtoList()));
 
         return OrderProcessResult.from(changeStatusResult);
     }

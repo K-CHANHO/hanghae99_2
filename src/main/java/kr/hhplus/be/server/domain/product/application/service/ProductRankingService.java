@@ -1,9 +1,12 @@
 package kr.hhplus.be.server.domain.product.application.service;
 
+import kr.hhplus.be.server.domain.order.application.event.OrderCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -24,6 +27,14 @@ public class ProductRankingService {
         String key = PRODUCT_RANK_KEY_PREFIX + LocalDate.now();
         redisTemplate.opsForZSet().incrementScore(key, productId.toString(), quantity);
         redisTemplate.expire(key, Duration.ofDays(4));
+    }
+
+    @EventListener
+    @Async
+    public void handleOrderCompletedEvent(OrderCompletedEvent event){
+        event.getOrderProductDtoList().forEach(
+                orderProductDto -> increaseSales(orderProductDto.getProductId(), orderProductDto.getQuantity())
+        );
     }
 
     public List<Long> getTopProductIdsLastNDays(int days, int limit) {

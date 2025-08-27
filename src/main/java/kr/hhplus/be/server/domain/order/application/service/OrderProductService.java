@@ -1,13 +1,13 @@
 package kr.hhplus.be.server.domain.order.application.service;
 
-import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsCommand;
-import kr.hhplus.be.server.domain.order.application.service.dto.GetOrderProductsByOrderIdsResult;
-import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveCommand;
-import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveResult;
+import kr.hhplus.be.server.domain.order.application.event.OrderCreatedEvent;
+import kr.hhplus.be.server.domain.order.application.service.dto.*;
 import kr.hhplus.be.server.domain.order.domain.entity.OrderProduct;
 import kr.hhplus.be.server.domain.order.domain.repository.OrderProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +17,7 @@ import java.util.List;
 public class OrderProductService {
 
     private final OrderProductRepository orderProductRepository;
+    private final ApplicationEventPublisher publisher;
 
     public OrderProductSaveResult save(OrderProductSaveCommand orderProductSaveCommand) {
 
@@ -31,6 +32,13 @@ public class OrderProductService {
 
         List<OrderProduct> orderProducts = orderProductRepository.saveAll(orderProductList);
         return OrderProductSaveResult.from(orderProducts);
+    }
+
+    // 주문 생성 이벤트 리스너
+    @EventListener
+    public void handleOrderCompletedEvent(OrderCreatedEvent event) {
+        OrderProductSaveCommand orderProductSaveCommand = OrderProductSaveCommand.from(event);
+        OrderProductSaveResult orderProductSaveResult = save(orderProductSaveCommand);
     }
 
     @Cacheable(value = "topProductIds", key = "'top::productIds'")

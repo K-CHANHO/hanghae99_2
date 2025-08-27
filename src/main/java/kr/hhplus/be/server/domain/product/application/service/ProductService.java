@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.product.application.service;
 
+import kr.hhplus.be.server.domain.order.application.event.OrderCreatedEvent;
 import kr.hhplus.be.server.domain.product.application.service.dto.*;
 import kr.hhplus.be.server.domain.product.domain.entity.Product;
 import kr.hhplus.be.server.domain.product.domain.entity.ProductStock;
@@ -7,6 +8,7 @@ import kr.hhplus.be.server.domain.product.domain.repository.ProductRepository;
 import kr.hhplus.be.server.domain.product.domain.repository.ProductStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,6 +44,14 @@ public class ProductService {
 
         ProductStock reducedStock = productStockRepository.save(productStock);
         return ReduceStockResult.from(reducedStock);
+    }
+
+    @EventListener
+    public void handleOrderCreatedEvent(OrderCreatedEvent event) {
+        event.getOrderProductDtoList().forEach(orderProduct -> {
+            ReduceStockCommand reduceStockCommand = ReduceStockCommand.from(orderProduct);
+            reduceStock(reduceStockCommand);
+        });
     }
 
 

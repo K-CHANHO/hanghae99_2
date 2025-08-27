@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.order.application.service.dto;
 
+import kr.hhplus.be.server.domain.order.application.event.OrderCreatedEvent;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,14 @@ public class OrderProductSaveCommand {
                 .userId(orderProcessCommand.getUserId())
                 .orderId(createOrderResult.getOrderId())
                 .orderProductDtoList(orderProcessCommand.getOrderProductDtoList())
+                .build();
+    }
+
+    public static OrderProductSaveCommand from(OrderCreatedEvent event) {
+        return OrderProductSaveCommand.builder()
+                .userId(event.getUserId())
+                .orderId(event.getOrderId())
+                .orderProductDtoList(event.getOrderProductDtoList())
                 .build();
     }
 }

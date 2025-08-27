@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.application.service.dto;
 
+import kr.hhplus.be.server.domain.order.application.event.OrderCreatedEvent;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,13 @@ public class UseCouponCommand {
         return UseCouponCommand.builder()
                 .userId(orderProcessCommand.getUserId())
                 .couponId(orderProcessCommand.getUserCouponId())
+                .build();
+    }
+
+    public static UseCouponCommand from(OrderCreatedEvent event) {
+        return UseCouponCommand.builder()
+                .userId(event.getUserId())
+                .couponId(event.getUserCouponId())
                 .build();
     }
 }

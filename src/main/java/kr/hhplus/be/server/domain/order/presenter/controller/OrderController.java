@@ -3,8 +3,9 @@ package kr.hhplus.be.server.domain.order.presenter.controller;
 import kr.hhplus.be.server.apidocs.OrderApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
 import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
-import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
-import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
+import kr.hhplus.be.server.domain.order.application.service.OrderService;
+import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderResult;
 import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderRequest;
 import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +22,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController implements OrderApiDocs {
 
     private final OrderFacade orderFacade;
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody OrderRequest request) {
 
-        OrderProcessCommand orderProcessCommand = OrderProcessCommand.from(request);
-        OrderProcessResult orderProcessResult = orderFacade.orderProcess(orderProcessCommand);
-        OrderResponse orderResponse = OrderResponse.from(orderProcessResult);
+        //OrderProcessCommand orderProcessCommand = OrderProcessCommand.from(request);
+        //OrderProcessResult orderProcessResult = orderFacade.orderProcess(orderProcessCommand);
+        //OrderResponse orderResponse = OrderResponse.from(orderProcessResult);
+
+        CreateOrderCommand createOrderCommand = CreateOrderCommand.from(request);
+        CreateOrderResult createdOrder = orderService.createOrder(createOrderCommand);
+        OrderResponse orderResponse = OrderResponse.from(createdOrder);
 
         ApiResponse<OrderResponse> result = new ApiResponse<>();
         result.setCode(200);
-        result.setMessage("주문/결제 성공");
+        result.setMessage("주문 요청 성공");
         result.setData(orderResponse);
 
         return new ResponseEntity<>(result,HttpStatus.OK);

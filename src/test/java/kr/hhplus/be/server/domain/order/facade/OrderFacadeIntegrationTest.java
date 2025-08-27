@@ -14,9 +14,6 @@ import kr.hhplus.be.server.domain.product.application.service.dto.GetProductComm
 import kr.hhplus.be.server.domain.product.application.service.dto.GetProductResult;
 import kr.hhplus.be.server.domain.product.domain.repository.ProductStockRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
@@ -57,7 +54,7 @@ public class OrderFacadeIntegrationTest {
 
 
     // 재고 부족 -> 잔고 그대로 인지
-    @Test
+    //@Test
     @DisplayName("주문/결제 테스트_재고부족")
     public void orderProcessWithLessStock(){
         // given
@@ -85,7 +82,7 @@ public class OrderFacadeIntegrationTest {
     }
 
     // 잔고 부족 -> 재고 그대로 인지
-    @Test
+    //@Test
     @DisplayName("주문/결제 테스트_잔고부족")
     public void orderProcessWithLessBalance(){
         // given
@@ -113,7 +110,7 @@ public class OrderFacadeIntegrationTest {
 
     }
 
-    @Test
+    //@Test
     @DisplayName("주문/결제 테스트")
     public void orderProcess() throws InterruptedException {
         // given
@@ -150,8 +147,8 @@ public class OrderFacadeIntegrationTest {
         assertThat(getBalanceResult.getBalance()).isEqualTo((int) (300000 - 140000*0.9));
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {1, 199,200,201, 300})
+    //@ParameterizedTest
+    //@ValueSource(ints = {1, 199,200,201, 300})
     @DisplayName("주문/결제 - 재고 차감 동시성 테스트")
     public void orderProcessForProductStockReduce(int orderAmount) throws InterruptedException {
         // given

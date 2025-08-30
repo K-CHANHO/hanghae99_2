@@ -22,4 +22,9 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     public Payment save(Payment payment) {
         return jpaRepository.save(payment);
     }
+
+    @Override
+    public Payment findByOrderId(Long orderId) {
+        return jpaRepository.findByOrderId(orderId).orElseThrow(() -> new RuntimeException("결제 정보가 존재하지 않습니다."));
+    }
 }

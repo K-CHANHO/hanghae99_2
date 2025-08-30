@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.order.presenter.controller.dto;
 
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
+import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +26,16 @@ public class OrderResponse {
                 .totalPrice(orderProcessResult.getTotalPrice())
                 .status(orderProcessResult.getStatus())
                 .orderDate(orderProcessResult.getOrderDate())
+                .build();
+    }
+
+    public static OrderResponse from(CreateOrderResult createdOrder) {
+        return OrderResponse.builder()
+                .orderId(createdOrder.getOrderId())
+                .userId(createdOrder.getUserId())
+                .totalPrice(createdOrder.getTotalPrice())
+                .status(createdOrder.getStatus())
+                .orderDate(createdOrder.getCreatedAt())
                 .build();
     }
 }

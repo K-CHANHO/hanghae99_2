@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.payment.application.service.dto;
 
+import kr.hhplus.be.server.domain.coupon.application.event.CouponUsedEvent;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.UseCouponResult;
 import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderResult;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,15 @@ public class PayCommand {
                 .orderId(createOrderResult.getOrderId())
                 .totalPrice(createOrderResult.getTotalPrice())
                 .discountRate(useCouponResult.getDiscountRate())
+                .build();
+    }
+
+    public static PayCommand from(CouponUsedEvent event) {
+        return PayCommand.builder()
+                .userId(event.getUserId())
+                .orderId(event.getOrderId())
+                .totalPrice(event.getTotalPrice())
+                .discountRate(event.getDiscountRate())
                 .build();
     }
 }

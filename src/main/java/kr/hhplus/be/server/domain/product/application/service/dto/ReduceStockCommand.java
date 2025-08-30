@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.product.application.service.dto;
 
 import kr.hhplus.be.server.domain.order.application.service.dto.OrderProductSaveResult;
+import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,13 @@ public class ReduceStockCommand {
         return ReduceStockCommand.builder()
                 .productId(product.getProductId())
                 .orderQuantity(product.getQuantity())
+                .build();
+    }
+
+    public static ReduceStockCommand from(OrderProductDto orderProduct) {
+        return ReduceStockCommand.builder()
+                .productId(orderProduct.getProductId())
+                .orderQuantity(orderProduct.getQuantity())
                 .build();
     }
 }

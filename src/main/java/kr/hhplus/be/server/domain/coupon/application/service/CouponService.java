@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.domain.coupon.application.service;
 
 import kr.hhplus.be.server.common.aop.DistributedLock;
+import kr.hhplus.be.server.domain.coupon.application.event.CouponUsedEvent;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.*;
 import kr.hhplus.be.server.domain.coupon.domain.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.domain.entity.CouponStock;
@@ -8,8 +9,11 @@ import kr.hhplus.be.server.domain.coupon.domain.entity.UserCoupon;
 import kr.hhplus.be.server.domain.coupon.domain.repository.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.domain.repository.CouponStockRepository;
 import kr.hhplus.be.server.domain.coupon.domain.repository.UserCouponRepository;
+import kr.hhplus.be.server.domain.order.application.event.OrderCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ public class CouponService {
     private final UserCouponRepository userCouponRepository;
     private final CouponStockRepository couponStockRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ApplicationEventPublisher publisher;
 
     @DistributedLock(prefix = "coupon:issue:", keys = "#couponCommand.couponId")
     @Transactional
@@ -101,6 +106,13 @@ public class CouponService {
                 .orElseThrow(() -> new RuntimeException("유효하지 않은 쿠폰입니다."));
         return UseCouponResult.from(usedCoupon, coupon);
 
+    }
+
+    @EventListener
+    public void handleOrderCreatedEvent(OrderCreatedEvent event){
+        UseCouponCommand useCouponCommand = UseCouponCommand.from(event);
+        UseCouponResult useCouponResult = useCoupon(useCouponCommand);
+        publisher.publishEvent(new CouponUsedEvent(event, useCouponResult));
     }
 
     public GetCouponListResult getCouponList(GetCouponListCommand getCouponListCommand) {

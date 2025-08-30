@@ -9,4 +9,6 @@ public interface PaymentRepository {
     List<Payment> findOrderIdByStatusAndPaidAtAfter(String status, Timestamp days);
 
     Payment save(Payment payment);
+
+    Payment findByOrderId(Long orderId);
 }

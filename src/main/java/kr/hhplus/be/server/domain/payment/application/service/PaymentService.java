@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.payment.application.service;
 
+import kr.hhplus.be.server.domain.coupon.application.event.CouponUsedEvent;
+import kr.hhplus.be.server.domain.payment.application.event.PaidEvent;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayCommand;
 import kr.hhplus.be.server.domain.payment.application.service.dto.PayResult;
 import kr.hhplus.be.server.domain.payment.domain.entity.Payment;
@@ -7,9 +9,9 @@ import kr.hhplus.be.server.domain.payment.domain.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Duration;
@@ -20,6 +22,7 @@ import java.util.List;
 @Slf4j
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    private final ApplicationEventPublisher publisher;
 
     public PayResult pay(PayCommand payCommand){
 
@@ -31,10 +34,15 @@ public class PaymentService {
         Payment createdPayment = paymentRepository.save(payment);
         createdPayment.pay();
 
-        // 알림 전송
-        sendPaymentNotification(createdPayment);
-
         return new PayResult(createdPayment);
+    }
+
+    @EventListener
+    public void handleCouponUsedEvent(CouponUsedEvent event){
+        PayCommand payCommand = PayCommand.from(event);
+        pay(payCommand);
+
+        publisher.publishEvent(new PaidEvent(event));
     }
 
     @Cacheable(value = "topOrderIds", key = "'top::orderIds'")
@@ -45,11 +53,5 @@ public class PaymentService {
                 .toList();
 
     }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private void sendPaymentNotification(Payment payment) {
-        log.info("결제정보 외부 전송");
-    }
-
 
 }

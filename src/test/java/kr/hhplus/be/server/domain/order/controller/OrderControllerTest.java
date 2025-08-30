@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import kr.hhplus.be.server.domain.order.application.facade.OrderFacade;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessCommand;
 import kr.hhplus.be.server.domain.order.application.facade.dto.OrderProcessResult;
+import kr.hhplus.be.server.domain.order.application.service.OrderService;
+import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderCommand;
+import kr.hhplus.be.server.domain.order.application.service.dto.CreateOrderResult;
 import kr.hhplus.be.server.domain.order.dto.OrderProductDto;
 import kr.hhplus.be.server.domain.order.presenter.controller.OrderController;
 import kr.hhplus.be.server.domain.order.presenter.controller.dto.OrderRequest;
@@ -21,6 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,6 +38,8 @@ class OrderControllerTest {
     private MockMvc mockMvc;
     @Mock
     private OrderFacade orderFacade;
+    @Mock
+    private OrderService orderService;
 
     @BeforeEach
     void setUp() {
@@ -71,7 +77,15 @@ class OrderControllerTest {
                 .status("PAID")
                 .build();
 
-        when(orderFacade.orderProcess(any(OrderProcessCommand.class))).thenReturn(mockOrderProcessResult);
+        CreateOrderResult mockCreateOrderResult = CreateOrderResult.builder()
+                .orderId(1L)
+                .userId("sampleUserId")
+                .totalPrice(600000)
+                .status("PAID")
+                .build();
+
+        lenient().when(orderFacade.orderProcess(any(OrderProcessCommand.class))).thenReturn(mockOrderProcessResult);
+        when(orderService.createOrder(any(CreateOrderCommand.class))).thenReturn(mockCreateOrderResult);
 
         // when
         ResultActions result = mockMvc.perform(
@@ -82,7 +96,7 @@ class OrderControllerTest {
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("주문/결제 성공"))
+                .andExpect(jsonPath("$.message").value("주문 요청 성공"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.orderId").isNotEmpty())
                 .andExpect(jsonPath("$.data.userId").value("sampleUserId"))

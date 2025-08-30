@@ -4,9 +4,11 @@ import kr.hhplus.be.server.common.aop.DistributedLock;
 import kr.hhplus.be.server.domain.balance.application.service.dto.*;
 import kr.hhplus.be.server.domain.balance.domain.entity.Balance;
 import kr.hhplus.be.server.domain.balance.domain.repository.BalanceRepository;
+import kr.hhplus.be.server.domain.payment.application.event.PaidEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,5 +46,11 @@ public class BalanceService{
         balance.use(useBalanceCommand.getUseAmount(), useBalanceCommand.getDiscountRate());
         Balance usedBalance = balanceRepository.save(balance);
         return UseBalanceResult.from(usedBalance);
+    }
+
+    @EventListener
+    public void handlePaidEvent(PaidEvent event){
+        UseBalanceCommand useBalanceCommand = UseBalanceCommand.from(event);
+        useBalance(useBalanceCommand);
     }
 }

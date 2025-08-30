@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.order.service;
 
+import kr.hhplus.be.server.domain.order.application.event.OrderCompletedEvent;
+import kr.hhplus.be.server.domain.order.application.event.OrderCreatedEvent;
 import kr.hhplus.be.server.domain.order.application.service.OrderService;
 import kr.hhplus.be.server.domain.order.application.service.dto.ChangeStatusCommand;
 import kr.hhplus.be.server.domain.order.application.service.dto.ChangeStatusResult;
@@ -14,14 +16,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
@@ -31,6 +33,9 @@ public class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private ApplicationEventPublisher publisher;
 
     @Test
     @DisplayName("주문 생성 테스트")
@@ -59,6 +64,8 @@ public class OrderServiceTest {
         CreateOrderResult createdOrder = orderService.createOrder(createOrderCommand);
 
         // then
+        verify(publisher, times(1)).publishEvent(any(OrderCreatedEvent.class));
+        verify(publisher, times(1)).publishEvent(any(OrderCompletedEvent.class));
         assertThat(createdOrder).isNotNull();
         assertThat(createdOrder.getOrderId()).isEqualTo(orderId);
         assertThat(createdOrder.getTotalPrice()).isEqualTo(totalPrice);

@@ -71,7 +71,7 @@ public class OrderControllerIntegrationTest {
         // given
         String userId = "sampleUserId";
         ArrayList<OrderProductDto> orderProductDtoList = new ArrayList<>();
-        OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(10000).quantity(100).build();
+        OrderProductDto orderProductDto1 = OrderProductDto.builder().productId(1L).price(1).quantity(100).build();
         orderProductDtoList.add(orderProductDto1);
 
         OrderRequest body = OrderRequest.builder()
@@ -131,9 +131,9 @@ public class OrderControllerIntegrationTest {
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("주문/결제 성공"))
+                .andExpect(jsonPath("$.message").value("주문 요청 성공"))
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data.status").value("PAID"));
+                .andExpect(jsonPath("$.data.status").value("PENDING"));
 
     }
 

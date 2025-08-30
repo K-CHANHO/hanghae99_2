@@ -39,8 +39,9 @@ class CouponControllerIntegrationTest {
         String userId = "sampleUserId";
         String url = "/api/v1/coupon/issue";
         String requestBody = "{ \"userId\": \"" + userId + "\", \"couponId\": "+ couponId +" }";
-        String userKey = "coupon:issue:" + couponId + ":" + userId; // 중복 확인 키
-        redisTemplate.opsForSet().add(userKey, userId); // 쿠폰 재고 초기화
+        String userKey = "coupon:issue:" + couponId + ":userSet"; // 중복 확인 키
+        redisTemplate.opsForSet().add(userKey, userId);
+        redisTemplate.opsForValue().set("coupon:stock:" + couponId, 50); // 쿠폰 재고 초기화
 
         // when
         ResultActions result = mockMvc.perform(

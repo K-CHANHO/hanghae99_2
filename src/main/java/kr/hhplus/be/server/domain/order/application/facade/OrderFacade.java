@@ -20,6 +20,7 @@ import kr.hhplus.be.server.domain.product.application.service.ProductService;
 import kr.hhplus.be.server.domain.product.application.service.dto.ReduceStockCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -36,6 +37,7 @@ public class OrderFacade {
     private final ProductService productService;
     private final ProductRankingService productRankingService;
     private final ApplicationEventPublisher publisher;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Transactional
     @DistributedLock(prefix = "order:process:", keys = {"#orderProcessCommand.orderProductDtoList.!['productId:'+ productId]"})
@@ -88,7 +90,9 @@ public class OrderFacade {
         });
 
         // 주문 완료 이벤트 발행
-        publisher.publishEvent(new OrderCompletedEvent(createOrderResult.getOrderId(), paidResult.getPaidPrice(), orderProcessCommand.getOrderProductDtoList()));
+        OrderCompletedEvent orderCompletedEvent = new OrderCompletedEvent(createOrderResult.getOrderId(), paidResult.getPaidPrice(), orderProcessCommand.getOrderProductDtoList());
+        //publisher.publishEvent(orderCompletedEvent); => 카프카로 변경
+        kafkaTemplate.send("order-completed", String.valueOf(orderCompletedEvent.getOrderId()));
 
         return OrderProcessResult.from(changeStatusResult);
     }

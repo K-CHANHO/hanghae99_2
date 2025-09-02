@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.coupon.application.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.common.aop.DistributedLock;
 import kr.hhplus.be.server.domain.coupon.application.event.CouponUsedEvent;
 import kr.hhplus.be.server.domain.coupon.application.service.dto.*;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +33,9 @@ public class CouponService {
     private final CouponStockRepository couponStockRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ApplicationEventPublisher publisher;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @DistributedLock(prefix = "coupon:issue:", keys = "#couponCommand.couponId")
+    //@DistributedLock(prefix = "coupon:issue:", keys = "#couponCommand.couponId")
     @Transactional
     public IssueCouponResult issueCoupon(IssueCouponCommand couponCommand) {
 
@@ -90,6 +94,14 @@ public class CouponService {
         userCoupon.issue(couponCommand.getUserId(), coupon);
 
         userCouponRepository.save(userCoupon);
+    }
+
+    public void issueCouponKafka(IssueCouponCommand couponCommand) throws JsonProcessingException {
+        String topic = "coupon-issue";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        kafkaTemplate.send(topic, String.valueOf(couponCommand.getCouponId()), objectMapper.writeValueAsString(couponCommand));
+
     }
 
     public UseCouponResult useCoupon(UseCouponCommand useCouponCommand) {

@@ -4,10 +4,12 @@ import kr.hhplus.be.server.domain.coupon.presenter.controller.dto.IssueCouponReq
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class IssueCouponCommand {
 
     private String userId; // 사용자 ID

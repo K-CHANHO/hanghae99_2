@@ -97,6 +97,8 @@ public class CouponService {
     }
 
     public void issueCouponKafka(IssueCouponCommand couponCommand) throws JsonProcessingException {
+        log.info("kafka send message : {}", couponCommand);
+
         String topic = "coupon-issue";
 
         ObjectMapper objectMapper = new ObjectMapper();

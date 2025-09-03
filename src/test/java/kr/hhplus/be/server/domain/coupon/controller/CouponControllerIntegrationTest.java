@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "/testSql/product.sql",
         "/testSql/coupon.sql"
 })
+@Slf4j
 class CouponControllerIntegrationTest {
 
     @Autowired
@@ -105,5 +111,42 @@ class CouponControllerIntegrationTest {
                 .andExpect(jsonPath("$.data").doesNotExist())  // 데이터가 없음을 확인
         ;
 
+    }
+
+    @Test
+    @DisplayName("쿠폰 발급 API 동시요청")
+    void issueCouponWithConcurrency() throws Exception {
+        // given
+        int threadCount = 10000; // 동시에 보낼 요청 수
+        ExecutorService executorService = Executors.newFixedThreadPool(200);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        Long couponId = 6L;
+        String url = "/api/v1/coupon/issue";
+        redisTemplate.opsForValue().set("coupon:stock:" + couponId, 10000);
+
+        long start = System.currentTimeMillis();
+        // when
+        for(int i=0; i<threadCount; i++){
+            executorService.submit(() ->{
+                String userId = "sampleUserId" + threadCount;
+                String requestBody = "{ \"userId\": \"" + userId + "\", \"couponId\": "+ couponId +" }";
+                try{
+                    mockMvc.perform(post(url)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(requestBody)
+                    ).andExpect(status().isOk());
+                } catch (Exception e){
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        long end = System.currentTimeMillis();
+
+        // then
+        log.info("소요시간 : " + (end - start) + "ms");
     }
 }

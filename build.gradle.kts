@@ -44,6 +44,8 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.springframework.kafka:spring-kafka-test")
+	testImplementation("org.testcontainers:kafka")
 
 	// self
 	implementation("org.projectlombok:lombok")
@@ -58,6 +60,10 @@ dependencies {
 	implementation ("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation ("org.springframework.boot:spring-boot-starter-cache")
 	implementation ("org.springframework.boot:spring-boot-starter")
+
+	// Spring Kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
 
 }
 

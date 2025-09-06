@@ -8,7 +8,6 @@ import kr.hhplus.be.server.domain.payment.application.event.PaidEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +47,7 @@ public class BalanceService{
         return UseBalanceResult.from(usedBalance);
     }
 
-    @EventListener
+    //@EventListener
     public void handlePaidEvent(PaidEvent event){
         UseBalanceCommand useBalanceCommand = UseBalanceCommand.from(event);
         useBalance(useBalanceCommand);

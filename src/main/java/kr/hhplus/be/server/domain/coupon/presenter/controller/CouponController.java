@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.presenter.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.hhplus.be.server.apidocs.CouponApiDocs;
 import kr.hhplus.be.server.common.ApiResponse;
 import kr.hhplus.be.server.domain.coupon.application.service.CouponService;
@@ -22,12 +23,13 @@ public class CouponController implements CouponApiDocs {
     private final CouponService couponService;
 
     @PostMapping("/issue")
-    public ResponseEntity<ApiResponse<IssueCouponResponse>> issueCoupon(@RequestBody IssueCouponRequest request) {
+    public ResponseEntity<ApiResponse<IssueCouponResponse>> issueCoupon(@RequestBody IssueCouponRequest request) throws JsonProcessingException {
 
         IssueCouponCommand couponCommand = new IssueCouponCommand(request);
 //        IssueCouponResult couponResult = couponService.issueCoupon(couponCommand);
 //        IssueCouponResponse response = new IssueCouponResponse(couponResult);
-        couponService.issueCouponRedis(couponCommand);
+//        couponService.issueCouponRedis(couponCommand);
+        couponService.issueCouponKafka(couponCommand);
 
         ApiResponse<IssueCouponResponse> result = new ApiResponse<>();
         result.setCode(200);

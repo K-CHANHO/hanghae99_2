@@ -34,6 +34,7 @@ public class CouponService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ApplicationEventPublisher publisher;
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     //@DistributedLock(prefix = "coupon:issue:", keys = "#couponCommand.couponId")
     @Transactional
@@ -100,10 +101,7 @@ public class CouponService {
         log.info("kafka send message : {}", couponCommand);
 
         String topic = "coupon-issue";
-
-        ObjectMapper objectMapper = new ObjectMapper();
         kafkaTemplate.send(topic, String.valueOf(couponCommand.getCouponId()), objectMapper.writeValueAsString(couponCommand));
-
     }
 
     public UseCouponResult useCoupon(UseCouponCommand useCouponCommand) {

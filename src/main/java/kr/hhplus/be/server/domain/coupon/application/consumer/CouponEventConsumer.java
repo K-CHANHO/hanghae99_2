@@ -19,8 +19,12 @@ public class CouponEventConsumer {
 
     @KafkaListener(topics = "coupon-issue")
     public void consume(String key, String message) throws JsonProcessingException {
-        log.info("Consumed message with key: " + key + ", message: " + message);
+        long start = System.currentTimeMillis();
+
         IssueCouponCommand command = objectMapper.readValue(message, IssueCouponCommand.class);
         couponService.issueCoupon(command);
+
+        long end = System.currentTimeMillis();
+        log.info("Processed coupon issuance for userId: " + command.getUserId() + " in " + (end - start) + " ms");
     }
 }

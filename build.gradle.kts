@@ -48,7 +48,7 @@ dependencies {
 	testImplementation("org.testcontainers:kafka")
 
 	// self
-	implementation("org.projectlombok:lombok")
+	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testCompileOnly ("org.projectlombok:lombok")
 	testAnnotationProcessor ("org.projectlombok:lombok")
@@ -59,7 +59,6 @@ dependencies {
 	implementation ("com.fasterxml.jackson.core:jackson-databind")
 	implementation ("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation ("org.springframework.boot:spring-boot-starter-cache")
-	implementation ("org.springframework.boot:spring-boot-starter")
 
 	// Spring Kafka
 	implementation("org.springframework.kafka:spring-kafka")
